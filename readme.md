@@ -1,20 +1,51 @@
 # pyreporter tools for reporter metabolite analysis
 
 ## Dependencies
-Dependencies can all be installed from pip: 
-pip install --user cobra pandas numpy
+Dependencies can be resolved by pip, or be installed manually from pip:  
+```pip install --user numpy pandas cobra networkx```
 
 ## Installation
-Installation proceeds via pip. Simply navigate to this folder, then call either of the following:
+Installation proceeds via pip. After cloning the repository, simply navigate to this folder. 
+Choose either of the following installation routes depending on your needs.
+Create a standard installation for usage: ```pip install --user pyreporter ```
+Create an editable installation for development: ```pip install --user -e pyreporter```
 
-pip install --user pyreporter (to create a standard install)
-pip install --user -e pyreporter (to create an editable install)
+## Usage
 
-## Usage 
-import pyreporter
-pyreporter.calc_reporters_from_expression(model, data, p_col, f_col)
+### Standard workflow from a CobraPy model
+```
+import pyreporter as pr
+results = pr.workflows.workflow_ratio(
+    cobra_model: cobra.Model,
+    mapped_genes_baseline: pd.Series,
+    mapped_genes_comparison: pd.Series,
+    adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
+    ranking = pr.PageRank.PageRankNX,
+    )
+```
+This will return the relative changes in centrality in the comparison relative to the baseline.
 
-where model is your cobra.Model object, data is your pandas.DataFrame with columns p_col containing p-values and f_col containing log2-fold-changes
+## Modularity and Configuration
+Pyreporter is designed to be modular and its central components can easily be swapped out or appended by other components 
+adhering to the specifications laid out in the module base classes.
+As such the adjacency calculation and ranking algorithms can easiy be swapped out.
+All classes inheriting from the abstract base classes laid out in the modules are swappable.
 
-The pagerank and local_changes subpackages have the functions separated out in case you need to adapt the code. 
-Just follow the public functions (functions not starting in _).
+## Core modules
+### Model
+Core of the package is the PyReporter model structure that contains the model data, integrates the workflow and calculates the results.
+### Adjacency
+Different approaches can be used to calculate adjacency in the networks.
+We offer alternatives and a platform to create custom algorithms for the model.
+### Expression
+Module covering the mapping of gene values onto reactions in the model via gene product rules.
+Providing different algorithms along with a platform to create alternatives.
+### PageRank
+Module providing ranking algorithms for the models along with a platform to include custom algorithms.
+### workflows
+The workflow module contains example workflows.
+To customize the workflow to your needs simply copy the provided functions and switch out the desired steps.
+### io
+Input and output functions that create PyReporter models from different sources.
+## utils
+Common utility functions used throughout the package.
