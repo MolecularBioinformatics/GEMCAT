@@ -4,6 +4,7 @@ from typing import Union
 from pyreporter import utils
 from pyreporter.Model import Model
 import pandas as pd
+import pickle
 
 #TODO: make windows compatible
 
@@ -65,6 +66,8 @@ def load_csv(csv_file: Union[Path, str], sep=',', reversibilities=None):
     :return: Model of the CSV file
     :rtype: Model
     """
+    if not isinstance(Path, csv_file):
+        csv_file = Path(csv_file)
     df = pd.read_csv(csv_file, sep=sep, index_col=0)
     S = df.values
     met = list(df.index)
@@ -73,3 +76,10 @@ def load_csv(csv_file: Union[Path, str], sep=',', reversibilities=None):
         reversibilities = [False] * len(rxn)
     S = Model(S, met, reversibilities)
     return S
+
+def pickle_model(model: Model, file_name: str, pickle_args = {}) -> Path:
+    pickle.dump(model, file_name, **pickle_args)
+    return Path(file_name)
+
+def load_pickled(file_name: str, pickle_args = {}) -> Model:
+    return pickle.load(file_name, **pickle_args)
