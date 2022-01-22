@@ -66,7 +66,7 @@ def load_csv(csv_file: Union[Path, str], sep=',', reversibilities=None):
     :return: Model of the CSV file
     :rtype: Model
     """
-    if not isinstance(Path, csv_file):
+    if not isinstance(csv_file, Path):
         csv_file = Path(csv_file)
     df = pd.read_csv(csv_file, sep=sep, index_col=0)
     S = df.values
