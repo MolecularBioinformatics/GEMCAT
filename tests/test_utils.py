@@ -1,4 +1,3 @@
-from os import SCHED_IDLE
 import pytest
 from pyreporter import utils
 import numpy as np
