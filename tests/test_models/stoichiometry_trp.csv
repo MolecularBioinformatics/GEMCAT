@@ -1,0 +1,15 @@
+Unnamed: 0	(IL4I1_kcat_set_to_1)	(TDO)	(DDC_Trypta)	(KYNU_LKyn)	(TPH1)	(AADAT_LKyn_kat1)	(AFMID_FKyn)	(KMO)	(INMT_Trypta)	(HAAO)	(KYNU_3HKyn)	(DDC_5HTrp)	(IDO_5HTrp)	(WARS2_tRNA_recombinant_assume_km_equal_Ka_or_Kb)	(AFMID_5HFKyn)	(Quinolic Acid formation (spontaneous))	(MAOA_Trypta)	(Cinnavalinate formation)	(Tryptophan_Transport Slc7a5)	(IDO)	(QPRT)	(KYNU_FKyn)	(AFMID_FAA)	(NMNAT1)	(ACMSD)	(MAOA_Serotonin)	(AANAT_Serotonin)	(AADAT_3HKyn_kat1)	(IDO_Serotonin)	(INMT_MTrypta)	(INMT_Serotonin)	(AADAT_3HKyn_kat2)	(AADAT_3HKyn_kat3)	(AADAT_LKyn_kat2)	(AADAT_LKyn_kat3)	(MAOB_Serotonin)	(MAOB_Trypta)	(AANAT_Trypta)	(TPH2)	(Tryptophan_Transport Slc7a8)	(LKyn_Transporter_Slc7a5)	(LKyn_Transporter_Slc7a8)	(IDO2)	(IDO2_5HTrp)	(IDO2_Serotonin)	(AADAT_3HKyn_kat4)	(AADAT_LKyn_kat4)
+M_Trp_c	-1	-1	-1	0	-1	0	0	0	0	0	0	0	0	-1	0	0	0	0	1	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	-1	1	0	0	-1	0	0	0	0
+M_LKyn_c	0	0	0	-1	0	-1	1	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	-1	-1	0	0	0	0	0	-1	-1	0	0	0	0	-1
+M_Serotonin	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	-1	-1	0	-1	0	-1	0	0	0	0	-1	0	0	0	0	0	0	0	0	-1	0	0
+M_3HAA	0	0	0	0	0	0	0	0	0	-1	1	0	0	0	0	0	0	-2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+M_3HKyn	0	0	0	0	0	0	0	1	0	0	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	-1	0	0	0	-1	-1	0	0	0	0	0	0	0	0	0	0	0	0	-1	0
+M_Trypta	0	0	1	0	0	0	0	0	-1	0	0	0	0	0	0	0	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	-1	-1	0	0	0	0	0	0	0	0	0
+M_5HTrp	0	0	0	0	1	0	0	0	0	0	0	-1	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	-1	0	0	0
+M_FKyn	0	1	0	0	0	0	-1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0
+M_Acms	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	-1	0	0	0	0	0	0	0	0	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+M_5HFKyn	0	0	0	0	0	0	0	0	0	0	0	0	1	0	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0
+M_NaMN	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+M_MTrypta	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+M_FAA	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+M_Quin	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
