@@ -37,13 +37,29 @@ def test_ExpressionMapSingleAverage(models):
     expected = np.array([2, 2, 2, 2])
     assert np.allclose(exp.get_mapped_values(), expected)
 
-def test_ExpressionMapFang2012(models):
+def test_ExpressionMapFang2012_simple(models):
     exp = ex.ExpressionFang2012(
         models['mini_complex_gpr'], 
         genes_mini_complex,
         'G\d'
     )
     assert isinstance(exp.gpr, pd.Series) 
-    #assert np.isclose(exp.mapped_values['R3'], 17.)
-    #pdb.set_trace()
+    assert np.isclose(exp.mapped_values['R4'], 4., rtol=R_TOLERANCE)
+
+def test_ExpressionMapFang2012_complex(models):
+    exp = ex.ExpressionFang2012(
+        models['mini_complex_gpr'], 
+        genes_mini_complex,
+        'G\d'
+    )
+    assert isinstance(exp.gpr, pd.Series) 
+    assert np.isclose(exp.mapped_values['R3'], 7.70787, rtol=R_TOLERANCE)
+
+def test_ExpressionModifiedFang2012Single_complex(models):
+    exp = ex.ExpressionModifiedFang2012Single(
+        models['mini_complex_gpr'], 
+        genes_mini_complex,
+        'G\d'
+    )
+    assert isinstance(exp.gpr, pd.Series) 
     assert np.isclose(exp.mapped_values['R3'], 15.41574, rtol=R_TOLERANCE)
