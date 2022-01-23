@@ -9,7 +9,8 @@ def models():
     modelpaths = {
         'mini': modelpath / 'mini.xml',
         'mini_redox': modelpath / 'mini_redox.xml',
-        'mini_reversible': modelpath / 'mini_reversible.xml'
+        'mini_reversible': modelpath / 'mini_reversible.xml',
+        'mini_complex_gpr': modelpath / 'mini_complex_gpr.xml',
     }
     models = {name: cobra.io.read_sbml_model(p.as_posix()) for name, p in modelpaths.items()}
     return models
@@ -20,8 +21,10 @@ def model_files_sbml():
     modelpaths = {
         'mini': modelpath / 'mini.xml',
         'mini_redox': modelpath / 'mini_redox.xml',
-        'mini_reversible': modelpath / 'mini_reversible.xml'
+        'mini_reversible': modelpath / 'mini_reversible.xml',
+        'mini_complex_gpr': modelpath / 'mini_complex_gpr.xml',
     }
+    modelpaths = {name: Path(loc) for name, loc in modelpaths.items()}
     return modelpaths
 
 @pytest.fixture
@@ -30,8 +33,10 @@ def model_files_json():
     modelpaths = {
         'mini': modelpath / 'mini.json',
         'mini_redox': modelpath / 'mini_redox.json',
-        'mini_reversible': modelpath / 'mini_reversible.json'
+        'mini_reversible': modelpath / 'mini_reversible.json',
+        'mini_complex_gpr': modelpath / 'mini_complex_gpr.json',
     }
+    modelpaths = {name: Path(loc) for name, loc in modelpaths.items()}
     return modelpaths
 
 @pytest.fixture
