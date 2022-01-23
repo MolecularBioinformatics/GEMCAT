@@ -138,6 +138,31 @@ class ExpressionFang2012(Expression):
         return result
 
 
+class ExpressionModifiedFang2012Single(ExpressionFang2012):
+    """
+    Integration of gene expression according to Fang et al. (2012)
+    doi.org/10.1371/journal.pcbi.1002688
+    """
+    @staticmethod
+    def eval_single_gpr(
+        gpr: str, 
+        gene_vals: pd.Series, 
+        fill_val: float, 
+        re_gene: str,
+        ):
+        # no dividing by number of enzymes as we want absolute vals
+        re_gene = re.compile(re_gene)
+        gid_finds = re_gene.findall(gpr)
+        for gid in gid_finds:
+            gid_val = gene_vals.get(gid, fill_val)
+            gpr = gpr.replace(gid, str(gid_val))
+        try: 
+            result = eval(gpr)
+        except SyntaxError:
+            print(f'Failed: {gpr}')
+            result = fill_val
+        return result
+
 
 class ExpressionMapSingleAverage(Expression):
     """
