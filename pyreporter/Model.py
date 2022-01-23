@@ -31,7 +31,7 @@ class Model():
         S: np.array,
         metabolite_names: List[str],
         reversibilities: List[bool],
-        at = AT.ATHalfStoich,
+        at = AT.ATPureAdjacency,
         ranking = PR.PageRankNX,
         ):
         """
