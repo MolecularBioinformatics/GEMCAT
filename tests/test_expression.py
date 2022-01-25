@@ -41,7 +41,7 @@ def test_ExpressionMapFang2012_complex(models):
         'G\d'
     )
     assert isinstance(exp.gpr, pd.Series) 
-    assert np.isclose(exp.mapped_values['R3'], 7.70787, rtol=R_TOLERANCE)
+    assert np.isclose(exp.mapped_values['R3'], 15.4157, rtol=R_TOLERANCE)
 
 def test_ExpressionModifiedFang2012Single_complex(models):
     exp = ex.ExpressionModifiedFang2012Single(

@@ -90,7 +90,6 @@ class ExpressionFang2012(Expression):
             return ''
         if not isinstance(gpr, str):
             return ''
-        gpr = gpr.lower()
         re_and = re.compile(f'{re_gene}(?: and {re_gene})+')
         gpr = gpr.replace('or', '+')
         res = re_and.findall(gpr)
