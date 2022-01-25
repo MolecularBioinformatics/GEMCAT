@@ -3,8 +3,8 @@ import pandas as pd
 from typing import Union
 
 def raise_for_duplicated_index(df: Union[pd.Series, pd.DataFrame]):
-    duplicates  = df.index.duplicated(keep='first')
-    if len(duplicates) > 0:
+    n_duplicates  = df.index.duplicated(keep='first').sum()
+    if n_duplicates > 0:
         raise ValueError('Index currently has duplicates')
 
 def convert_df_index_to_str(df: Union[pd.Series, pd.DataFrame]) -> Union[pd.Series, pd.DataFrame]:
