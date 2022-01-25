@@ -222,28 +222,6 @@ class ExpressionMapSingleAverage(Expression):
         self.mapped_values = pd.Series(vals_dict)
         self.fillna_mean()
 
-def _correct_df_index_str(df: Union[pd.Series, pd.DataFrame]) -> Union[pd.Series, pd.DataFrame]:
-    """
-    Checks a DataFrame or Series object's Index dtype. If it's not a str, throws a warning and converts it to str.
-    :param df: DataFrame or Series to check
-    :type df: Union[pd.Series, pd.DataFrame]
-    :return: DataFrame or Series with Index as a str
-    :rtype: Union[pd.Series, pd.DataFrame]
-    """
-    if not df.index.dtype == 'O':
-        warnings.warn('Index of DataFrame is not str. Autoconverting to str.')
-        df.index = df.index.astype(str)
-    return df
-
-def _check_series_content_float(ser: pd.Series):
-    """
-    Checks a Series' content for whether it is numeric. If it isn't numeric raises a ValueError
-    :param ser: Series to check
-    :type ser: pd.Series
-    :raises ValueError: ValueError raised if Series content isn't NumPy type float64 or int64.
-    """
-    if not ser.dtype == 'float64' or ser.dtype == 'int64':
-        raise ValueError('Series contains no numerical values')
 
 def read_simple_gpr_from_cobra(
     model: cobra.Model,
