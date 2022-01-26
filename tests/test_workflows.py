@@ -5,13 +5,7 @@ import numpy as np
 
 def test_workflow_single(models):
     mini = models['mini']
-    genes_mapped = pd.Series({
-        'G1': 2,
-        'G2': 2,
-        'G3': 2,
-        'G4': 2,
-        'G5': 2,
-    })
+    genes = [f'G{i}' for i in range(1,6)]
+    genes_mapped = pd.Series(dict(zip(genes, [2.]*5)))
     result = wf.workflow_single(mini, genes_mapped)
     assert isinstance(result[0], pd.Series)
-

@@ -5,20 +5,9 @@ import pytest
 from fixtures import *
 
 def test_sanity_double_all(models):
-    genes_mapped_single = pd.Series({
-        'G1': 1,
-        'G2': 1,
-        'G3': 1,
-        'G4': 1,
-        'G5': 1,
-    })
-    genes_mapped_double = pd.Series({
-        'G1': 2,
-        'G2': 2,
-        'G3': 2,
-        'G4': 2,
-        'G5': 2,
-    })
+    genes = [f'G{i}' for i in range(1,6)]
+    genes_mapped_single = pd.Series(dict(zip(genes, [1.]*5)))
+    genes_mapped_double = pd.Series(dict(zip(genes, [2.]*5)))
     mini = models['mini']
     result_single = pr.workflows.workflow_single(mini, genes_mapped_single)
     result_double = pr.workflows.workflow_single(mini, genes_mapped_double)

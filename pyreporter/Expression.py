@@ -6,7 +6,7 @@ import warnings
 from typing import Union, List, Dict
 import abc
 import re
-from pyreporter import utils
+from pyreporter import utils, verification
 
 class Expression(abc.ABC):
     """
@@ -20,6 +20,13 @@ class Expression(abc.ABC):
         gpr: Dict[str, List[str]],
     ):
         pass
+    
+    @staticmethod
+    def _verify_data(data):
+        verification.raise_for_duplicated_index(data)
+        verification.raise_for_non_int_float_64_dtype(data)
+        data = verification.convert_df_index_to_str(data)
+        return data
 
     @abc.abstractmethod
     def load_gpr():
@@ -67,7 +74,7 @@ class ExpressionFang2012(Expression):
         :type re_gene: str, optional
         """
         self.re_gene = re_gene
-        self.data = data
+        self.data = self._verify_data(data)
         self.load_gpr(model)
         self.rewrite_gpr()
         self.mapped_values = None
@@ -183,6 +190,7 @@ class ExpressionMapSingleAverage(Expression):
         self.gpr = None
         self.load_gpr(gpr)
         self.mapped_values = None
+        data = self._verify_data(data)
         self.map(data)
 
     def load_gpr(

@@ -12,7 +12,7 @@ gpr_mini = {
 }
 genes = [f'G{i}' for i in range(1, 9)]
 genes_gid = [f'000{i}.{i}' for i in range(1,9)]
-gene_vals = list(range(1,9))
+gene_vals = [float(i) for i in range(1,9)]
 genes_mini_complex = pd.Series(dict(zip(genes, gene_vals)))
 gids_mini_complex = pd.Series(dict(zip(genes_gid, gene_vals)))
 
@@ -21,7 +21,7 @@ def test_read_simple_gpr_from_cobra(models):
     assert gpr == gpr_mini
 
 def test_ExpressionMapSingleAverage(models):
-    gene_map = pd.Series({'G1': 2, 'G2': 2, 'G3': 2, 'G4': 2})
+    gene_map = pd.Series({'G1': 2., 'G2': 2., 'G3': 2., 'G4': 2.})
     gpr = ex.read_simple_gpr_from_cobra(models['mini'])
     exp = ex.ExpressionMapSingleAverage(gene_map, gpr)
     expected = np.array([2, 2, 2, 2])
