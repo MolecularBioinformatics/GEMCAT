@@ -6,7 +6,9 @@ import warnings
 from typing import Union, List, Dict
 import abc
 import re
-from pyreporter import utils, verification
+from pyreporter import utils, verification, regexes
+
+regex_recon3d_old = regexes.REGEX['Recon3D_old']
 
 class Expression(abc.ABC):
     """
@@ -62,7 +64,7 @@ class ExpressionFang2012(Expression):
         self,
         model: cobra.Model,
         data: pd.Series,
-        re_gene = '\d+\.\d',
+        re_gene = regex_recon3d_old,
         ):
         """
         
