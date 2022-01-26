@@ -41,7 +41,7 @@
 },
 "lower_bound":0,
 "upper_bound":1,
-"gene_reaction_rule":"G1"
+"gene_reaction_rule":"0001.1"
 },
 {
 "id":"R2",
@@ -52,7 +52,7 @@
 },
 "lower_bound":0,
 "upper_bound":1,
-"gene_reaction_rule":"G2"
+"gene_reaction_rule":"0002.2"
 },
 {
 "id":"R3",
@@ -65,7 +65,7 @@
 },
 "lower_bound":0,
 "upper_bound":1,
-"gene_reaction_rule":"G3 or (G4 and G5 and G6) or (G7 and G8)"
+"gene_reaction_rule":"0003.3 or (0004.4 and 0005.5 and 0006.6) or (0007.7 and 0008.8)"
 },
 {
 "id":"R4",
@@ -78,7 +78,7 @@
 },
 "lower_bound":0,
 "upper_bound":1,
-"gene_reaction_rule":"G4"
+"gene_reaction_rule":"0004.4"
 }
 ],
 "genes":[
@@ -112,6 +112,38 @@
 },
 {
 "id":"G7",
+"name":""
+},
+{
+"id":"0001.1",
+"name":""
+},
+{
+"id":"0002.2",
+"name":""
+},
+{
+"id":"0003.3",
+"name":""
+},
+{
+"id":"0006.6",
+"name":""
+},
+{
+"id":"0005.5",
+"name":""
+},
+{
+"id":"0007.7",
+"name":""
+},
+{
+"id":"0004.4",
+"name":""
+},
+{
+"id":"0008.8",
 "name":""
 }
 ],

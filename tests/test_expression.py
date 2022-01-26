@@ -11,8 +11,10 @@ gpr_mini = {
     'R4': ['G4'],
 }
 genes = [f'G{i}' for i in range(1, 9)]
+genes_gid = [f'000{i}.{i}' for i in range(1,9)]
 gene_vals = list(range(1,9))
 genes_mini_complex = pd.Series(dict(zip(genes, gene_vals)))
+gids_mini_complex = pd.Series(dict(zip(genes_gid, gene_vals)))
 
 def test_read_simple_gpr_from_cobra(models):
     gpr = ex.read_simple_gpr_from_cobra(models['mini'])
@@ -39,6 +41,15 @@ def test_ExpressionMapFang2012_complex(models):
         models['mini_complex_gpr'], 
         genes_mini_complex,
         'G\d'
+    )
+    assert isinstance(exp.gpr, pd.Series) 
+    assert np.isclose(exp.mapped_values['R3'], 15.4157, rtol=R_TOLERANCE)
+
+def test_ExpressionMapFang2012_gids(models):
+    exp = ex.ExpressionFang2012(
+        models['mini_complex_gpr_gids'], 
+        gids_mini_complex,
+        '\d{4}\.\d'
     )
     assert isinstance(exp.gpr, pd.Series) 
     assert np.isclose(exp.mapped_values['R3'], 15.4157, rtol=R_TOLERANCE)

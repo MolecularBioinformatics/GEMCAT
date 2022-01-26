@@ -11,6 +11,8 @@ def models():
         'mini_redox': modelpath / 'mini_redox.xml',
         'mini_reversible': modelpath / 'mini_reversible.xml',
         'mini_complex_gpr': modelpath / 'mini_complex_gpr.xml',
+        'mini_complex_gpr_gids': modelpath / 'mini_complex_gpr_gid_version.xml',
+        'mini_complex_gpr_allcaps': modelpath / 'mini_complex_gpr_allcaps.xml',
     }
     models = {name: cobra.io.read_sbml_model(p.as_posix()) for name, p in modelpaths.items()}
     return models
@@ -23,6 +25,8 @@ def model_files_sbml():
         'mini_redox': modelpath / 'mini_redox.xml',
         'mini_reversible': modelpath / 'mini_reversible.xml',
         'mini_complex_gpr': modelpath / 'mini_complex_gpr.xml',
+        'mini_complex_gpr_gids': modelpath / 'mini_complex_gpr_gid_version.xml',
+        'mini_complex_gpr_allcaps': modelpath / 'mini_complex_gpr_allcaps.xml',
     }
     modelpaths = {name: Path(loc) for name, loc in modelpaths.items()}
     return modelpaths
@@ -35,6 +39,8 @@ def model_files_json():
         'mini_redox': modelpath / 'mini_redox.json',
         'mini_reversible': modelpath / 'mini_reversible.json',
         'mini_complex_gpr': modelpath / 'mini_complex_gpr.json',
+        'mini_complex_gpr_gids': modelpath / 'mini_complex_gpr_gid_version.json',
+        'mini_complex_gpr_allcaps': modelpath / 'mini_complex_gpr_allcaps.json',
     }
     modelpaths = {name: Path(loc) for name, loc in modelpaths.items()}
     return modelpaths
