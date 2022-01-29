@@ -13,7 +13,19 @@ def workflow_single(
     adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
     ranking = pr.PageRank.PageRankNX,
     ) -> pd.Series:
-    
+    """
+    Workflow using Expression data integration via simple averaging, provides only the output from a single expression data set.
+    :param cobra_model: cobra Model used as a base for modeling
+    :type cobra_model: cobra.Model
+    :param mapped_genes: Levels of gene/protein expression values
+    :type mapped_genes: pd.Series
+    :param adjacency: Adjacency metric, defaults to pr.AdjacencyTransformation.ATPureAdjacency
+    :type adjacency: pr.AdjacencyTransformation.AdjacencyTransformation, optional
+    :param ranking: Ranking algorithm class, defaults to pr.PageRank.PageRankNX
+    :type ranking: pr.PageRank.Ranking, optional
+    :return: Normalized relative metabolite scores: comparison / baseline
+    :rtype: pd.Series
+    """
     model = pr.io.convert_cobra_model(cobra_model)
     model.AT = adjacency
     model.ranking = ranking
@@ -30,7 +42,22 @@ def workflow_ratio(
     adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
     ranking = pr.PageRank.PageRankNX,
     ) -> pd.Series:
-
+    """
+    Workflow for differerential expression between two datasets.
+    Integrates expression data via simple averaging.
+    :param cobra_model: cobra Model used as a base for modeling
+    :type cobra_model: cobra.Model
+    :param mapped_genes_baseline: Baseline levels of gene/protein expression values
+    :type mapped_genes_baseline: pd.Series
+    :param mapped_genes_comparison: Comparison levels of gene/protein expression values
+    :type mapped_genes_comparison: pd.Series
+    :param adjacency: Adjacency metric, defaults to pr.AdjacencyTransformation.ATPureAdjacency
+    :type adjacency: pr.AdjacencyTransformation.AdjacencyTransformation, optional
+    :param ranking: Ranking algorithm class, defaults to pr.PageRank.PageRankNX
+    :type ranking: pr.PageRank.Ranking, optional
+    :return: Normalized relative metabolite scores: comparison / baseline
+    :rtype: pd.Series
+    """
     model = pr.io.convert_cobra_model(cobra_model)
     model.AT = adjacency
     model.ranking = ranking
@@ -53,7 +80,23 @@ def workflow_Fang2012(
     adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
     ranking = pr.PageRank.PageRankNX,
     ) -> pd.Series:
-
+    """
+    Standard workflow integrating expression data via the method provided by Fang2012.
+    :param cobra_model: COBRA model to be used to generate PyReporter model and GPR
+    :type cobra_model: cobra.Model
+    :param mapped_genes_baseline: Baseline levels of gene/protein expression values
+    :type mapped_genes_baseline: pd.Series
+    :param mapped_genes_comparison: Comparison levels of gene/protein expression values
+    :type mapped_genes_comparison: pd.Series
+    :param re_gene: RegEx string that matches the gene ID used, defaults to regex_recon3d_old
+    :type re_gene: string, optional
+    :param adjacency: Adjacency metric, defaults to pr.AdjacencyTransformation.ATPureAdjacency
+    :type adjacency: pr.AdjacencyTransformation.AdjacencyTransformation, optional
+    :param ranking: Ranking algorithm class, defaults to pr.PageRank.PageRankNX
+    :type ranking: pr.PageRank.Ranking, optional
+    :return: Normalized relative metabolite scores: comparison / baseline
+    :rtype: pd.Series
+    """
     model = pr.io.convert_cobra_model(cobra_model)
     model.AT = adjacency
     model.ranking = ranking
@@ -73,4 +116,4 @@ def workflow_Fang2012(
     results_baseline = model.calculate()
     results = results_comparison / results_baseline
 
-    return results
+    return (results, results_comparison, results_baseline)
