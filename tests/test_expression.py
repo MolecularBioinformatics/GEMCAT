@@ -64,9 +64,18 @@ def test_ExpressionModifiedFang2012Single_complex(models):
     assert isinstance(exp.gpr, pd.Series) 
     assert np.isclose(exp.mapped_values['R3'], 15.41574, rtol=R_TOLERANCE)
 
-def test_read_complex_gpr(models):
+
+def test_read_complex_gpr_structure(models):
     gpr = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])
     assert isinstance(gpr, tuple)
     assert isinstance(gpr[0], dict)
-    assert isinstance(gpr[1], list)
-    assert (gpr[0]['R3'] == 'G3 or ( G4 and G5 and G6 ) or ( G7 and G8 )')
+    assert isinstance(gpr[1], dict)
+
+def test_read_complex_gpr_gene_rxn(models):
+    rxn_genes = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])[1]
+    expected = ['G3', 'G4', 'G5', 'G6', 'G7', 'G8']
+    assert (set(rxn_genes['R3']) == set(expected)) 
+
+def test_read_complex_gpr_gpr(models):
+    gpr = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])[0]
+    assert (gpr['R3'] == 'G3 or ( G4 and G5 and G6 ) or ( G7 and G8 )')

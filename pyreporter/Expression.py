@@ -259,5 +259,5 @@ def read_gpr_strings_from_cobra(
     :rtype: Tuple[ Dict[str, str], list[str] ]
     """
     gpr = {rxn.id: rxn.gene_reaction_rule for rxn in model.reactions}
-    genes = [g.id for g in model.genes]
+    genes = {rxn.id: [gene.id for gene in rxn.genes] for rxn in model.reactions}
     return gpr, genes
