@@ -3,7 +3,7 @@ from numpy.lib.index_tricks import fill_diagonal
 import pandas as pd
 import numpy as np
 import warnings
-from typing import Union, List, Dict
+from typing import Tuple, Union, List, Dict
 import abc
 import re
 from pyreporter import utils, verification, regexes
@@ -247,3 +247,17 @@ def read_simple_gpr_from_cobra(
     
     genes_dict = dict(zip([r.id for r in model.reactions], genes))
     return genes_dict
+
+def read_gpr_strings_from_cobra(
+    model : cobra.Model,
+) -> Tuple[Dict[str, str], list[str]]:
+    """
+    Extracts the gene product rules (GPRs) from a model.
+    :param model: Model from which to extract GPR
+    :type model: cobra.Model
+    :return: Tuple of extracted GPR (dict) and list of all genes.
+    :rtype: Tuple[ Dict[str, str], list[str] ]
+    """
+    gpr = {rxn.id: rxn.gene_reaction_rule for rxn in model.reactions}
+    genes = [g.id for g in model.genes]
+    return gpr, genes

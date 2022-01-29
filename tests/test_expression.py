@@ -1,3 +1,4 @@
+from cgi import test
 import pyreporter.Expression as ex
 import pandas as pd
 import numpy as np
@@ -62,3 +63,10 @@ def test_ExpressionModifiedFang2012Single_complex(models):
     )
     assert isinstance(exp.gpr, pd.Series) 
     assert np.isclose(exp.mapped_values['R3'], 15.41574, rtol=R_TOLERANCE)
+
+def test_read_complex_gpr(models):
+    gpr = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])
+    assert isinstance(gpr, tuple)
+    assert isinstance(gpr[0], dict)
+    assert isinstance(gpr[1], list)
+    assert (gpr[0]['R3'] == 'G3 or ( G4 and G5 and G6 ) or ( G7 and G8 )')
