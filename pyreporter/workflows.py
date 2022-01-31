@@ -90,6 +90,8 @@ def workflow_Fang2012(
     :type adjacency: pr.AdjacencyTransformation.AdjacencyTransformation, optional
     :param ranking: Ranking algorithm class, defaults to pr.PageRank.PageRankNX
     :type ranking: pr.PageRank.Ranking, optional
+    :param gene_fill: Value to fill in for genes missing in input data, defaults to 0.
+    :type gene_fill: float
     :return: Normalized relative metabolite scores: comparison / baseline
     :rtype: pd.Series
     """

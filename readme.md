@@ -1,5 +1,10 @@
 # pyreporter tools for reporter metabolite analysis
 
+## Compatibility
+Python 3.10 is not currently supported due to issues with NumPy.
+The package has been tested for and will run on Python 3.8 and 3.9.
+It has been tested on Windows 11 and the latest release of Ubuntu.
+
 ## Dependencies
 Dependencies can be resolved by pip, or be installed manually from pip:  
 ```pip install --user numpy pandas cobra networkx```
