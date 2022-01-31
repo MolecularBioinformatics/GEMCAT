@@ -79,6 +79,7 @@ def workflow_Fang2012(
     re_gene = regex_recon3d_old,
     adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
     ranking = pr.PageRank.PageRankNX,
+    gene_fill = 0.,
     ) -> pd.Series:
     """
     Standard workflow integrating expression data via the method provided by Fang2012.
@@ -98,17 +99,20 @@ def workflow_Fang2012(
     :rtype: pd.Series
     """
     model = pr.io.convert_cobra_model(cobra_model)
+    gpr, rxn_gene_mapping = pr.Expression.read_gpr_strings_from_cobra(cobra_model)
     model.AT = adjacency
     model.ranking = ranking
     ex_baseline = pr.Expression.ExpressionFang2012(
-        model = cobra_model,
-        data = mapped_genes_comparison,
-        re_gene = re_gene
+        gpr = gpr,
+        reaction_gene_mapping = rxn_gene_mapping,
+        data = mapped_genes_baseline,
+        gene_fill = gene_fill,
     )
     ex_comparison = pr.Expression.ExpressionFang2012(
-        model = cobra_model,
-        data = mapped_genes_baseline,
-        re_gene = re_gene
+        gpr = gpr,
+        reaction_gene_mapping = rxn_gene_mapping,
+        data = mapped_genes_comparison,
+        gene_fill = gene_fill,
     )
     model.load_expression(ex_comparison)
     results_comparison = model.calculate()

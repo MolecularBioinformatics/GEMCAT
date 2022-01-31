@@ -65,10 +65,9 @@ class ExpressionFang2012(Expression):
     def __init__(
         self,
         gpr: dict[str, str],
-        reaction_genes: Dict[str, List[str]],
+        reaction_gene_mapping: Dict[str, List[str]],
         data: pd.Series,
         gene_fill = 0.,
-        rxn_fill = 1.,
         ):
         """
         
@@ -82,10 +81,9 @@ class ExpressionFang2012(Expression):
         self.quant_gpr: pd.Series = None
         self.mapped_values: pd.Series = None
         self.gene_fill = gene_fill
-        self.rxn_fill = rxn_fill
         self.data = self._verify_data(data)
         self.load_gpr(gpr)
-        self.reaction_gene_list = reaction_genes
+        self.reaction_gene_list = reaction_gene_mapping
         self.rewrite_gpr()
         self.map()
         self.fillna_mean()

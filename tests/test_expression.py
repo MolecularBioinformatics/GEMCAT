@@ -32,7 +32,7 @@ def test_ExpressionMapFang2012_simple(models):
     gpr, gene_dict = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])
     exp = ex.ExpressionFang2012(
         gpr = gpr,
-        reaction_genes = gene_dict,
+        reaction_gene_mapping = gene_dict,
         data = genes_mini_complex,
     )
     assert isinstance(exp.gpr, pd.Series) 
@@ -42,7 +42,7 @@ def test_ExpressionMapFang2012_complex(models):
     gpr, gene_dict = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])
     exp = ex.ExpressionFang2012(
         gpr = gpr,
-        reaction_genes = gene_dict,
+        reaction_gene_mapping = gene_dict,
         data = genes_mini_complex,
     )
     assert isinstance(exp.gpr, pd.Series) 
