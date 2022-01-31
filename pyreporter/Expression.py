@@ -64,7 +64,7 @@ class ExpressionFang2012(Expression):
 
     def __init__(
         self,
-        gpr: dict[str, str],
+        gpr: Dict[str, str],
         reaction_gene_mapping: Dict[str, List[str]],
         data: pd.Series,
         gene_fill = 0.,

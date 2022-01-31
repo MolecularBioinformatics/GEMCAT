@@ -70,5 +70,6 @@ def test_read_complex_gpr_gene_rxn(models):
     assert (set(rxn_genes['R3']) == set(expected)) 
 
 def test_read_complex_gpr_gpr(models):
+    expected = models['mini_complex_gpr'].reactions.get_by_id('R3').gene_reaction_rule
     gpr = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])[0]
-    assert (gpr['R3'] == 'G3 or ( G4 and G5 and G6 ) or ( G7 and G8 )')
+    assert (gpr['R3'] == expected)
