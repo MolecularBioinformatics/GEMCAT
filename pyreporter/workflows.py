@@ -5,8 +5,6 @@ import cobra
 import pyreporter as pr
 
 
-regex_recon3d_old = pr.regexes.REGEX['Recon3D_old']
-
 def workflow_single(
     cobra_model: cobra.Model, 
     mapped_genes: pd.Series,
@@ -76,7 +74,6 @@ def workflow_Fang2012(
     cobra_model: cobra.Model,
     mapped_genes_baseline: pd.Series,
     mapped_genes_comparison: pd.Series,
-    re_gene = regex_recon3d_old,
     adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
     ranking = pr.PageRank.PageRankNX,
     gene_fill = 0.,
@@ -89,8 +86,6 @@ def workflow_Fang2012(
     :type mapped_genes_baseline: pd.Series
     :param mapped_genes_comparison: Comparison levels of gene/protein expression values
     :type mapped_genes_comparison: pd.Series
-    :param re_gene: RegEx string that matches the gene ID used, defaults to regex_recon3d_old
-    :type re_gene: string, optional
     :param adjacency: Adjacency metric, defaults to pr.AdjacencyTransformation.ATPureAdjacency
     :type adjacency: pr.AdjacencyTransformation.AdjacencyTransformation, optional
     :param ranking: Ranking algorithm class, defaults to pr.PageRank.PageRankNX

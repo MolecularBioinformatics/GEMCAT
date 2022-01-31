@@ -3,7 +3,6 @@ from fixtures import *
 import pandas as pd
 import numpy as np
 
-regex_tests = 'G\d'
 
 def test_workflow_single(models):
     mini = models['mini']

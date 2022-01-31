@@ -6,9 +6,7 @@ import warnings
 from typing import Tuple, Union, List, Dict
 import abc
 import re
-from pyreporter import utils, verification, regexes
-
-regex_recon3d_old = regexes.REGEX['Recon3D_old']
+from pyreporter import utils, verification
 
 class Expression(abc.ABC):
     """
