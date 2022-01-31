@@ -21,6 +21,5 @@ def test_workflow_Fang2012(models):
         mini, 
         genes_mapped,
         genes_baseline,
-        re_gene = regex_tests
         )
     assert isinstance(result[0], pd.Series)

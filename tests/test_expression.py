@@ -29,41 +29,34 @@ def test_ExpressionMapSingleAverage(models):
     assert np.allclose(exp.get_mapped_values(), expected)
 
 def test_ExpressionMapFang2012_simple(models):
+    gpr, gene_dict = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])
     exp = ex.ExpressionFang2012(
-        models['mini_complex_gpr'], 
-        genes_mini_complex,
-        'G\d'
+        gpr = gpr,
+        reaction_genes = gene_dict,
+        data = genes_mini_complex,
     )
     assert isinstance(exp.gpr, pd.Series) 
     assert np.isclose(exp.mapped_values['R4'], 4., rtol=R_TOLERANCE)
 
 def test_ExpressionMapFang2012_complex(models):
+    gpr, gene_dict = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])
     exp = ex.ExpressionFang2012(
-        models['mini_complex_gpr'], 
-        genes_mini_complex,
-        'G\d'
+        gpr = gpr,
+        reaction_genes = gene_dict,
+        data = genes_mini_complex,
     )
     assert isinstance(exp.gpr, pd.Series) 
     assert np.isclose(exp.mapped_values['R3'], 15.4157, rtol=R_TOLERANCE)
 
 def test_ExpressionMapFang2012_gids(models):
+    gpr, gene_dict = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr_gids'])
     exp = ex.ExpressionFang2012(
-        models['mini_complex_gpr_gids'], 
+        gpr,
+        gene_dict,
         gids_mini_complex,
-        '\d{4}\.\d'
     )
     assert isinstance(exp.gpr, pd.Series) 
     assert np.isclose(exp.mapped_values['R3'], 15.4157, rtol=R_TOLERANCE)
-
-def test_ExpressionModifiedFang2012Single_complex(models):
-    exp = ex.ExpressionModifiedFang2012Single(
-        models['mini_complex_gpr'], 
-        genes_mini_complex,
-        'G\d'
-    )
-    assert isinstance(exp.gpr, pd.Series) 
-    assert np.isclose(exp.mapped_values['R3'], 15.41574, rtol=R_TOLERANCE)
-
 
 def test_read_complex_gpr_structure(models):
     gpr = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])
