@@ -221,13 +221,13 @@ def read_simple_gpr_from_cobra(
 
 def read_gpr_strings_from_cobra(
     model : cobra.Model,
-) -> Tuple[Dict[str, str], list[str]]:
+) -> Tuple[Dict[str, str], List[str]]:
     """
     Extracts the gene product rules (GPRs) from a model.
     :param model: Model from which to extract GPR
     :type model: cobra.Model
     :return: Tuple of extracted GPR (dict) and list of all genes.
-    :rtype: Tuple[ Dict[str, str], list[str] ]
+    :rtype: Tuple[ Dict[str, str], List[str] ]
     """
     gpr = {rxn.id: rxn.gene_reaction_rule for rxn in model.reactions}
     genes = {rxn.id: [gene.id for gene in rxn.genes] for rxn in model.reactions}
