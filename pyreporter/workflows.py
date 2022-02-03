@@ -5,8 +5,6 @@ import cobra
 import pyreporter as pr
 
 
-regex_recon3d_old = pr.regexes.REGEX['Recon3D_old']
-
 def workflow_single(
     cobra_model: cobra.Model, 
     mapped_genes: pd.Series,
@@ -76,9 +74,9 @@ def workflow_Fang2012(
     cobra_model: cobra.Model,
     mapped_genes_baseline: pd.Series,
     mapped_genes_comparison: pd.Series,
-    re_gene = regex_recon3d_old,
     adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
     ranking = pr.PageRank.PageRankNX,
+    gene_fill = 0.,
     ) -> pd.Series:
     """
     Standard workflow integrating expression data via the method provided by Fang2012.
@@ -88,27 +86,30 @@ def workflow_Fang2012(
     :type mapped_genes_baseline: pd.Series
     :param mapped_genes_comparison: Comparison levels of gene/protein expression values
     :type mapped_genes_comparison: pd.Series
-    :param re_gene: RegEx string that matches the gene ID used, defaults to regex_recon3d_old
-    :type re_gene: string, optional
     :param adjacency: Adjacency metric, defaults to pr.AdjacencyTransformation.ATPureAdjacency
     :type adjacency: pr.AdjacencyTransformation.AdjacencyTransformation, optional
     :param ranking: Ranking algorithm class, defaults to pr.PageRank.PageRankNX
     :type ranking: pr.PageRank.Ranking, optional
+    :param gene_fill: Value to fill in for genes missing in input data, defaults to 0.
+    :type gene_fill: float
     :return: Normalized relative metabolite scores: comparison / baseline
     :rtype: pd.Series
     """
     model = pr.io.convert_cobra_model(cobra_model)
+    gpr, rxn_gene_mapping = pr.Expression.read_gpr_strings_from_cobra(cobra_model)
     model.AT = adjacency
     model.ranking = ranking
     ex_baseline = pr.Expression.ExpressionFang2012(
-        model = cobra_model,
-        data = mapped_genes_comparison,
-        re_gene = re_gene
+        gpr = gpr,
+        reaction_gene_mapping = rxn_gene_mapping,
+        data = mapped_genes_baseline,
+        gene_fill = gene_fill,
     )
     ex_comparison = pr.Expression.ExpressionFang2012(
-        model = cobra_model,
-        data = mapped_genes_baseline,
-        re_gene = re_gene
+        gpr = gpr,
+        reaction_gene_mapping = rxn_gene_mapping,
+        data = mapped_genes_comparison,
+        gene_fill = gene_fill,
     )
     model.load_expression(ex_comparison)
     results_comparison = model.calculate()

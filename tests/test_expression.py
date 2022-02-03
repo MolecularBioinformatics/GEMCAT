@@ -1,3 +1,4 @@
+from cgi import test
 import pyreporter.Expression as ex
 import pandas as pd
 import numpy as np
@@ -28,37 +29,47 @@ def test_ExpressionMapSingleAverage(models):
     assert np.allclose(exp.get_mapped_values(), expected)
 
 def test_ExpressionMapFang2012_simple(models):
+    gpr, gene_dict = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])
     exp = ex.ExpressionFang2012(
-        models['mini_complex_gpr'], 
-        genes_mini_complex,
-        'G\d'
+        gpr = gpr,
+        reaction_gene_mapping = gene_dict,
+        data = genes_mini_complex,
     )
     assert isinstance(exp.gpr, pd.Series) 
     assert np.isclose(exp.mapped_values['R4'], 4., rtol=R_TOLERANCE)
 
 def test_ExpressionMapFang2012_complex(models):
+    gpr, gene_dict = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])
     exp = ex.ExpressionFang2012(
-        models['mini_complex_gpr'], 
-        genes_mini_complex,
-        'G\d'
+        gpr = gpr,
+        reaction_gene_mapping = gene_dict,
+        data = genes_mini_complex,
     )
     assert isinstance(exp.gpr, pd.Series) 
     assert np.isclose(exp.mapped_values['R3'], 15.4157, rtol=R_TOLERANCE)
 
 def test_ExpressionMapFang2012_gids(models):
+    gpr, gene_dict = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr_gids'])
     exp = ex.ExpressionFang2012(
-        models['mini_complex_gpr_gids'], 
+        gpr,
+        gene_dict,
         gids_mini_complex,
-        '\d{4}\.\d'
     )
     assert isinstance(exp.gpr, pd.Series) 
     assert np.isclose(exp.mapped_values['R3'], 15.4157, rtol=R_TOLERANCE)
 
-def test_ExpressionModifiedFang2012Single_complex(models):
-    exp = ex.ExpressionModifiedFang2012Single(
-        models['mini_complex_gpr'], 
-        genes_mini_complex,
-        'G\d'
-    )
-    assert isinstance(exp.gpr, pd.Series) 
-    assert np.isclose(exp.mapped_values['R3'], 15.41574, rtol=R_TOLERANCE)
+def test_read_complex_gpr_structure(models):
+    gpr = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])
+    assert isinstance(gpr, tuple)
+    assert isinstance(gpr[0], dict)
+    assert isinstance(gpr[1], dict)
+
+def test_read_complex_gpr_gene_rxn(models):
+    rxn_genes = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])[1]
+    expected = ['G3', 'G4', 'G5', 'G6', 'G7', 'G8']
+    assert (set(rxn_genes['R3']) == set(expected)) 
+
+def test_read_complex_gpr_gpr(models):
+    expected = models['mini_complex_gpr'].reactions.get_by_id('R3').gene_reaction_rule
+    gpr = ex.read_gpr_strings_from_cobra(models['mini_complex_gpr'])[0]
+    assert (gpr['R3'] == expected)

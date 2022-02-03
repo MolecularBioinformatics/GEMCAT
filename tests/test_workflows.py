@@ -3,7 +3,6 @@ from fixtures import *
 import pandas as pd
 import numpy as np
 
-regex_tests = 'G\d'
 
 def test_workflow_single(models):
     mini = models['mini']
@@ -21,6 +20,5 @@ def test_workflow_Fang2012(models):
         mini, 
         genes_mapped,
         genes_baseline,
-        re_gene = regex_tests
         )
     assert isinstance(result[0], pd.Series)
