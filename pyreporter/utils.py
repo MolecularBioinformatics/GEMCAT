@@ -4,8 +4,9 @@ import numpy as np
 import pandas as pd
 import cobra
 import math
+from functools import reduce
 
-from typing import Tuple, List, Union
+from typing import Iterable, Tuple, List, Union
 
 
 
@@ -334,5 +335,8 @@ def geometric_mean(*numbers):
     if n == 0:
         raise ValueError('List of numbers is empty')
     numbers = [float(i) for i in numbers]
-    prod = math.prod(numbers)
+    prod = multiply(numbers)
     return prod ** (1 / n)
+
+def multiply(*numbers):
+    return np.prod(numbers)
