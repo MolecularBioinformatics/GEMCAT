@@ -454,3 +454,23 @@ def test_geometric_mean_one():
     result = utils.geometric_mean(*nums)
     expected = 17.
     assert np.isclose(result, expected, rtol=R_TOLERANCE)
+
+def test_multiply_list():
+    testcase = [1, 2, 3, 4, 5]
+    result = utils.multiply(testcase)
+    expected = 1 * 2 * 3 * 4 * 5
+    print(result)
+    print(expected)
+    assert np.isclose(result, expected, rtol=R_TOLERANCE)
+
+def test_multiply_single():
+    testcase = 3
+    result = utils.multiply(testcase)
+    expected = 3
+    assert np.isclose(result, expected, rtol=R_TOLERANCE)
+
+def test_multiply_numbers():
+    testcase = [1, 2, 3, 4, 5]
+    result = utils.multiply(*testcase)
+    expected = 1 * 2 * 3 * 4 * 5
+    assert np.isclose(result, expected, rtol=R_TOLERANCE)
