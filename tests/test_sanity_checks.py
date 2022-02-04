@@ -11,4 +11,4 @@ def test_sanity_double_all(models):
     mini = models['mini']
     result_single = pr.workflows.workflow_single(mini, genes_mapped_single)
     result_double = pr.workflows.workflow_single(mini, genes_mapped_double)
-    assert np.allclose(result_single[0].values, result_double[0].values)
+    assert np.allclose(result_single.values, result_double.values)

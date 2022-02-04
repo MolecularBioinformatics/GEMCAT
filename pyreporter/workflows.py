@@ -21,7 +21,7 @@ def workflow_single(
     :type adjacency: pr.AdjacencyTransformation.AdjacencyTransformation, optional
     :param ranking: Ranking algorithm class, defaults to pr.PageRank.PageRankNX
     :type ranking: pr.PageRank.Ranking, optional
-    :return: Normalized relative metabolite scores: comparison / baseline
+    :return: Normalized metabolite scores
     :rtype: pd.Series
     """
     model = pr.io.convert_cobra_model(cobra_model)
@@ -31,7 +31,7 @@ def workflow_single(
     ex = pr.Expression.ExpressionMapSingleAverage(mapped_genes, gpr)
     model.load_expression(ex)
     results = model.calculate()
-    return results, model
+    return results
 
 def workflow_ratio(
     cobra_model: cobra.Model,
@@ -117,4 +117,4 @@ def workflow_Fang2012(
     results_baseline = model.calculate()
     results = results_comparison / results_baseline
 
-    return (results, results_comparison, results_baseline)
+    return results

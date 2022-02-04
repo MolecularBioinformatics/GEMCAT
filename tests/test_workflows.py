@@ -9,7 +9,7 @@ def test_workflow_single(models):
     genes = [f'G{i}' for i in range(1,6)]
     genes_mapped = pd.Series(dict(zip(genes, [2.]*5)))
     result = wf.workflow_single(mini, genes_mapped)
-    assert isinstance(result[0], pd.Series)
+    assert isinstance(result, pd.Series)
 
 def test_workflow_Fang2012(models):
     mini = models['mini']
@@ -21,4 +21,4 @@ def test_workflow_Fang2012(models):
         genes_mapped,
         genes_baseline,
         )
-    assert isinstance(result[0], pd.Series)
+    assert isinstance(result, pd.Series)
