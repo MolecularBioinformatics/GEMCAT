@@ -1,12 +1,8 @@
 #!/usr/bin/python
-from sknetwork.ranking import PageRank as PR_SK
 import networkx as nx
 
 import numpy as np
-import pandas as pd
-
-import pyreporter.utils
-from typing import Dict, Tuple, List
+from typing import Dict
 import abc
 
 
