@@ -1,9 +1,7 @@
 import cobra
-from numpy.lib.index_tricks import fill_diagonal
 import pandas as pd
 import numpy as np
-import warnings
-from typing import Tuple, Union, List, Dict
+from typing import Tuple, List, Dict
 import abc
 import re
 from pyreporter import utils, verification
@@ -68,13 +66,16 @@ class ExpressionFang2012(Expression):
         gene_fill = 0.,
         ):
         """
-        
-        :param model: [description]
-        :type model: cobra.Model
-        :param data: [description]
+        Create a component for the integration of expression data.
+        This adheres to the algorithm laid out by Fang et al. 2012.
+        :param gpr: Gene product rule for each reaction, Dict[Reaction: GPRstring]
+        :type gpr: Dict[str, str]
+        :param reaction_gene_mapping: Mapping which genes participate in which reactions, Dict[reaction: List[geneString]]
+        :type reaction_gene_mapping: Dict[str, List[str]]
+        :param data: Omics data mapped to genes, pd.Series[geneString: value]
         :type data: pd.Series
-        :param re_gene: [description], defaults to '\d+\.\d'
-        :type re_gene: str, optional
+        :param gene_fill: value to fill in for genes missing in the data set
+        :type gene_fill: float
         """
         self.quant_gpr: pd.Series = None
         self.mapped_values: pd.Series = None

@@ -1,12 +1,8 @@
 #!/usr/bin/python
-from sknetwork.ranking import PageRank as PR_SK
 import networkx as nx
 
 import numpy as np
-import pandas as pd
-
-import pyreporter.utils
-from typing import Dict, Tuple, List
+from typing import Dict
 import abc
 
 
@@ -17,6 +13,7 @@ class Ranking(abc.ABC):
     @abc.abstractmethod
     def propagate(self, graph_args: Dict, pr_args: Dict) -> np.array:
         pass
+
 
 class PageRankNX(Ranking):
     """
@@ -40,30 +37,6 @@ class PageRankNX(Ranking):
         Ax = nx.DiGraph(A, **graph_args)
         results = nx.algorithms.link_analysis.pagerank(Ax, **pr_args)
         return np.array(list(results.values()))
-
-
-class PageRankSK(Ranking):
-
-    @staticmethod
-    def propagate(A: np.array, graph_args: Dict, pr_args: Dict) -> np.array:
-        """
-        Propagates scores using Scikit-network's PageRank (not tested).
-        See NetworkX documentation for input into graph_args and pr_args. 
-        :param A: Adjacency matrix
-        :type A: np.array (m x m)
-        :param graph_args: Dictionary of arguments passed to SKN PageRank, defaults to {}
-        :type graph_args: dict, optional
-        :param pr_args: Dictionary of arguments passed to SKN PageRank's fit_transform, defaults to {}
-        :type pr_args: dict, optional
-        :return: NumPy array of PageRank scores
-        :rtype: 1-D np.array (m x 1)
-        """
-        pr = PR_SK(**pr_args)
-        seeds = graph_args.get('seeds', None)
-        if seeds:
-            return pr.fit_transform(A, seeds=seeds)
-        return pr.fit_transform(A)
-
 
 def run_PR_nx(A: np.array) -> np.array:
     """
