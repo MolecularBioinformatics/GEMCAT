@@ -22,7 +22,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        python-version: [
+          "3.8", 
+          "3.9", 
+          "3.10",
+          "3.11",
+          ]
 
     steps:
     - uses: actions/checkout@v2
@@ -45,4 +50,3 @@ jobs:
     - name: Test with pytest
       run: |
         python -m pytest tests/
-# running plain pytest will fail due to import path issues
