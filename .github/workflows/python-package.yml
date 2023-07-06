@@ -5,9 +5,15 @@ name: Test Pyreporter on Python versions
 
 on:
   push:
-    branches: [ main, development ]
+    branches: [ 
+      main,
+      development,
+      ]
   pull_request:
-    branches: [ main, development ]
+    branches: [ 
+      main,
+      development,
+    ]
 
 jobs:
   build:
@@ -29,7 +35,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        pip install -e .
+        pip install .
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -38,4 +44,5 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest
+        python -m pytest tests/
+# running plain pytest will fail due to import path issues
