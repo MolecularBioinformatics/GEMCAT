@@ -1,0 +1,5 @@
+numpy 
+pandas 
+cobra
+networkx
+scipy
