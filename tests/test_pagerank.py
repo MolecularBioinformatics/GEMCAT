@@ -19,11 +19,11 @@ def test_simple_linear():
 
 def test_simple_circular_nx():
     A = np.array([
-        [0, 0, 1, 0, 0, ],
-        [1, 0, 0, 0, 0, ],
         [0, 1, 0, 0, 0, ],
-        [0, 0, 0, 0, 1, ],
+        [0, 0, 1, 0, 0, ],
         [0, 0, 0, 1, 0, ],
+        [0, 0, 0, 0, 1, ],
+        [1, 0, 0, 0, 0, ],
     ])
     result = pr.run_PR_nx(A)
     expected = np.ones(5) * .2
