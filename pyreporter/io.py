@@ -6,7 +6,6 @@ from pyreporter.Model import Model
 import pandas as pd
 import pickle
 
-#TODO: make windows compatible
 
 def convert_cobra_model(cobra_model: cobra.Model) -> Model:
     """
