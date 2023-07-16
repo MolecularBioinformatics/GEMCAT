@@ -1,7 +1,7 @@
 # Pyreporter: a tool for reporter metabolite analysis
 
 ## Compatibility
-The package is tested for compatibility with Python >= 3.10 on Ubuntu.
+The package is tested for compatibility with Python >= 3.9 on Ubuntu.
 
 ## Installation
 Install using pip. 
