@@ -6,6 +6,45 @@ import abc
 import re
 from pyreporter import utils, verification
 
+
+def read_simple_gpr_from_cobra(
+    model: cobra.Model,
+    ) -> Dict[str, List[str]]:
+    """
+    Reads a simple version of GPR from a COBRA model:
+    All reactions are mapped to all involved genes.
+    :return: Dictionary with keys reactions, values associated genes 
+    :rtype: Dict[str: List[str]]
+    """
+    genes = []
+    for r in model.reactions:
+        genes.append([g.id for g in r.genes])
+    
+    genes_dict = dict(zip([r.id for r in model.reactions], genes))
+    return genes_dict
+
+def read_gpr_strings_from_cobra(
+    model : cobra.Model,
+) -> Tuple[Dict[str, str], List[str]]:
+    """
+    Extracts the gene product rules (GPRs) from a model.
+    :param model: Model from which to extract GPR
+    :type model: cobra.Model
+    :return: Tuple of extracted GPR (dict) and list of all genes.
+    :rtype: Tuple[ Dict[str, str], List[str] ]
+    """
+    gpr = {rxn.id: rxn.gene_reaction_rule for rxn in model.reactions}
+    genes = {rxn.id: [gene.id for gene in rxn.genes] for rxn in model.reactions}
+    return gpr, genes
+
+def fillna_mean(series: pd.Series) -> pd.Series:
+    """
+    Fills all NaN values in self.mapped_values with the mean
+    of the other data.
+    """
+    return series.fillna(series.mean())
+
+
 class Expression(abc.ABC):
     """
     Abstract base class for Expression to define interface. 
@@ -41,14 +80,18 @@ class Expression(abc.ABC):
         :rtype: 1-D np.array (r)
         """
         return self.mapped_values.values
-
-    def fillna_mean(self):
+    
+    def fillna(
+            self, 
+            fill_fn = lambda series: series.fillna(1.)
+        ) -> None:
         """
-        Fills all NaN values in self.mapped_values with the mean
-        of the other data.
+        Fills NaN values in the mapped reaction values according to a function passed.
+        The passed function receives a pd.Series object and returns a filled version.
+        :param fill_fn: Function filling NaN values in a pd.Series
+        :type fill_fn: Function (fill_fn:: pd.Series -> pd.Series)
         """
-        mean = self.mapped_values.mean()
-        self.mapped_values.fillna(mean, inplace=True)
+        self.mapped_values = fill_fn(self.mapped_values)
 
 
 class ExpressionFang2012(Expression):
@@ -85,7 +128,7 @@ class ExpressionFang2012(Expression):
         self.reaction_gene_list = reaction_gene_mapping
         self.rewrite_gpr()
         self.map()
-        self.fillna_mean()
+        self.fillna()
 
     def load_gpr(self, gpr):
         self.gpr = pd.Series(gpr)
@@ -201,35 +244,4 @@ class ExpressionMapSingleAverage(Expression):
             else:
                 vals_dict[reaction] = sum(expression) / len(expression)
         self.mapped_values = pd.Series(vals_dict)
-        self.fillna_mean()
-
-
-def read_simple_gpr_from_cobra(
-    model: cobra.Model,
-    ) -> Dict[str, List[str]]:
-    """
-    Reads a simple version of GPR from a COBRA model:
-    All reactions are mapped to all involved genes.
-    :return: Dictionary with keys reactions, values associated genes 
-    :rtype: Dict[str: List[str]]
-    """
-    genes = []
-    for r in model.reactions:
-        genes.append([g.id for g in r.genes])
-    
-    genes_dict = dict(zip([r.id for r in model.reactions], genes))
-    return genes_dict
-
-def read_gpr_strings_from_cobra(
-    model : cobra.Model,
-) -> Tuple[Dict[str, str], List[str]]:
-    """
-    Extracts the gene product rules (GPRs) from a model.
-    :param model: Model from which to extract GPR
-    :type model: cobra.Model
-    :return: Tuple of extracted GPR (dict) and list of all genes.
-    :rtype: Tuple[ Dict[str, str], List[str] ]
-    """
-    gpr = {rxn.id: rxn.gene_reaction_rule for rxn in model.reactions}
-    genes = {rxn.id: [gene.id for gene in rxn.genes] for rxn in model.reactions}
-    return gpr, genes
+        self.fillna()
