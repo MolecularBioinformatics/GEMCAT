@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyreporter"
-version = "0.2.3"
+version = "0.3.0"
 
 description = "Toolbox for finding reporter metabolites in genome-scale metabolic models using omics data"
 keywords = ["python", "bioinformatics","modeling", "metabolites", "omics"]
@@ -27,3 +27,6 @@ dev = [
   'pytest==7.4.0',
   "flake8==6.0.0"
 ]
+
+[project.scripts]
+pyreporter = "pyreporter.cli:main"
