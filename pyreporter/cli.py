@@ -121,9 +121,7 @@ def save_to_file(outfile: Path, results: Series) -> None:
         # We should never end up here, as we only have .csv and .tsv output
         raise ValueError('An unknown issue occured with the output file. Output is not being saved.')
 
-def main():
-    parser = build_parser()
-    args = parser.parse_args()
+def cli_fang2012(args: argparse.Namespace):
     
     expression = parse_expression(args.expression_file, args.expression_column)
     if args.baseline:
@@ -151,5 +149,11 @@ def main():
         ranking = ranking,
         gene_fill = gene_fill,
     )
+    return results, outfile
     
+
+def main():
+    parser = build_parser()
+    args = parser.parse_args()
+    results, outfile = cli_fang2012(args)
     save_to_file(outfile, results)
