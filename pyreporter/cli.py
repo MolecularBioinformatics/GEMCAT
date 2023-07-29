@@ -1,5 +1,5 @@
 import argparse
-from cobra import Model as cobraModel
+import cobra
 from pathlib import Path
 from pandas import Series, read_csv
 from typing import Optional
@@ -33,15 +33,11 @@ MODELS = {
     '.mat': not_implemented,
 }
 
-def parse_model(model_path: str) -> cobraModel:
-    model_file = Path(model_path)
-    if not model_file.exists():
+def parse_cobra_model(model_path: str) -> cobra.Model:
+    model_path = Path(model_path)
+    if not model_path.exists():
         raise FileNotFoundError('The model file cannot be found.')
-    try:
-        fn = MODELS[model_file.suffix]
-    except KeyError:
-        raise ValueError(f'Invalid file type {model_file.suffix}')
-    return fn(model_file)
+    return cobra.io.read_sbml_model(model_path.as_posix())
 
 def parse_expression(expression_file: str) -> Series:
     file_path = Path(expression_file)
@@ -78,16 +74,16 @@ def get_all_ones(expression: Series) -> Series:
     return Series(index=expression.index, data = 1.)
 
 def parse_outfile(outfile: Optional[str]) -> Path:
-    outfile = Path(outfile)
     if not outfile:
-        outfile = Path('./results.csv')
+        outfile = './results.csv'
+    outfile = Path(outfile)
     if not outfile.suffix in ['.csv', '.tsv']:
         warn(f'Cannot handle output format {outfile.suffix} .')
         outfile = outfile.with_suffix('.csv')
         warn(f'Saving instead to {outfile} .')
     return outfile
 
-def main():
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog='PyReporter',
         description='PyReporter tool for metabolomics predictions',
@@ -102,6 +98,21 @@ def main():
     parser.add_argument('-v', '--verbose')
     parser.add_argument('-o', '--outfile')
 
+    return parser
+
+def save_to_file(outfile: Path, results: Series) -> None:
+    if outfile.exists():
+        warn('Overwriting existing file at {outfile}.')
+    if outfile.suffix == '.csv':
+        results.to_csv(outfile)
+    elif outfile.suffix == '.tsv':
+        results.to_csv(outfile, sep='\t')
+    else:
+        # We should never end up here, as we only have .csv and .tsv output
+        raise ValueError('An unknown issue occured with the output file. Output is not being saved.')
+
+def main():
+    parser = build_parser()
     args = parser.parse_args()
     
     expression = parse_expression(args.expression_file)
@@ -117,7 +128,7 @@ def main():
         print('Empty or invalid gene-fill value. Defaulting to 1.0 .')
         gene_fill = 1.
 
-    model = parse_model(args.model_file)
+    model = parse_cobra_model(args.model_file)
     adjacency = parse_adjacency(args.adjacency)
     ranking = parse_ranking(args.ranking)
     outfile = parse_outfile(args.outfile)
@@ -131,7 +142,4 @@ def main():
         gene_fill = gene_fill,
     )
     
-    if outfile.suffix == 'csv':
-        results.to_csv(outfile)
-    elif outfile.suffix == 'tsv':
-        results.to_csv(outfile, sep='\t')
+    save_to_file(outfile, results)
