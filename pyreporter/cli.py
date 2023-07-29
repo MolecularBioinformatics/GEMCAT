@@ -1,7 +1,7 @@
 import argparse
 import cobra
 from pathlib import Path
-from pandas import Series, read_csv
+from pandas import Series, DataFrame, read_csv
 from typing import Optional
 from warnings import warn
 
@@ -39,7 +39,7 @@ def parse_cobra_model(model_path: str) -> cobra.Model:
         raise FileNotFoundError('The model file cannot be found.')
     return cobra.io.read_sbml_model(model_path.as_posix())
 
-def parse_expression(expression_file: str) -> Series:
+def read_expression(expression_file: str) -> DataFrame:
     file_path = Path(expression_file)
     if not file_path.exists():
         raise FileNotFoundError(f'File {expression_file} could not be found')
@@ -49,7 +49,14 @@ def parse_expression(expression_file: str) -> Series:
         content = read_csv(file_path, sep='\t', index_col=0)
     else:
         raise ValueError(f'Unknown file format {file_path.suffix} in file {expression_file}')
-    content = content.squeeze()
+    return content
+
+def parse_expression(expression_file: str, col_name: Optional[str]) -> Series:
+    content = read_expression(expression_file)
+    if not content.shape[1] or (content.shape[1] == 1):
+        content = content.squeeze()
+    else:
+        content = content.loc[:, col_name]
     if not isinstance(content, Series):
         raise ValueError('Expression file must be in the format of a pandas Series, mapping a gene column to a value column.')
     return content
@@ -91,8 +98,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('expression_file')
     parser.add_argument('model_file')
 
+    parser.add_argument('-e', '--expression_column')
     parser.add_argument('-r', '--ranking')
     parser.add_argument('-b', '--baseline')
+    parser.add_argument('-c', '--baseline-column')
     parser.add_argument('-a', '--adjacency')
     parser.add_argument('-g', '--genefill')
     parser.add_argument('-v', '--verbose')
@@ -102,7 +111,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 def save_to_file(outfile: Path, results: Series) -> None:
     if outfile.exists():
-        warn('Overwriting existing file at {outfile}.')
+        warn_str = f'Overwriting existing file at {outfile}.'
+        warn(warn_str)
     if outfile.suffix == '.csv':
         results.to_csv(outfile)
     elif outfile.suffix == '.tsv':
@@ -115,9 +125,9 @@ def main():
     parser = build_parser()
     args = parser.parse_args()
     
-    expression = parse_expression(args.expression_file)
+    expression = parse_expression(args.expression_file, args.expression_column)
     if args.baseline:
-       baseline = parse_expression(args.baseline)
+       baseline = parse_expression(args.baseline, args.baseline_column)
     else:
         print('Empty baseline expression. Defaulting to all ones.')
         baseline = get_all_ones(expression)
