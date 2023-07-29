@@ -11,6 +11,10 @@ Or an editable installation for development: ```pip install -e pyreporter```
 
 ## Usage
 
+### Standard workflow from the Command-Line Interface (CLI)
+` pyreporter ./expression_file.csv ./model_file.xml -e column_name -a pure -g 1.0 -o result_file.csv`
+will run the standard Fang2012 workflow.
+
 ### Standard workflow from a CobraPy model
 ```
 import pyreporter as pr
