@@ -95,13 +95,13 @@ def build_parser() -> argparse.ArgumentParser:
         prog='PyReporter',
         description='PyReporter tool for metabolomics predictions',
     )
-    parser.add_argument('expression_file')
-    parser.add_argument('model_file')
+    parser.add_argument('expressionfile')
+    parser.add_argument('modelfile')
 
-    parser.add_argument('-e', '--expression_column')
+    parser.add_argument('-e', '--expressioncolumn')
     parser.add_argument('-r', '--ranking')
     parser.add_argument('-b', '--baseline')
-    parser.add_argument('-c', '--baseline-column')
+    parser.add_argument('-c', '--baselinecolumn')
     parser.add_argument('-a', '--adjacency')
     parser.add_argument('-g', '--genefill')
     parser.add_argument('-v', '--verbose')
@@ -123,7 +123,7 @@ def save_to_file(outfile: Path, results: Series) -> None:
 
 def cli_fang2012(args: argparse.Namespace):
     
-    expression = parse_expression(args.expression_file, args.expression_column)
+    expression = parse_expression(args.expressionfile, args.expressioncolumn)
     if args.baseline:
        baseline = parse_expression(args.baseline, args.baseline_column)
     else:
@@ -136,7 +136,7 @@ def cli_fang2012(args: argparse.Namespace):
         print('Empty or invalid gene-fill value. Defaulting to 1.0 .')
         gene_fill = 1.
 
-    model = parse_cobra_model(args.model_file)
+    model = parse_cobra_model(args.modelfile)
     adjacency = parse_adjacency(args.adjacency)
     ranking = parse_ranking(args.ranking)
     outfile = parse_outfile(args.outfile)
