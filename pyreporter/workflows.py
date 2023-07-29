@@ -3,6 +3,7 @@
 import pandas as pd
 import cobra
 import pyreporter as pr
+from typing import Union
 
 
 def workflow_single(
@@ -71,7 +72,7 @@ def workflow_ratio(
     return results
 
 def workflow_Fang2012(
-    cobra_model: cobra.Model,
+    model: Union[cobra.Model, pr.Model.Model],
     mapped_genes_baseline: pd.Series,
     mapped_genes_comparison: pd.Series,
     adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
@@ -80,8 +81,8 @@ def workflow_Fang2012(
     ) -> pd.Series:
     """
     Standard workflow integrating expression data via the method provided by Fang2012.
-    :param cobra_model: COBRA model to be used to generate PyReporter model and GPR
-    :type cobra_model: cobra.Model
+    :param model: COBRA model to be used to generate PyReporter model and GPR
+    :type model: cobra.Model
     :param mapped_genes_baseline: Baseline levels of gene/protein expression values
     :type mapped_genes_baseline: pd.Series
     :param mapped_genes_comparison: Comparison levels of gene/protein expression values
@@ -95,8 +96,9 @@ def workflow_Fang2012(
     :return: Normalized relative metabolite scores: comparison / baseline
     :rtype: pd.Series
     """
-    model = pr.io.convert_cobra_model(cobra_model)
-    gpr, rxn_gene_mapping = pr.Expression.read_gpr_strings_from_cobra(cobra_model)
+    if isinstance(model, cobra.Model):
+        model = pr.io.convert_cobra_model(model)
+    gpr, rxn_gene_mapping = pr.Expression.read_gpr_strings_from_cobra(model)
     model.AT = adjacency
     model.ranking = ranking
     ex_baseline = pr.Expression.ExpressionFang2012(

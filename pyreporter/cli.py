@@ -1,6 +1,9 @@
 import argparse
+from cobra import Model as cobraModel
 from pathlib import Path
 from pandas import Series, read_csv
+from typing import Optional
+from warnings import warn
 
 from pyreporter.workflows import workflow_Fang2012
 from pyreporter.AdjacencyTransformation import AdjacencyTransformation, ATPureAdjacency
@@ -23,50 +26,66 @@ def not_implemented(whatever):
     raise NotImplementedError()
 
 MODELS = {
-    'sbml': load_sbml_cobra, 
-    'json': not_implemented, 
-    'csv': not_implemented,
+    '.sbml': load_sbml_cobra,
+    '.xml': load_sbml_cobra, 
+    '.json': not_implemented,
+    '.csv': not_implemented,
+    '.mat': not_implemented,
 }
 
-def parse_model(model_path: str) -> Model:
+def parse_model(model_path: str) -> cobraModel:
     model_file = Path(model_path)
     if not model_file.exists():
         raise FileNotFoundError('The model file cannot be found.')
     try:
         fn = MODELS[model_file.suffix]
     except KeyError:
-        raise ValueError(f'Invalid file type .{model_file.suffix}')
-    native_model = fn(model_file)
-    return convert_cobra_model(native_model)
-
-def parse_adjacency(adjacency: str) -> AdjacencyTransformation:
-    try:
-        return ADJACENCIES[adjacency]
-    except KeyError:
-        raise ValueError(f'Adjacency model {adjacency} does not exist. Allowed models: {ALLOWED_ADJ}')
+        raise ValueError(f'Invalid file type {model_file.suffix}')
+    return fn(model_file)
 
 def parse_expression(expression_file: str) -> Series:
     file_path = Path(expression_file)
     if not file_path.exists():
         raise FileNotFoundError(f'File {expression_file} could not be found')
-    if file_path.suffix == 'csv':
-        content = read_csv(file_path, sep=',')
-    elif file_path.suffix == 'tsv':
-        content = read_csv(file_path, sep='\t')
+    if file_path.suffix == '.csv':
+        content = read_csv(file_path, sep=',', index_col=0)
+    elif file_path.suffix == '.tsv':
+        content = read_csv(file_path, sep='\t', index_col=0)
     else:
-        raise ValueError('Unknown file format {file_path.suffix} in file {expression_file}')
+        raise ValueError(f'Unknown file format {file_path.suffix} in file {expression_file}')
+    content = content.squeeze()
     if not isinstance(content, Series):
         raise ValueError('Expression file must be in the format of a pandas Series, mapping a gene column to a value column.')
     return content
 
-def parse_ranking(ranking: str) -> Ranking:
+def parse_adjacency(adjacency: Optional[str]) -> AdjacencyTransformation:
+    if adjacency is None:
+        return ATPureAdjacency
+    try:
+        return ADJACENCIES[adjacency]
+    except KeyError:
+        raise ValueError(f'Adjacency model {adjacency} does not exist. Allowed models: {ALLOWED_ADJ}')
+
+def parse_ranking(ranking: Optional[str]) -> Ranking:
+    if ranking is None:
+        return PageRankNX
     try:
         return RANKINGS[ranking]
     except KeyError:
         raise ValueError(f'{ranking} is not a valid ranking method. Available methods are: {ALLOWED_RANKINGS}')
 
-def get_all_ones(expression: Series):
+def get_all_ones(expression: Series) -> Series:
     return Series(index=expression.index, data = 1.)
+
+def parse_outfile(outfile: Optional[str]) -> Path:
+    outfile = Path(outfile)
+    if not outfile:
+        outfile = Path('./results.csv')
+    if not outfile.suffix in ['.csv', '.tsv']:
+        warn(f'Cannot handle output format {outfile.suffix} .')
+        outfile = outfile.with_suffix('.csv')
+        warn(f'Saving instead to {outfile} .')
+    return outfile
 
 def main():
     parser = argparse.ArgumentParser(
@@ -76,6 +95,7 @@ def main():
     parser.add_argument('expression_file')
     parser.add_argument('model_file')
 
+    parser.add_argument('-r', '--ranking')
     parser.add_argument('-b', '--baseline')
     parser.add_argument('-a', '--adjacency')
     parser.add_argument('-g', '--genefill')
@@ -100,14 +120,7 @@ def main():
     model = parse_model(args.model_file)
     adjacency = parse_adjacency(args.adjacency)
     ranking = parse_ranking(args.ranking)
-
-    outfile = args.outfile
-    if not outfile:
-        outfile = Path('./results.csv')
-    if not outfile.suffix in ['csv', 'tsv']:
-        print(f'Cannot handle output format {outfile.suffix} .')
-        outfile = outfile.with_suffix('.csv')
-        print('Saving instead to {outfile} .')
+    outfile = parse_outfile(args.outfile)
     
     results = workflow_Fang2012(
         model,
