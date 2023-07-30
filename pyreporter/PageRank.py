@@ -2,7 +2,7 @@
 import networkx as nx
 
 import numpy as np
-from typing import Dict
+from typing import Dict, Optional
 import abc
 
 
@@ -21,7 +21,7 @@ class PageRankNX(Ranking):
     Initialize with empty constructor if needed.
     """
     @staticmethod
-    def propagate(A: np.array, graph_args = {}, pr_args = {}) -> np.array:
+    def propagate(A: np.array, seeds: Optional[float] = None, graph_args = {}, pr_args = {}) -> np.array:
         """
         Propagates scores using NetworkX's PageRank.
         See NetworkX documentation for input into graph_args and pr_args. 
@@ -35,6 +35,8 @@ class PageRankNX(Ranking):
         :rtype: 1-D np.array (m x 1)
         """
         Ax = nx.DiGraph(A, **graph_args)
+        if seeds:
+            pass  
         results = nx.algorithms.link_analysis.pagerank(Ax, **pr_args)
         return np.array(list(results.values()))
 
