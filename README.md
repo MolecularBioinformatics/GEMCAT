@@ -1,18 +1,19 @@
 # Pyreporter: a tool for reporter metabolite analysis
 
 ## Compatibility
-Python 3.10 is not currently supported due to issues with NumPy.
-The package has been tested for and will run on Python 3.6, 3.7, 3.8 and 3.9.
-It has been tested on Windows 11 and the latest release of Ubuntu.
+The package is tested for compatibility with Python >= 3.9 on Ubuntu.
 
 ## Installation
-Install using pip. Clone the repository, then simply navigate to this folder. 
-Choose either of the following installation routes depending on your needs.
+Install using pip. 
 
-Create a standard installation for usage: ```pip install --user pyreporter ```
-Create an editable installation for development: ```pip install --user -e pyreporter```
+Create a standard installation for usage: ```pip install pyreporter ```
+Or an editable installation for development: ```pip install -e pyreporter```
 
 ## Usage
+
+### Standard workflow from the Command-Line Interface (CLI)
+` pyreporter ./expression_file.csv ./model_file.xml -e column_name -a pure -g 1.0 -o result_file.csv`
+will run the standard Fang2012 workflow.
 
 ### Standard workflow from a CobraPy model
 ```

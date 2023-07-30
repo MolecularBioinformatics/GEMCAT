@@ -76,7 +76,7 @@ def workflow_Fang2012(
     mapped_genes_comparison: pd.Series,
     adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
     ranking = pr.PageRank.PageRankNX,
-    gene_fill = 0.,
+    gene_fill = 1.,
     ) -> pd.Series:
     """
     Standard workflow integrating expression data via the method provided by Fang2012.
