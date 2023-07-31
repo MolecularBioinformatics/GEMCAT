@@ -53,7 +53,6 @@ class Model():
         self.expression_vector = None
         self.reversibilities = reversibilities
         self.expression = None
-        self.seeds = None
         self._update_expression_vector()
         self._A_is_current = False
         self.scores = None
@@ -67,11 +66,12 @@ class Model():
         :raises ValueError: In case of incompatible dimensions
         """
         if seeds is None:
+            self.seeds = None
             return
+        if not isinstance(seeds, list):
+            raise TypeError('Expected metabolite seeds to be of type list')
         if not (len(seeds) == self.dimensions[0]):
             raise ValueError("Length of seeds must be equal to number of metabolites")
-        if not isinstance(seeds, np.ndarray):
-            seeds = np.array(seeds)     
         self.seeds = seeds
 
     def _update_A(self):
@@ -117,7 +117,13 @@ class Model():
         :rtype: pd.Series
         """
         self._check_and_reload__A()
-        scores = self.ranking.propagate(self.A, self.seeds, graph_args, pr_args)
+        scores = self.ranking.propagate(
+            self.A, 
+            self.seeds,
+            self.metabolite_names,
+            graph_args, 
+            pr_args
+        )
         self.scores = scores
         return utils._annotate(scores, self.metabolite_names)
 
