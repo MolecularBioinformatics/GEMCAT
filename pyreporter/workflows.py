@@ -7,11 +7,11 @@ import pyreporter as pr
 
 
 def workflow_single(
-    cobra_model: cobra.Model, 
+    cobra_model: cobra.Model,
     mapped_genes: pd.Series,
     adjacency: Optional[pr.AdjacencyTransformation.AdjacencyTransformation] = None,
     ranking: Optional[pr.PageRank.Ranking] = None,
-    ) -> pd.Series:
+) -> pd.Series:
     """
     Workflow using Expression data integration via simple averaging, provides only the output from a single expression data set.
     :param cobra_model: cobra Model used as a base for modeling
@@ -27,7 +27,7 @@ def workflow_single(
     """
     model = pr.io.convert_cobra_model(cobra_model)
     if adjacency is None:
-        adjacency =pr.AdjacencyTransformation.ATPureAdjacency()
+        adjacency = pr.AdjacencyTransformation.ATPureAdjacency()
     model.AT = adjacency
     if ranking is None:
         ranking = pr.PageRank.PageRankNX()
@@ -38,13 +38,14 @@ def workflow_single(
     results = model.calculate()
     return results
 
+
 def workflow_ratio(
     cobra_model: cobra.Model,
     mapped_genes_baseline: pd.Series,
     mapped_genes_comparison: pd.Series,
     adjacency: Optional[pr.AdjacencyTransformation.AdjacencyTransformation] = None,
     ranking: Optional[pr.PageRank.Ranking] = None,
-    ) -> pd.Series:
+) -> pd.Series:
     """
     Workflow for differerential expression between two datasets.
     Integrates expression data via simple averaging.
@@ -63,7 +64,7 @@ def workflow_ratio(
     """
     model = pr.io.convert_cobra_model(cobra_model)
     if adjacency is None:
-        adjacency =pr.AdjacencyTransformation.ATPureAdjacency()
+        adjacency = pr.AdjacencyTransformation.ATPureAdjacency()
     model.AT = adjacency
     if ranking is None:
         ranking = pr.PageRank.PageRankNX()
@@ -79,14 +80,15 @@ def workflow_ratio(
 
     return results
 
+
 def workflow_Fang2012(
     cobra_model: cobra.Model,
     mapped_genes_baseline: pd.Series,
     mapped_genes_comparison: pd.Series,
     adjacency: Optional[pr.AdjacencyTransformation.AdjacencyTransformation] = None,
     ranking: Optional[pr.PageRank.Ranking] = None,
-    gene_fill = 1.,
-    ) -> pd.Series:
+    gene_fill=1.0,
+) -> pd.Series:
     """
     Standard workflow integrating expression data via the method provided by Fang2012.
     :param cobra_model: COBRA model to be used to generate PyReporter model and GPR
@@ -107,22 +109,22 @@ def workflow_Fang2012(
     model = pr.io.convert_cobra_model(cobra_model)
     gpr, rxn_gene_mapping = pr.Expression.read_gpr_strings_from_cobra(cobra_model)
     if adjacency is None:
-        adjacency =pr.AdjacencyTransformation.ATPureAdjacency()
+        adjacency = pr.AdjacencyTransformation.ATPureAdjacency()
     model.AT = adjacency
     if ranking is None:
         ranking = pr.PageRank.PageRankNX()
     model.ranking = ranking
     ex_baseline = pr.Expression.ExpressionFang2012(
-        gpr = gpr,
-        reaction_gene_mapping = rxn_gene_mapping,
-        data = mapped_genes_baseline,
-        gene_fill = gene_fill,
+        gpr=gpr,
+        reaction_gene_mapping=rxn_gene_mapping,
+        data=mapped_genes_baseline,
+        gene_fill=gene_fill,
     )
     ex_comparison = pr.Expression.ExpressionFang2012(
-        gpr = gpr,
-        reaction_gene_mapping = rxn_gene_mapping,
-        data = mapped_genes_comparison,
-        gene_fill = gene_fill,
+        gpr=gpr,
+        reaction_gene_mapping=rxn_gene_mapping,
+        data=mapped_genes_comparison,
+        gene_fill=gene_fill,
     )
     model.load_expression(ex_comparison)
     results_comparison = model.calculate()

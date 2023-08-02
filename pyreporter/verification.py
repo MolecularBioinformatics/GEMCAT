@@ -2,12 +2,16 @@ from warnings import warn
 import pandas as pd
 from typing import Union
 
-def raise_for_duplicated_index(df: Union[pd.Series, pd.DataFrame]):
-    n_duplicates  = df.index.duplicated(keep='first').sum()
-    if n_duplicates > 0:
-        raise ValueError('Index currently has duplicates')
 
-def convert_df_index_to_str(df: Union[pd.Series, pd.DataFrame]) -> Union[pd.Series, pd.DataFrame]:
+def raise_for_duplicated_index(df: Union[pd.Series, pd.DataFrame]):
+    n_duplicates = df.index.duplicated(keep="first").sum()
+    if n_duplicates > 0:
+        raise ValueError("Index currently has duplicates")
+
+
+def convert_df_index_to_str(
+    df: Union[pd.Series, pd.DataFrame]
+) -> Union[pd.Series, pd.DataFrame]:
     """
     Checks a DataFrame or Series object's Index dtype. If it's not a str, throws a warning and converts it to str.
     :param df: DataFrame or Series to check
@@ -15,10 +19,11 @@ def convert_df_index_to_str(df: Union[pd.Series, pd.DataFrame]) -> Union[pd.Seri
     :return: DataFrame or Series with Index as a str
     :rtype: Union[pd.Series, pd.DataFrame]
     """
-    if not df.index.dtype == 'O':
-        warn('Index of DataFrame is not str. Autoconverting to str.')
+    if not df.index.dtype == "O":
+        warn("Index of DataFrame is not str. Autoconverting to str.")
         df.index = df.index.astype(str)
     return df
+
 
 def raise_for_non_int_float_64_dtype(ser: pd.Series):
     """
@@ -27,5 +32,5 @@ def raise_for_non_int_float_64_dtype(ser: pd.Series):
     :type ser: pd.Series
     :raises ValueError: ValueError raised if Series content isn't NumPy type float64 or int64.
     """
-    if not ser.dtype == 'float64' or ser.dtype == 'int64':
-        raise ValueError('Series contains no numerical values')
+    if not ser.dtype == "float64" or ser.dtype == "int64":
+        raise ValueError("Series contains no numerical values")

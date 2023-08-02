@@ -10,6 +10,7 @@ class Ranking(abc.ABC):
     """
     Abstract base class for Ranking methods. Do NOT use.
     """
+
     @abc.abstractmethod
     def propagate(self, graph_args: Dict, pr_args: Dict) -> np.array:
         pass
@@ -20,17 +21,18 @@ class PageRankNX(Ranking):
     Class interfacing NetworkX's PageRank.
     Initialize with empty constructor if needed.
     """
+
     @staticmethod
     def propagate(
-            A: np.array, 
-            seeds: Optional[list[float]] = None, 
-            names: Optional[list[str]] = None, 
-            graph_args: Optional[Dict] = None, 
-            pr_args: Optional[Dict] = None,
-        ) -> np.array:
+        A: np.array,
+        seeds: Optional[list[float]] = None,
+        names: Optional[list[str]] = None,
+        graph_args: Optional[Dict] = None,
+        pr_args: Optional[Dict] = None,
+    ) -> np.array:
         """
         Propagates scores using NetworkX's PageRank.
-        See NetworkX documentation for input into graph_args and pr_args. 
+        See NetworkX documentation for input into graph_args and pr_args.
         :param A: Adjacency matrix
         :type A: np.array (m x m)
         :param seeds: Metabolite seeds to use as personalization
@@ -50,14 +52,15 @@ class PageRankNX(Ranking):
             pr_args = {}
         Ax = nx.DiGraph(A, **graph_args)
         if isinstance(seeds, list) and len(seeds) > 0:
-            pr_args['personalization'] = dict(zip(names, seeds))
+            pr_args["personalization"] = dict(zip(names, seeds))
             Ax = rename_unnamed_graph(Ax, names)
         results = nx.algorithms.link_analysis.pagerank(Ax, **pr_args)
         return np.array(list(results.values()))
 
+
 def rename_unnamed_graph(G: nx.DiGraph, names: list[str]) -> nx.DiGraph:
     """_summary_
-    Rename a graph  with unlabeled nodes 
+    Rename a graph  with unlabeled nodes
     (default node names are integers in range(n_nodes))
     and return a copy labeled with the names given
     :param G: Graph with unnamed nodes
@@ -69,13 +72,14 @@ def rename_unnamed_graph(G: nx.DiGraph, names: list[str]) -> nx.DiGraph:
     :rtype: nx.DiGraph
     """
     if not len(G.nodes) == len(names):
-        raise ValueError('Length of names does not match number of graph nodes')
+        raise ValueError("Length of names does not match number of graph nodes")
     default_names = range(len(names))
     name_mapping = dict(zip(default_names, names))
     return nx.relabel_nodes(
         G,
         name_mapping,
-    ) 
+    )
+
 
 def run_PR_nx(A: np.array) -> np.array:
     """
