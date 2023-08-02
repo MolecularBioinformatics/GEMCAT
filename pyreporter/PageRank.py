@@ -25,21 +25,29 @@ class PageRankNX(Ranking):
             A: np.array, 
             seeds: Optional[list[float]] = None, 
             names: Optional[list[str]] = None, 
-            graph_args = {}, 
-            pr_args = {},
+            graph_args: Optional[Dict] = None, 
+            pr_args: Optional[Dict] = None,
         ) -> np.array:
         """
         Propagates scores using NetworkX's PageRank.
         See NetworkX documentation for input into graph_args and pr_args. 
         :param A: Adjacency matrix
         :type A: np.array (m x m)
-        :param graph_args: Dictionary of arguments passed to networkx DiGraph, defaults to {}
-        :type graph_args: dict, optional
-        :param pr_args: Dictionary of arguments passed to networkx PageRank, defaults to {}
-        :type pr_args: dict, optional
+        :param seeds: Metabolite seeds to use as personalization
+        :type seeds: List[float]
+        :param names: Metabolite names for the metabolites in the graph
+        :type names: List[str]
+        :param graph_args: Dictionary of arguments passed to networkx DiGraph, defaults to None
+        :type graph_args: Optional[dict]
+        :param pr_args: Dictionary of arguments passed to networkx PageRank, defaults to None
+        :type pr_args: Optional[dict]
         :return: NumPy array of PageRank scores
         :rtype: 1-D np.array (m x 1)
         """
+        if graph_args is None:
+            graph_args = {}
+        if pr_args is None:
+            pr_args = {}
         Ax = nx.DiGraph(A, **graph_args)
         if isinstance(seeds, list) and len(seeds) > 0:
             pr_args['personalization'] = dict(zip(names, seeds))

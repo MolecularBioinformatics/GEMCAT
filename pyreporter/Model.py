@@ -31,8 +31,8 @@ class Model():
         S: np.array,
         metabolite_names: List[str],
         reversibilities: List[bool],
-        at = AT.ATPureAdjacency,
-        ranking = PR.PageRankNX,
+        at: Optional[AT.ATPureAdjacency] = None,
+        ranking: Optional[PR.PageRankNX] = None,
         metabolite_seeds: Optional[List[float]] = None
         ):
         """
@@ -47,8 +47,14 @@ class Model():
         self.S = S
         self.dimensions = self.S.shape
         self.expression_shape = (1, self.dimensions[1])
+        
+        if at is None:
+            at = AT.ATPureAdjacency()
         self.AT = at
+        if ranking is None:
+            ranking = PR.PageRankNX()
         self.ranking = ranking
+
         self.metabolite_names = metabolite_names
         self.expression_vector = None
         self.reversibilities = reversibilities
@@ -56,6 +62,7 @@ class Model():
         self._update_expression_vector()
         self._A_is_current = False
         self.scores = None
+        self.seeds = None
         self.load_metabolite_seeds(metabolite_seeds)
 
     def load_metabolite_seeds(self, seeds):
@@ -104,8 +111,8 @@ class Model():
 
     def calculate(
         self, 
-        graph_args = {}, 
-        pr_args = {}
+        graph_args: Optional[dict] = None, 
+        pr_args: Optional[dict] = None
         ) -> pd.Series:
         """
         Calculate scores with current S, expression, and metabolite score seeds.
@@ -116,6 +123,10 @@ class Model():
         :return: Scores for each metabolite
         :rtype: pd.Series
         """
+        if graph_args is None:
+            graph_args = {}
+        if pr_args is None:
+            pr_args = {}
         self._check_and_reload__A()
         scores = self.ranking.propagate(
             self.A, 
