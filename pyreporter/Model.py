@@ -1,5 +1,5 @@
 from warnings import warn
-from typing import List
+from typing import List, Optional
 import numpy as np
 import pyreporter.PageRank as PR
 import pyreporter.AdjacencyTransformation as AT
@@ -31,8 +31,9 @@ class Model():
         S: np.array,
         metabolite_names: List[str],
         reversibilities: List[bool],
-        at = AT.ATPureAdjacency,
-        ranking = PR.PageRankNX,
+        at: Optional[AT.ATPureAdjacency] = None,
+        ranking: Optional[PR.PageRankNX] = None,
+        metabolite_seeds: Optional[List[float]] = None
         ):
         """
         Create a model object
@@ -46,16 +47,39 @@ class Model():
         self.S = S
         self.dimensions = self.S.shape
         self.expression_shape = (1, self.dimensions[1])
+        
+        if at is None:
+            at = AT.ATPureAdjacency()
         self.AT = at
+        if ranking is None:
+            ranking = PR.PageRankNX()
         self.ranking = ranking
+
         self.metabolite_names = metabolite_names
         self.expression_vector = None
         self.reversibilities = reversibilities
         self.expression = None
-        self.seeds = None
         self._update_expression_vector()
         self._A_is_current = False
         self.scores = None
+        self.seeds = None
+        self.load_metabolite_seeds(metabolite_seeds)
+
+    def load_metabolite_seeds(self, seeds):
+        """
+        Load metabolite seeds and convert to numpy array if necessary.
+        :param seeds: Metabolite score seeds
+        :type seeds: List of Numpy array
+        :raises ValueError: In case of incompatible dimensions
+        """
+        if seeds is None:
+            self.seeds = None
+            return
+        if not isinstance(seeds, list):
+            raise TypeError('Expected metabolite seeds to be of type list')
+        if not (len(seeds) == self.dimensions[0]):
+            raise ValueError("Length of seeds must be equal to number of metabolites")
+        self.seeds = seeds
 
     def _update_A(self):
         """
@@ -87,8 +111,8 @@ class Model():
 
     def calculate(
         self, 
-        graph_args = {}, 
-        pr_args = {}
+        graph_args: Optional[dict] = None, 
+        pr_args: Optional[dict] = None
         ) -> pd.Series:
         """
         Calculate scores with current S, expression, and metabolite score seeds.
@@ -99,15 +123,24 @@ class Model():
         :return: Scores for each metabolite
         :rtype: pd.Series
         """
-        # TODO: implement metabolite score seeds
+        if graph_args is None:
+            graph_args = {}
+        if pr_args is None:
+            pr_args = {}
         self._check_and_reload__A()
-        scores = self.ranking.propagate(self.A, graph_args, pr_args)
+        scores = self.ranking.propagate(
+            self.A, 
+            self.seeds,
+            self.metabolite_names,
+            graph_args, 
+            pr_args
+        )
         self.scores = scores
         return utils._annotate(scores, self.metabolite_names)
 
     def _update_expression_vector(self):
         """
-        Initializes expression scores to all ones
+        Initializes expression scores
         """
         if self.expression:
             self.expression_vector = self.expression.get_mapped_values()

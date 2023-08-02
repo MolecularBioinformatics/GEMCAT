@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from typing import Optional
 import pandas as pd
 import cobra
 import pyreporter as pr
@@ -8,8 +9,8 @@ import pyreporter as pr
 def workflow_single(
     cobra_model: cobra.Model, 
     mapped_genes: pd.Series,
-    adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
-    ranking = pr.PageRank.PageRankNX,
+    adjacency: Optional[pr.AdjacencyTransformation.AdjacencyTransformation] = None,
+    ranking: Optional[pr.PageRank.Ranking] = None,
     ) -> pd.Series:
     """
     Workflow using Expression data integration via simple averaging, provides only the output from a single expression data set.
@@ -25,7 +26,11 @@ def workflow_single(
     :rtype: pd.Series
     """
     model = pr.io.convert_cobra_model(cobra_model)
+    if adjacency is None:
+        adjacency =pr.AdjacencyTransformation.ATPureAdjacency()
     model.AT = adjacency
+    if ranking is None:
+        ranking = pr.PageRank.PageRankNX()
     model.ranking = ranking
     gpr = pr.Expression.read_simple_gpr_from_cobra(cobra_model)
     ex = pr.Expression.ExpressionMapSingleAverage(mapped_genes, gpr)
@@ -37,8 +42,8 @@ def workflow_ratio(
     cobra_model: cobra.Model,
     mapped_genes_baseline: pd.Series,
     mapped_genes_comparison: pd.Series,
-    adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
-    ranking = pr.PageRank.PageRankNX,
+    adjacency: Optional[pr.AdjacencyTransformation.AdjacencyTransformation] = None,
+    ranking: Optional[pr.PageRank.Ranking] = None,
     ) -> pd.Series:
     """
     Workflow for differerential expression between two datasets.
@@ -57,7 +62,11 @@ def workflow_ratio(
     :rtype: pd.Series
     """
     model = pr.io.convert_cobra_model(cobra_model)
+    if adjacency is None:
+        adjacency =pr.AdjacencyTransformation.ATPureAdjacency()
     model.AT = adjacency
+    if ranking is None:
+        ranking = pr.PageRank.PageRankNX()
     model.ranking = ranking
     gpr = pr.Expression.read_simple_gpr_from_cobra(cobra_model)
     ex = pr.Expression.ExpressionMapSingleAverage(mapped_genes_comparison, gpr)
@@ -74,8 +83,8 @@ def workflow_Fang2012(
     cobra_model: cobra.Model,
     mapped_genes_baseline: pd.Series,
     mapped_genes_comparison: pd.Series,
-    adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
-    ranking = pr.PageRank.PageRankNX,
+    adjacency: Optional[pr.AdjacencyTransformation.AdjacencyTransformation] = None,
+    ranking: Optional[pr.PageRank.Ranking] = None,
     gene_fill = 1.,
     ) -> pd.Series:
     """
@@ -97,7 +106,11 @@ def workflow_Fang2012(
     """
     model = pr.io.convert_cobra_model(cobra_model)
     gpr, rxn_gene_mapping = pr.Expression.read_gpr_strings_from_cobra(cobra_model)
+    if adjacency is None:
+        adjacency =pr.AdjacencyTransformation.ATPureAdjacency()
     model.AT = adjacency
+    if ranking is None:
+        ranking = pr.PageRank.PageRankNX()
     model.ranking = ranking
     ex_baseline = pr.Expression.ExpressionFang2012(
         gpr = gpr,
