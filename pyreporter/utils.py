@@ -9,8 +9,9 @@ from functools import reduce
 from typing import Iterable, Tuple, List, Union
 
 
-
-def _get_ids(iterable: List[Union[cobra.Gene, cobra.Reaction, cobra.Metabolite]]) -> List[str]:
+def _get_ids(
+    iterable: List[Union[cobra.Gene, cobra.Reaction, cobra.Metabolite]]
+) -> List[str]:
     """
     Gets a list of IDs from a cobra iterable.
     :param genes: Iterable for which to get IDs.
@@ -57,6 +58,7 @@ def _split_matrix_pos_neg(s: np.array) -> Tuple[np.array, np.array]:
     s_minus = s * (s < 0.001)
     return s_plus, s_minus
 
+
 def _annotate(scores: np.array, metabolite_ids: List[str]) -> pd.Series:
     """
     Create a pandas Series matching metabolite scores with their IDs.
@@ -79,16 +81,19 @@ def _get_stoich_matrix(model: cobra.Model) -> np.array:
     :return: Stoichiometric matrix (m x r)
     :rtype: np.array
     """
-    return cobra.util.array.create_stoichiometric_matrix(model, array_type='dense', dtype=float)
+    return cobra.util.array.create_stoichiometric_matrix(
+        model, array_type="dense", dtype=float
+    )
+
 
 def _make_unidirectional(
-    S: np.array, 
+    S: np.array,
     reversibilities: List[bool],
-    ) -> np.array:
+) -> np.array:
     """
     Takes in a stoichiometric matrix and a list of reversibilities,
     then adds the reverse of all the reversible reactions to the matrix.
-    :param S: Stoichiometric matrix 
+    :param S: Stoichiometric matrix
     :type S: np.array [m x r]
     :param reversibilities: List of bools whether reactions are reversible
     :type reversibilities: List[bool] [length r]
@@ -97,16 +102,17 @@ def _make_unidirectional(
     """
     for r in reversibilities:
         if not isinstance(r, bool):
-            raise TypeError('Bool is expected for reversibility')
+            raise TypeError("Bool is expected for reversibility")
     S_rev = S[:, reversibilities]
-    S_rev = -1. * S_rev
+    S_rev = -1.0 * S_rev
     return np.append(S, S_rev, axis=1)
 
-def _get_unidirectional_matrix(model:cobra.Model) -> np.array:
+
+def _get_unidirectional_matrix(model: cobra.Model) -> np.array:
     """
-    Takes in a model and returns its stoichiometric matrix 
+    Takes in a model and returns its stoichiometric matrix
     with reversible reactions separated into
-    two different reactions with opposite direction. 
+    two different reactions with opposite direction.
     :param model: Model for which to return the stoichiometric matrix.
     :type model: cobra.Model
     :return: Stoichiometric matrix.
@@ -115,6 +121,7 @@ def _get_unidirectional_matrix(model:cobra.Model) -> np.array:
     S = _get_stoich_matrix(model)
     reversibilities = [r.reversibility for r in model.reactions]
     return _make_unidirectional(S, reversibilities)
+
 
 def _replace_zeroes(array: np.array) -> np.array:
     """
@@ -125,9 +132,9 @@ def _replace_zeroes(array: np.array) -> np.array:
     :return: Array with entries replaced
     :rtype: np.array
     """
-    array[array == np.inf] = 0.
-    array[array == -np.inf] = 0.
-    array[np.isnan(array)] = 0.
+    array[array == np.inf] = 0.0
+    array[array == -np.inf] = 0.0
+    array[np.isnan(array)] = 0.0
     return array
 
 
@@ -150,7 +157,7 @@ def _scale(series: pd.Series) -> pd.Series:
     :return: Pandas Series of scaled scores.
     :rtype: pd.Series
     """
-    #return series / max(abs(series.min()), series.max())
+    # return series / max(abs(series.min()), series.max())
     return series / series.sum()
 
 
@@ -176,7 +183,7 @@ def _is_exchange(tag: str) -> bool:
     :return: True/False whether reaction is an exchange reaction.
     :rtype: bool
     """
-    exchange_prefixes = ['OF_', 'EX_']
+    exchange_prefixes = ["OF_", "EX_"]
     for prefix in exchange_prefixes:
         if tag.startswith(prefix):
             return True
@@ -207,7 +214,7 @@ def _l1_norm(vector: np.array) -> float:
     :rtype: float
     """
     if vector.size == 0:
-        raise ValueError('Array is empty')
+        raise ValueError("Array is empty")
     return np.sum(np.abs(vector))
 
 
@@ -246,11 +253,12 @@ def _get_reaction_ids(model: cobra.Model) -> List[str]:
     :rtype: List[str]
     """
     if not isinstance(model, cobra.Model):
-        raise TypeError('CobraPy model required as input')
+        raise TypeError("CobraPy model required as input")
     if len(model.reactions) == 0:
-        raise ValueError('No reactions in the model')
+        raise ValueError("No reactions in the model")
     r_ids = [r.id for r in model.reactions]
     return r_ids
+
 
 def _get_metabolite_ids(model: cobra.Model) -> List[str]:
     """
@@ -261,9 +269,9 @@ def _get_metabolite_ids(model: cobra.Model) -> List[str]:
     :rtype: List[str]
     """
     if not isinstance(model, cobra.Model):
-        raise TypeError('CobraPy model required as input')
+        raise TypeError("CobraPy model required as input")
     if len(model.metabolites) == 0:
-        raise ValueError('No metabolites in the model')
+        raise ValueError("No metabolites in the model")
     m_ids = [m.id for m in model.metabolites]
     return m_ids
 
@@ -291,6 +299,7 @@ def _make_column_vector(arr: np.array) -> np.array:
     """
     return arr.reshape(arr.size, 1)
 
+
 def _is_np_array(arr):
     """
     Throws a TypeError if the object given is not a NumPy array.
@@ -299,7 +308,8 @@ def _is_np_array(arr):
     :raises TypeError: Raised if object type is not np.array
     """
     if not isinstance(arr, np.ndarray):
-        raise TypeError('NumPy array was expected')
+        raise TypeError("NumPy array was expected")
+
 
 def _check_array_shape(arr, target):
     """
@@ -308,11 +318,12 @@ def _check_array_shape(arr, target):
     :raises ValueError: Raised if shape of the two arrays doesn't match.
     """
     if not arr.shape == target.shape:
-            msg = f"""
+        msg = f"""
             Wrong array shape. Needs to be {target.shape}
             but is {arr.shape}
             """
-            raise ValueError(msg)
+        raise ValueError(msg)
+
 
 def _is_all_ones(arr: np.array) -> bool:
     """
@@ -325,6 +336,7 @@ def _is_all_ones(arr: np.array) -> bool:
     ones = np.ones(arr.shape)
     return np.allclose(arr, ones)
 
+
 def geometric_mean(*numbers):
     """
     Calculates the geometric mean for a number of ints or floats.
@@ -333,10 +345,11 @@ def geometric_mean(*numbers):
     """
     n = len(numbers)
     if n == 0:
-        raise ValueError('List of numbers is empty')
+        raise ValueError("List of numbers is empty")
     numbers = [float(i) for i in numbers]
     prod = multiply(numbers)
     return prod ** (1 / n)
+
 
 def multiply(*numbers):
     return np.prod(numbers)

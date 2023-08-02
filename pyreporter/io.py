@@ -16,13 +16,14 @@ def convert_cobra_model(cobra_model: cobra.Model) -> Model:
     :rtype: Model
     """
     if not isinstance(cobra_model, cobra.Model):
-        raise TypeError('COBRApy Model object expected')
+        raise TypeError("COBRApy Model object expected")
     S = utils._get_stoich_matrix(cobra_model)
     rev = utils._get_reversibilities(cobra_model)
     metabolites = utils._get_metabolite_ids(cobra_model)
     model = Model(S, metabolites, rev)
 
     return model
+
 
 def load_json_cobra(json_file: Union[str, Path]) -> Model:
     """
@@ -38,6 +39,7 @@ def load_json_cobra(json_file: Union[str, Path]) -> Model:
 
     return convert_cobra_model(cobra_model)
 
+
 def load_sbml_cobra(sbml_file: Union[str, Path]):
     """
     Loads a PageRank-based Model from a COBRA SBML file.
@@ -49,11 +51,11 @@ def load_sbml_cobra(sbml_file: Union[str, Path]):
     if isinstance(sbml_file, Path):
         sbml_file = sbml_file.as_posix()
     cobra_model = cobra.io.read_sbml_model(sbml_file)
-    
+
     return convert_cobra_model(cobra_model)
 
 
-def load_csv(csv_file: Union[Path, str], sep=',', reversibilities=None):
+def load_csv(csv_file: Union[Path, str], sep=",", reversibilities=None):
     """
     Load models from CSV file (uses Pandas).
     :param csv_file: Path to CSV file
@@ -76,9 +78,11 @@ def load_csv(csv_file: Union[Path, str], sep=',', reversibilities=None):
     S = Model(S, met, reversibilities)
     return S
 
-def pickle_model(model: Model, file_name: str, pickle_args = {}) -> Path:
+
+def pickle_model(model: Model, file_name: str, pickle_args={}) -> Path:
     pickle.dump(model, file_name, **pickle_args)
     return Path(file_name)
 
-def load_pickled(file_name: str, pickle_args = {}) -> Model:
+
+def load_pickled(file_name: str, pickle_args={}) -> Model:
     return pickle.load(file_name, **pickle_args)

@@ -8,22 +8,24 @@ class AdjacencyTransformation(abc.ABC):
     """
     Abstract base class defining adjacency transformation interface do NOT use.
     """
+
     @abc.abstractmethod
     def transform(S: np.array) -> np.array:
         pass
 
+
 class ATFullStoich(AdjacencyTransformation):
     """
     Transform S into A with normalization based on rows, stoichiometry in both
-    products and educts considered.    
+    products and educts considered.
     """
-    
+
     @staticmethod
     def transform(
-        S: np.array, 
+        S: np.array,
         reversibilities: List[bool],
         expression: np.array,
-        ) -> np.array:
+    ) -> np.array:
         """
         Calculates the (PageRank) adjacency matrix for a given stoichiometric matrix.
         :param S: Stoichiometric matrix.
@@ -43,18 +45,19 @@ class ATFullStoich(AdjacencyTransformation):
 
         return A
 
+
 class ATHalfStoich(AdjacencyTransformation):
     """
-    Transform S into A with normalization based on rows, 
+    Transform S into A with normalization based on rows,
     stoichiometry in products only considered.
     """
-    
+
     @staticmethod
     def transform(
-        S: np.array, 
+        S: np.array,
         reversibilities: List[bool],
         expression: np.array,
-        ) -> np.array:
+    ) -> np.array:
         """
         Calculates the (PageRank) adjacency matrix for a given stoichiometric matrix.
         :param S: Stoichiometric matrix.
@@ -80,12 +83,13 @@ class ATPureAdjacency(AdjacencyTransformation):
     """
     Transform S into A using pure adjacency not regarding stoichiometry.
     """
+
     @staticmethod
     def transform(
-        S: np.array, 
+        S: np.array,
         reversibilities: List[bool],
         expression: np.array,
-        ) -> np.array:
+    ) -> np.array:
         """
         Calculates the (PageRank) adjacency matrix for a given stoichiometric matrix.
         :param S: Stoichiometric matrix.
@@ -107,12 +111,13 @@ class ATPureAdjacency(AdjacencyTransformation):
 
         return A
 
+
 def run_AT_normalize(
     S: np.array,
     reversibilities: List[bool],
     expression_vector: np.array,
     AT: AdjacencyTransformation,
-    ) -> np.array:
+) -> np.array:
     """
     Shortcut function for testing calculation of A with row-based normalization.
     :param S: stoichiometric matrix

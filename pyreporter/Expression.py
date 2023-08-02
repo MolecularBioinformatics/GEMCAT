@@ -9,22 +9,23 @@ from pyreporter import utils, verification
 
 def read_simple_gpr_from_cobra(
     model: cobra.Model,
-    ) -> Dict[str, List[str]]:
+) -> Dict[str, List[str]]:
     """
     Reads a simple version of GPR from a COBRA model:
     All reactions are mapped to all involved genes.
-    :return: Dictionary with keys reactions, values associated genes 
+    :return: Dictionary with keys reactions, values associated genes
     :rtype: Dict[str: List[str]]
     """
     genes = []
     for r in model.reactions:
         genes.append([g.id for g in r.genes])
-    
+
     genes_dict = dict(zip([r.id for r in model.reactions], genes))
     return genes_dict
 
+
 def read_gpr_strings_from_cobra(
-    model : cobra.Model,
+    model: cobra.Model,
 ) -> Tuple[Dict[str, str], List[str]]:
     """
     Extracts the gene product rules (GPRs) from a model.
@@ -37,6 +38,7 @@ def read_gpr_strings_from_cobra(
     genes = {rxn.id: [gene.id for gene in rxn.genes] for rxn in model.reactions}
     return gpr, genes
 
+
 def fillna_mean(series: pd.Series) -> pd.Series:
     """
     Fills all NaN values in self.mapped_values with the mean
@@ -47,9 +49,10 @@ def fillna_mean(series: pd.Series) -> pd.Series:
 
 class Expression(abc.ABC):
     """
-    Abstract base class for Expression to define interface. 
+    Abstract base class for Expression to define interface.
     Do NOT use.
     """
+
     @abc.abstractmethod
     def __init__(
         self,
@@ -57,7 +60,7 @@ class Expression(abc.ABC):
         gpr: Dict[str, List[str]],
     ):
         pass
-    
+
     @staticmethod
     def _verify_data(data):
         verification.raise_for_duplicated_index(data)
@@ -80,11 +83,8 @@ class Expression(abc.ABC):
         :rtype: 1-D np.array (r)
         """
         return self.mapped_values.values
-    
-    def fillna(
-            self, 
-            fill_fn = lambda series: series.fillna(1.)
-        ) -> None:
+
+    def fillna(self, fill_fn=lambda series: series.fillna(1.0)) -> None:
         """
         Fills NaN values in the mapped reaction values according to a function passed.
         The passed function receives a pd.Series object and returns a filled version.
@@ -99,15 +99,14 @@ class ExpressionFang2012(Expression):
     Integration of gene expression according to Fang et al. (2012)
     doi.org/10.1371/journal.pcbi.1002688
     """
-    
 
     def __init__(
         self,
         gpr: Dict[str, str],
         reaction_gene_mapping: Dict[str, List[str]],
         data: pd.Series,
-        gene_fill = 0.,
-        ):
+        gene_fill=0.0,
+    ):
         """
         Create a component for the integration of expression data.
         This adheres to the algorithm laid out by Fang et al. 2012.
@@ -132,57 +131,53 @@ class ExpressionFang2012(Expression):
 
     def load_gpr(self, gpr):
         self.gpr = pd.Series(gpr)
-    
+
     def rewrite_gpr(self):
-        quant_gpr = self.gpr.index.map(
-            lambda rxn: self.rewrite_single_gpr(rxn) 
-            )
+        quant_gpr = self.gpr.index.map(lambda rxn: self.rewrite_single_gpr(rxn))
         self.quant_gpr = pd.Series(list(quant_gpr), self.gpr.index)
-        
+
     def rewrite_single_gpr(self, rxn):
         gpr = self.gpr[rxn]
-        genes = self.reaction_gene_list.get(rxn, '')
+        genes = self.reaction_gene_list.get(rxn, "")
         if not gpr:
-            return ''
+            return ""
         if not isinstance(gpr, str):
-            return ''
-        
+            return ""
+
         for gene in genes:
             if isinstance(gene, float):
                 gene = str(gene)
             gene_val = float(self.data.get(gene, self.gene_fill))
-            gpr = gpr.replace(gene, f'{gene_val}')
-        
-        gpr = gpr.replace('or', '+')
-        re_float = '\d*\.\d*'
-        re_and = re.compile(f'{re_float}(?: and {re_float})+')
+            gpr = gpr.replace(gene, f"{gene_val}")
+
+        gpr = gpr.replace("or", "+")
+        re_float = "\d*\.\d*"
+        re_and = re.compile(f"{re_float}(?: and {re_float})+")
         hits = re_and.findall(gpr)
         if not hits:
             return gpr
         for hit in hits:
-            gids = hit.split('and')
+            gids = hit.split("and")
             gids = [x.strip() for x in gids]
-            gids = ', '.join(gids)
-            new = f'utils.geometric_mean({gids})'
+            gids = ", ".join(gids)
+            new = f"utils.geometric_mean({gids})"
             gpr = gpr.replace(hit, new)
-        
+
         return gpr
 
     def map(self):
-        self.mapped_values = self.quant_gpr.map(
-            lambda gpr: self.eval_single_gpr(gpr)
-            )
+        self.mapped_values = self.quant_gpr.map(lambda gpr: self.eval_single_gpr(gpr))
 
     @staticmethod
     def eval_single_gpr(
-        gpr: str, 
-        ):
+        gpr: str,
+    ):
         if len(gpr) == 0:
             return np.nan
-        try: 
+        try:
             result = eval(gpr)
         except SyntaxError:
-            print(f'Failed: {gpr}')
+            print(f"Failed: {gpr}")
             result = np.nan
         return result
 
@@ -192,11 +187,12 @@ class ExpressionMapSingleAverage(Expression):
     Simple integration of expression data by mapping each reaction
     onto the mean expression of the genes involved in it.
     """
+
     def __init__(
-        self, 
-        data: pd.Series, 
+        self,
+        data: pd.Series,
         gpr: Dict[str, List[str]],
-        ):
+    ):
         """
         Initialize object and map expression data onto reactions.
         :param data: Gene expression data
@@ -211,9 +207,9 @@ class ExpressionMapSingleAverage(Expression):
         self.map(data)
 
     def load_gpr(
-        self, 
+        self,
         gpr: Dict[str, List[str]],
-        ):
+    ):
         """
         Load gene product rule into the object.
         :param gpr: [description]
@@ -230,7 +226,7 @@ class ExpressionMapSingleAverage(Expression):
         :raises ValueError: Raised if no GPR is set on the object
         """
         if not self.gpr:
-            raise ValueError('GPR not yet set')
+            raise ValueError("GPR not yet set")
         vals_dict = {}
         for reaction, genes in self.gpr.items():
             expression = []
