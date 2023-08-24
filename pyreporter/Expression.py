@@ -161,7 +161,7 @@ class ExpressionFang2012(Expression):
             gids = [x.strip() for x in gids]
             gids = ", ".join(gids)
             new = f"utils.geometric_mean({gids})"
-            gpr = gpr.replace(hit, new)
+            gpr = gpr.replace("(" + hit + ")", "(" + new + ")")
 
         return gpr
 
