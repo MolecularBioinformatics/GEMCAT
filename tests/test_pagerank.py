@@ -80,19 +80,74 @@ def test_simple_bidir():
     assert np.allclose(result, expected, atol=TOLERANCE)
 
 
-# def test_prs_algos():
-#     algos = [
-#         'piteration', 'diteration', 'lanczos',
-#         'bicgstab', 'RH',
-#     ]
-#     A = np.array([
-#         [0, 0, 1, 0, 0, ],
-#         [1, 0, 0, 0, 0, ],
-#         [0, 1, 0, 0, 0, ],
-#         [0, 0, 0, 0, 1, ],
-#         [0, 0, 0, 1, 0, ],
-#     ])
-#     expected = np.ones(5) * .2
-#     for algo in algos:
-#         result = prs(A, solver=algo)
-#         assert np.allclose(result, expected, atol=TOLERANCE)
+def test_complex():
+    A = np.array(
+        [
+            [
+                000,
+                1 / 5,
+                1 / 5,
+                1 / 5,
+                1 / 5,
+                000,
+                1 / 5,
+            ],
+            [
+                1 / 1,
+                000,
+                000,
+                000,
+                000,
+                000,
+                000,
+            ],
+            [
+                1 / 2,
+                1 / 2,
+                000,
+                000,
+                000,
+                000,
+                000,
+            ],
+            [
+                000,
+                1 / 3,
+                1 / 3,
+                000,
+                1 / 3,
+                000,
+                000,
+            ],
+            [
+                1 / 4,
+                000,
+                1 / 4,
+                1 / 4,
+                000,
+                1 / 4,
+                000,
+            ],
+            [
+                1 / 2,
+                000,
+                000,
+                000,
+                1 / 2,
+                000,
+                000,
+            ],
+            [
+                000,
+                000,
+                000,
+                000,
+                1 / 1,
+                000,
+                000,
+            ],
+        ]
+    )
+    expected = [0.280, 0.159, 0.139, 0.108, 0.184, 0.061, 0.069]
+    result = pr.run_PR_nx(A)
+    assert np.allclose(result, expected, atol=TOLERANCE)
