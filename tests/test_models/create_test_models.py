@@ -67,9 +67,6 @@ cobra.io.save_json_model(mini, 'mini_redox.json')
 
 # # Mini complex GPR
 
-for r in mini.reactions:
-    print(f'{r.id}: {r.build_reaction_string()}\t{r.gene_reaction_rule}')
-
 g1 = cobra.Gene(id='G1')
 g2 = cobra.Gene(id='G2')
 g3 = cobra.Gene(id='G3')
