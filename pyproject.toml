@@ -1,9 +1,9 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "PRankMe"
+name = "prankme"
 version = "0.6.0"
 
 description = "Toolbox for finding reporter metabolites in genome-scale metabolic models using omics data"
@@ -28,6 +28,9 @@ dev = [
   "flake8==6.0.0",
   "black==23.7.0"
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [project.scripts]
 prankme = "prankme.cli:main"

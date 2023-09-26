@@ -1,4 +1,4 @@
-import pyreporter.utils as utils
+from . import utils
 import numpy as np
 from typing import List
 import abc
