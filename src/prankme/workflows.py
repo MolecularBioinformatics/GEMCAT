@@ -5,6 +5,7 @@ import pandas as pd
 import cobra
 from . import AdjacencyTransformation as at
 from . import PageRank as pr
+from . import Expression as ex
 from . import io
 
 
@@ -34,9 +35,9 @@ def workflow_single(
     if ranking is None:
         ranking = pr.PageRankNX()
     model.ranking = ranking
-    gpr = pr.Expression.read_simple_gpr_from_cobra(cobra_model)
-    ex = pr.Expression.ExpressionMapSingleAverage(mapped_genes, gpr)
-    model.load_expression(ex)
+    gpr = ex.read_simple_gpr_from_cobra(cobra_model)
+    expression = ex.ExpressionMapSingleAverage(mapped_genes, gpr)
+    model.load_expression(expression)
     results = model.calculate()
     return results
 
@@ -71,12 +72,12 @@ def workflow_ratio(
     if ranking is None:
         ranking = pr.PageRankNX()
     model.ranking = ranking
-    gpr = pr.Expression.read_simple_gpr_from_cobra(cobra_model)
-    ex = pr.Expression.ExpressionMapSingleAverage(mapped_genes_comparison, gpr)
-    ex_baseline = pr.Expression.ExpressionMapSingleAverage(mapped_genes_baseline, gpr)
-    model.load_expression(ex)
+    gpr = ex.read_simple_gpr_from_cobra(cobra_model)
+    expression = ex.ExpressionMapSingleAverage(mapped_genes_comparison, gpr)
+    expression_baseline = ex.ExpressionMapSingleAverage(mapped_genes_baseline, gpr)
+    model.load_expression(expression)
     results = model.calculate()
-    model.load_expression(ex_baseline)
+    model.load_expression(expression_baseline)
     results_baseline = model.calculate()
     results = results / results_baseline
 
@@ -109,20 +110,20 @@ def workflow_Fang2012(
     :rtype: pd.Series
     """
     model = io.convert_cobra_model(cobra_model)
-    gpr, rxn_gene_mapping = pr.Expression.read_gpr_strings_from_cobra(cobra_model)
+    gpr, rxn_gene_mapping = ex.read_gpr_strings_from_cobra(cobra_model)
     if adjacency is None:
         adjacency = at.ATPureAdjacency()
     model.AT = adjacency
     if ranking is None:
         ranking = pr.PageRankNX()
     model.ranking = ranking
-    ex_baseline = pr.Expression.ExpressionFang2012(
+    ex_baseline = ex.ExpressionFang2012(
         gpr=gpr,
         reaction_gene_mapping=rxn_gene_mapping,
         data=mapped_genes_baseline,
         gene_fill=gene_fill,
     )
-    ex_comparison = pr.Expression.ExpressionFang2012(
+    ex_comparison = ex.ExpressionFang2012(
         gpr=gpr,
         reaction_gene_mapping=rxn_gene_mapping,
         data=mapped_genes_comparison,

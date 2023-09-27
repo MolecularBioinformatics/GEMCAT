@@ -1,4 +1,4 @@
-import pyreporter as pr
+import prankme as pr
 import pandas as pd
 import numpy as np
 import pytest

@@ -1,4 +1,4 @@
-import pyreporter as pr
+from prankme import cli
 from typing import Optional
 from dataclasses import dataclass
 from pandas import Series
@@ -32,7 +32,7 @@ args_minimal = MockNamespace(
 
 
 def test_cli_workflow():
-    result, outfile = pr.cli.cli_fang2012(args_minimal)
+    result, outfile = cli.cli_fang2012(args_minimal)
     print(result)
     assert isinstance(result, Series)
     assert outfile.stem == "temp_outfile"

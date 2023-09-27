@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-import pyreporter.AdjacencyTransformation as at
+from prankme import AdjacencyTransformation as at
 from random import randint
 from fixtures import *
 
