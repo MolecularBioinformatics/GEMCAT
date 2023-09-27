@@ -1,4 +1,4 @@
-import pyreporter.verification as ver
+import prankme.verification as ver
 import pandas as pd
 from fixtures import *
 import pytest

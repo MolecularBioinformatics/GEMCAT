@@ -1,5 +1,5 @@
 import pytest
-from pyreporter import utils
+from prankme import utils
 import numpy as np
 import cobra
 import pandas as pd

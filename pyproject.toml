@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pyreporter"
-version = "0.5.0"
+name = "prankme"
+version = "0.7.0"
 
 description = "Toolbox for finding reporter metabolites in genome-scale metabolic models using omics data"
 keywords = ["python", "bioinformatics","modeling", "metabolites", "omics"]
@@ -24,10 +24,13 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  'pytest==7.4.0',
+  "pytest==7.4.0",
   "flake8==6.0.0",
   "black==23.7.0"
 ]
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [project.scripts]
-pyreporter = "pyreporter.cli:main"
+prankme = "prankme.cli:main"
