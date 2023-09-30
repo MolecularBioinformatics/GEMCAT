@@ -1,4 +1,4 @@
-from pyreporter.Model import Model
+from prankme.Model import Model
 import numpy as np
 import pytest
 from fixtures import *

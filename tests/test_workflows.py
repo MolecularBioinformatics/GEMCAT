@@ -1,4 +1,4 @@
-from pyreporter import workflows as wf
+from prankme import workflows as wf
 from fixtures import *
 import pandas as pd
 import numpy as np

@@ -1,5 +1,5 @@
 import pytest
-import pyreporter as pr
+import prankme as pr
 from pathlib import Path
 from pandas import Series
 import numpy as np

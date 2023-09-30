@@ -1,11 +1,11 @@
 from warnings import warn
 from typing import List, Optional
 import numpy as np
-import pyreporter.PageRank as PR
-import pyreporter.AdjacencyTransformation as AT
-import pyreporter.utils as utils
+from . import PageRank as PR
+from . import AdjacencyTransformation as AT
+from . import utils as utils
 import pandas as pd
-import pyreporter.Expression as EX
+from . import Expression as EX
 import networkx as nx
 
 

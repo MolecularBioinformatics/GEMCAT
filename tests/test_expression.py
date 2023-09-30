@@ -1,4 +1,4 @@
-import pyreporter.Expression as ex
+from prankme import Expression as ex
 import pandas as pd
 import numpy as np
 from fixtures import *

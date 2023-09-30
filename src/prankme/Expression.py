@@ -4,7 +4,7 @@ import numpy as np
 from typing import Tuple, List, Dict
 import abc
 import re
-from pyreporter import utils, verification
+from . import utils, verification
 
 
 def read_simple_gpr_from_cobra(

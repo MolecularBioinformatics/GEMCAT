@@ -1,8 +1,8 @@
 import cobra
 from pathlib import Path
 from typing import Union
-from pyreporter import utils
-from pyreporter.Model import Model
+from . import utils
+from .Model import Model
 import pandas as pd
 import pickle
 

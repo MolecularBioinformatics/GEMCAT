@@ -5,11 +5,11 @@ from pandas import Series, DataFrame, read_csv
 from typing import Optional
 from warnings import warn
 
-from pyreporter.workflows import workflow_Fang2012
-from pyreporter.AdjacencyTransformation import AdjacencyTransformation, ATPureAdjacency
-from pyreporter.io import load_sbml_cobra, convert_cobra_model
-from pyreporter.Model import Model
-from pyreporter.PageRank import PageRankNX, Ranking
+from .workflows import workflow_Fang2012
+from .AdjacencyTransformation import AdjacencyTransformation, ATPureAdjacency
+from .io import load_sbml_cobra, convert_cobra_model
+from .Model import Model
+from .PageRank import PageRankNX, Ranking
 
 
 ADJACENCIES = {

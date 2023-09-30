@@ -3,7 +3,7 @@ from pathlib import Path
 import cobra
 import numpy as np
 import pytest
-from pyreporter import io
+from prankme import io
 
 from fixtures import *
 
