@@ -1,7 +1,8 @@
-import prankme.verification as ver
 import pandas as pd
-from fixtures import *
 import pytest
+from fixtures import *
+
+import prankme.verification as ver
 
 
 def test_correct_df_index_str():

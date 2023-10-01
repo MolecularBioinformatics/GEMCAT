@@ -1,11 +1,13 @@
-import cobra
-import pandas as pd
-import numpy as np
-from typing import Tuple, List, Dict
 import abc
-import re
-from . import utils, verification
 import logging
+import re
+from typing import Dict, List, Tuple
+
+import cobra
+import numpy as np
+import pandas as pd
+
+from . import utils, verification
 
 
 def read_simple_gpr_from_cobra(

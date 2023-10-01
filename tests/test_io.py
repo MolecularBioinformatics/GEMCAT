@@ -3,9 +3,9 @@ from pathlib import Path
 import cobra
 import numpy as np
 import pytest
-from prankme import io
-
 from fixtures import *
+
+from prankme import io
 
 
 def test_convert_cobra_model(models, S_models):

@@ -1,8 +1,10 @@
-from prankme import cli
-from typing import Optional
 from dataclasses import dataclass
-from pandas import Series
+from typing import Optional
+
 from numpy import isclose
+from pandas import Series
+
+from prankme import cli
 
 
 @dataclass

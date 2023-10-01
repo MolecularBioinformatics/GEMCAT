@@ -1,11 +1,13 @@
 #!/usr/bin/python
 
 from typing import Optional
-import pandas as pd
+
 import cobra
+import pandas as pd
+
 from . import AdjacencyTransformation as at
-from . import PageRank as pr
 from . import Expression as ex
+from . import PageRank as pr
 from . import io
 
 

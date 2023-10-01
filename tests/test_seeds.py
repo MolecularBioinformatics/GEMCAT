@@ -1,8 +1,10 @@
-import pytest
-import prankme as pr
 from pathlib import Path
-from pandas import Series
+
 import numpy as np
+import pytest
+from pandas import Series
+
+import prankme as pr
 
 base_path = Path("./tests")
 model_path = base_path / "test_models"

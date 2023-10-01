@@ -1,9 +1,10 @@
 #!/usr/bin/python
-import networkx as nx
-import numpy as np
-from typing import Dict, Optional
 import abc
 import logging
+from typing import Dict, Optional
+
+import networkx as nx
+import numpy as np
 
 
 class Ranking(abc.ABC):

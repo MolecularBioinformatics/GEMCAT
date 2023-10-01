@@ -1,7 +1,9 @@
-from . import utils
-import numpy as np
-from typing import List
 import abc
+from typing import List
+
+import numpy as np
+
+from . import utils
 
 
 class AdjacencyTransformation(abc.ABC):

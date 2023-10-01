@@ -1,7 +1,8 @@
-from prankme.Model import Model
 import numpy as np
 import pytest
 from fixtures import *
+
+from prankme.Model import Model
 
 R_TOLERANCE = 10**-2  # why is the accuracy lower here than in test_pagerank?
 
