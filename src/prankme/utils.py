@@ -1,13 +1,13 @@
 #!/usr/bin/python
 
 import logging
-import numpy as np
-import pandas as pd
-import cobra
 import math
 from functools import reduce
+from typing import Iterable, List, Tuple, Union
 
-from typing import Iterable, Tuple, List, Union
+import cobra
+import numpy as np
+import pandas as pd
 
 
 def _get_ids(

@@ -1,12 +1,14 @@
-from typing import List, Optional
-import numpy as np
-from . import PageRank as PR
-from . import AdjacencyTransformation as AT
-from . import utils as utils
-import pandas as pd
-from . import Expression as EX
-import networkx as nx
 import logging
+from typing import List, Optional
+
+import networkx as nx
+import numpy as np
+import pandas as pd
+
+from . import AdjacencyTransformation as AT
+from . import Expression as EX
+from . import PageRank as PR
+from . import utils as utils
 
 
 class Model:

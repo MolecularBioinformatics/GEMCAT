@@ -1,6 +1,7 @@
 import logging
-import pandas as pd
 from typing import Union
+
+import pandas as pd
 
 
 def raise_for_duplicated_index(df: Union[pd.Series, pd.DataFrame]):

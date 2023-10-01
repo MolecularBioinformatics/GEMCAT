@@ -1,7 +1,8 @@
-from prankme import Expression as ex
-import pandas as pd
 import numpy as np
+import pandas as pd
 from fixtures import *
+
+from prankme import Expression as ex
 
 R_TOLERANCE = 10**-5
 gpr_mini = {

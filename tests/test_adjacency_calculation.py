@@ -1,8 +1,10 @@
-import pytest
-import numpy as np
-from prankme import AdjacencyTransformation as at
 from random import randint
+
+import numpy as np
+import pytest
 from fixtures import *
+
+from prankme import AdjacencyTransformation as at
 
 R_TOLERANCE = 10**-5
 

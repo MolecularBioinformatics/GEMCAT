@@ -1,7 +1,8 @@
-from prankme import workflows as wf
-from fixtures import *
-import pandas as pd
 import numpy as np
+import pandas as pd
+from fixtures import *
+
+from prankme import workflows as wf
 
 
 def test_workflow_single(models):

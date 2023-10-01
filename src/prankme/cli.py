@@ -1,16 +1,16 @@
 import argparse
-import cobra
-from pathlib import Path
-from pandas import Series, DataFrame, read_csv
-from typing import Optional
 import logging
+from pathlib import Path
+from typing import Optional
 
-from .workflows import workflow_Fang2012
+import cobra
+from pandas import DataFrame, Series, read_csv
+
 from .AdjacencyTransformation import AdjacencyTransformation, ATPureAdjacency
-from .io import load_sbml_cobra, convert_cobra_model
+from .io import convert_cobra_model, load_sbml_cobra
 from .Model import Model
 from .PageRank import PageRankNX, Ranking
-
+from .workflows import workflow_Fang2012
 
 ADJACENCIES = {
     "pure": ATPureAdjacency,

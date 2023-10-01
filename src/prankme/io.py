@@ -1,11 +1,13 @@
-import cobra
+import logging
+import pickle
 from pathlib import Path
 from typing import Union
+
+import cobra
+import pandas as pd
+
 from . import utils
 from .Model import Model
-import pandas as pd
-import pickle
-import logging
 
 
 def convert_cobra_model(cobra_model: cobra.Model) -> Model:

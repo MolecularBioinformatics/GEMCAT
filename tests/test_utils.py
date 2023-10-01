@@ -1,9 +1,11 @@
-import pytest
-from prankme import utils
-import numpy as np
-import cobra
-import pandas as pd
 from pathlib import Path
+
+import cobra
+import numpy as np
+import pandas as pd
+import pytest
+
+from prankme import utils
 
 R_TOLERANCE = 10**-5
 A_TOLERANCE = 10**-3

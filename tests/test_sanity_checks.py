@@ -1,8 +1,9 @@
-import prankme as pr
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
 from fixtures import *
+
+import prankme as pr
 
 
 def test_sanity_double_all(models):

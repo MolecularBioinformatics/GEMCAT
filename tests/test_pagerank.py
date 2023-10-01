@@ -1,6 +1,7 @@
-import pytest
-import prankme.PageRank as pr
 import numpy as np
+import pytest
+
+import prankme.PageRank as pr
 
 TOLERANCE = 10**-3
 
