@@ -5,6 +5,7 @@ from typing import Tuple, List, Dict
 import abc
 import re
 from . import utils, verification
+import logging
 
 
 def read_simple_gpr_from_cobra(
@@ -177,7 +178,7 @@ class ExpressionFang2012(Expression):
         try:
             result = eval(gpr)
         except SyntaxError:
-            print(f"Failed: {gpr}")
+            logging.debug(f"Failed: {gpr}")
             result = np.nan
         return result
 
@@ -226,7 +227,9 @@ class ExpressionMapSingleAverage(Expression):
         :raises ValueError: Raised if no GPR is set on the object
         """
         if not self.gpr:
-            raise ValueError("GPR not yet set")
+            err = "Attempting to map expression data while GPR has not yet been set."
+            logging.error(err)
+            raise ValueError(err)
         vals_dict = {}
         for reaction, genes in self.gpr.items():
             expression = []

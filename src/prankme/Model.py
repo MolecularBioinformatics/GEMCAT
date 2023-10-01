@@ -1,4 +1,3 @@
-from warnings import warn
 from typing import List, Optional
 import numpy as np
 from . import PageRank as PR
@@ -7,6 +6,7 @@ from . import utils as utils
 import pandas as pd
 from . import Expression as EX
 import networkx as nx
+import logging
 
 
 class Model:
@@ -101,7 +101,7 @@ class Model:
         if not isinstance(expression, EX.Expression):
             raise TypeError("Needs to be an Expression object")
         if self.expression:
-            warn("Previous expression data overwritten")
+            logging.debug("Previous expression data overwritten")
         self._A_is_current = False
         self.expression = expression
         self._update_expression_vector()
@@ -153,7 +153,9 @@ class Model:
                     self.expression_shape
                 )
             except:
-                raise ValueError("Current expression vector is wrong length")
+                err = "Current expression vector is wrong length"
+                logging.error(err)
+                raise ValueError(err)
 
     def _check_and_reload__A(self):
         """

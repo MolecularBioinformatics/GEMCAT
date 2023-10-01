@@ -3,7 +3,7 @@ import cobra
 from pathlib import Path
 from pandas import Series, DataFrame, read_csv
 from typing import Optional
-from warnings import warn
+import logging
 
 from .workflows import workflow_Fang2012
 from .AdjacencyTransformation import AdjacencyTransformation, ATPureAdjacency
@@ -39,22 +39,26 @@ MODELS = {
 def parse_cobra_model(model_path: str) -> cobra.Model:
     model_path = Path(model_path)
     if not model_path.exists():
-        raise FileNotFoundError("The model file cannot be found.")
+        error_str = f"The model file at {model_path} cannot be found."
+        logging.error(error_str)
+        raise FileNotFoundError(error_str)
     return cobra.io.read_sbml_model(model_path.as_posix())
 
 
 def read_expression(expression_file: str) -> DataFrame:
     file_path = Path(expression_file)
     if not file_path.exists():
-        raise FileNotFoundError(f"File {expression_file} could not be found")
+        error_str = f"File {expression_file} could not be found"
+        logging.error(error_str)
+        raise FileNotFoundError(error_str)
     if file_path.suffix == ".csv":
         content = read_csv(file_path, sep=",", index_col=0)
     elif file_path.suffix == ".tsv":
         content = read_csv(file_path, sep="\t", index_col=0)
     else:
-        raise ValueError(
-            f"Unknown file format {file_path.suffix} in file {expression_file}"
-        )
+        error_str = f"Unknown file format {file_path.suffix} in file {expression_file}"
+        logging.error(error_str)
+        raise ValueError(error_str)
     return content
 
 
@@ -65,9 +69,9 @@ def parse_expression(expression_file: str, col_name: Optional[str]) -> Series:
     else:
         content = content.loc[:, col_name]
     if not isinstance(content, Series):
-        raise ValueError(
-            "Expression file must be in the format of a pandas Series, mapping a gene column to a value column."
-        )
+        error_str = "Expression file must be in the format of a pandas Series, mapping a gene column to a value column."
+        logging.error(error_str)
+        raise ValueError(error_str)
     return content
 
 
@@ -77,9 +81,11 @@ def parse_adjacency(adjacency: Optional[str]) -> AdjacencyTransformation:
     try:
         return ADJACENCIES[adjacency]
     except KeyError:
-        raise ValueError(
+        error_str = (
             f"Adjacency model {adjacency} does not exist. Allowed models: {ALLOWED_ADJ}"
         )
+        logging.error(error_str)
+        raise ValueError(error_str)
 
 
 def parse_ranking(ranking: Optional[str]) -> Ranking:
@@ -88,9 +94,9 @@ def parse_ranking(ranking: Optional[str]) -> Ranking:
     try:
         return RANKINGS[ranking]
     except KeyError:
-        raise ValueError(
-            f"{ranking} is not a valid ranking method. Available methods are: {ALLOWED_RANKINGS}"
-        )
+        error_str = f"{ranking} is not a valid ranking method. Available methods are: {ALLOWED_RANKINGS}"
+        logging.error(error_str)
+        raise ValueError(error_str)
 
 
 def get_all_ones(expression: Series) -> Series:
@@ -102,9 +108,9 @@ def parse_outfile(outfile: Optional[str]) -> Path:
         outfile = "./results.csv"
     outfile = Path(outfile)
     if not outfile.suffix in [".csv", ".tsv"]:
-        warn(f"Cannot handle output format {outfile.suffix} .")
+        logging.warning(f"Cannot handle output format {outfile.suffix} .")
         outfile = outfile.with_suffix(".csv")
-        warn(f"Saving instead to {outfile} .")
+        logging.warning(f"Saving instead to {outfile} .")
     return outfile
 
 
@@ -124,6 +130,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("-g", "--genefill")
     parser.add_argument("-v", "--verbose")
     parser.add_argument("-o", "--outfile")
+    parser.add_argument("-l", "--logfile")
 
     return parser
 
@@ -131,7 +138,7 @@ def build_parser() -> argparse.ArgumentParser:
 def save_to_file(outfile: Path, results: Series) -> None:
     if outfile.exists():
         warn_str = f"Overwriting existing file at {outfile}."
-        warn(warn_str)
+        logging.debug(warn_str)
     if outfile.suffix == ".csv":
         results.to_csv(outfile)
     elif outfile.suffix == ".tsv":
@@ -176,5 +183,22 @@ def cli_fang2012(args: argparse.Namespace):
 def main():
     parser = build_parser()
     args = parser.parse_args()
+    verbosity = logging.DEBUG if args.verbose else logging.WARN
+    datefmt = "%Y-%m-%d %H:%M:%S"
+    fmt = "%(asctime)s %(levelname)s %(message)s"
+    if args.logfile:
+        logging.basicConfig(
+            format=fmt,
+            level=verbosity,
+            datefmt=datefmt,
+            filename=args.logfile,
+            encoding="utf-8",
+        )
+    else:
+        logging.basicConfig(
+            format=fmt,
+            level=verbosity,
+            datefmt=datefmt,
+        )
     results, outfile = cli_fang2012(args)
     save_to_file(outfile, results)

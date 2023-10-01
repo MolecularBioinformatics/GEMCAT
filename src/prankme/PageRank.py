@@ -3,6 +3,7 @@ import networkx as nx
 import numpy as np
 from typing import Dict, Optional
 import abc
+import logging
 
 
 class Ranking(abc.ABC):
@@ -71,7 +72,9 @@ def rename_unnamed_graph(G: nx.DiGraph, names: list[str]) -> nx.DiGraph:
     :rtype: nx.DiGraph
     """
     if not len(G.nodes) == len(names):
-        raise ValueError("Length of names does not match number of graph nodes")
+        err = "Length of names does not match number of graph nodes"
+        logging.error(err)
+        raise ValueError(err)
     default_names = range(len(names))
     name_mapping = dict(zip(default_names, names))
     return nx.relabel_nodes(

@@ -5,6 +5,7 @@ from . import utils
 from .Model import Model
 import pandas as pd
 import pickle
+import logging
 
 
 def convert_cobra_model(cobra_model: cobra.Model) -> Model:
@@ -16,7 +17,10 @@ def convert_cobra_model(cobra_model: cobra.Model) -> Model:
     :rtype: Model
     """
     if not isinstance(cobra_model, cobra.Model):
-        raise TypeError("COBRApy Model object expected")
+        received = type(cobra_model)
+        err = f"Expected a COBRA Model but received {received}"
+        logging.error(err)
+        raise TypeError(err)
     S = utils._get_stoich_matrix(cobra_model)
     rev = utils._get_reversibilities(cobra_model)
     metabolites = utils._get_metabolite_ids(cobra_model)

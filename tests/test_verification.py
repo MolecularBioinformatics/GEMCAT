@@ -37,12 +37,16 @@ def test_duplicate_indeces_raise():
             "G3": 3.0,
         }
     )
-    testcase = testcase.append(
-        pd.Series(
-            {
-                "G2": 1.5,
-            }
-        )
+    testcase = pd.concat(
+        (
+            testcase,
+            pd.Series(
+                {
+                    "G2": 1.5,
+                }
+            ),
+        ),
+        axis=0,
     )
     with pytest.raises(ValueError):
         ver.raise_for_duplicated_index(testcase)

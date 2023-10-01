@@ -1,4 +1,4 @@
-from warnings import warn
+import logging
 import pandas as pd
 from typing import Union
 
@@ -6,7 +6,9 @@ from typing import Union
 def raise_for_duplicated_index(df: Union[pd.Series, pd.DataFrame]):
     n_duplicates = df.index.duplicated(keep="first").sum()
     if n_duplicates > 0:
-        raise ValueError("Index currently has duplicates")
+        err = "Index currently has duplicates"
+        logging.error(err)
+        raise ValueError(err)
 
 
 def convert_df_index_to_str(
@@ -20,7 +22,7 @@ def convert_df_index_to_str(
     :rtype: Union[pd.Series, pd.DataFrame]
     """
     if not df.index.dtype == "O":
-        warn("Index of DataFrame is not str. Autoconverting to str.")
+        logging.warning("Index of DataFrame is not str. Autoconverting to str.")
         df.index = df.index.astype(str)
     return df
 
@@ -33,4 +35,6 @@ def raise_for_non_int_float_64_dtype(ser: pd.Series):
     :raises ValueError: ValueError raised if Series content isn't NumPy type float64 or int64.
     """
     if not ser.dtype == "float64" or ser.dtype == "int64":
-        raise ValueError("Series contains no numerical values")
+        err = "Series contains no numerical values"
+        logging.error(err)
+        raise ValueError(err)

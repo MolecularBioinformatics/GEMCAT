@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import logging
 import numpy as np
 import pandas as pd
 import cobra
@@ -102,7 +103,9 @@ def _make_unidirectional(
     """
     for r in reversibilities:
         if not isinstance(r, bool):
-            raise TypeError("Bool is expected for reversibility")
+            err = "Bool is expected for reversibility"
+            logging.error(err)
+            raise TypeError(err)
     S_rev = S[:, reversibilities]
     S_rev = -1.0 * S_rev
     return np.append(S, S_rev, axis=1)
@@ -214,7 +217,9 @@ def _l1_norm(vector: np.array) -> float:
     :rtype: float
     """
     if vector.size == 0:
-        raise ValueError("Array is empty")
+        err = "Cannot calculate the l1-norm of an empty vector"
+        logging.error(err)
+        raise ValueError(err)
     return np.sum(np.abs(vector))
 
 
@@ -253,9 +258,13 @@ def _get_reaction_ids(model: cobra.Model) -> List[str]:
     :rtype: List[str]
     """
     if not isinstance(model, cobra.Model):
-        raise TypeError("CobraPy model required as input")
+        err = "CobraPy model required to extract reaction IDs"
+        logging.error(err)
+        raise TypeError(err)
     if len(model.reactions) == 0:
-        raise ValueError("No reactions in the model")
+        err = "The COBRA model contains no reactions"
+        logging.error(err)
+        raise ValueError(err)
     r_ids = [r.id for r in model.reactions]
     return r_ids
 
@@ -269,9 +278,13 @@ def _get_metabolite_ids(model: cobra.Model) -> List[str]:
     :rtype: List[str]
     """
     if not isinstance(model, cobra.Model):
-        raise TypeError("CobraPy model required as input")
+        err = "CobraPy model required to extract metabolite IDs"
+        logging.error(err)
+        raise TypeError(err)
     if len(model.metabolites) == 0:
-        raise ValueError("No metabolites in the model")
+        err = "The COBRA model contains no metabolites"
+        logging.error(err)
+        raise ValueError(err)
     m_ids = [m.id for m in model.metabolites]
     return m_ids
 
@@ -308,7 +321,10 @@ def _is_np_array(arr):
     :raises TypeError: Raised if object type is not np.array
     """
     if not isinstance(arr, np.ndarray):
-        raise TypeError("NumPy array was expected")
+        received = type(arr)
+        err = f"Expected a NumPy array but received {received}"
+        logging.error(err)
+        raise TypeError(err)
 
 
 def _check_array_shape(arr, target):
@@ -318,10 +334,8 @@ def _check_array_shape(arr, target):
     :raises ValueError: Raised if shape of the two arrays doesn't match.
     """
     if not arr.shape == target.shape:
-        msg = f"""
-            Wrong array shape. Needs to be {target.shape}
-            but is {arr.shape}
-            """
+        msg = f"Array shape needs to be {target.shape} but is {arr.shape}"
+        logging.error(msg)
         raise ValueError(msg)
 
 
@@ -345,7 +359,9 @@ def geometric_mean(*numbers):
     """
     n = len(numbers)
     if n == 0:
-        raise ValueError("List of numbers is empty")
+        err = "Cannot calculate the geometric mean of an empty set of numbers"
+        logging.error(err)
+        raise ValueError(err)
     numbers = [float(i) for i in numbers]
     prod = multiply(numbers)
     return prod ** (1 / n)
