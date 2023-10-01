@@ -1,6 +1,5 @@
 import numpy as np
-import pytest
-from fixtures import *
+from fixtures import S_examples
 
 from prankme.Model import Model
 

@@ -7,7 +7,7 @@ import cobra
 from pandas import DataFrame, Series, read_csv
 
 from .AdjacencyTransformation import AdjacencyTransformation, ATPureAdjacency
-from .io import convert_cobra_model, load_sbml_cobra
+from .io import load_sbml_cobra
 from .Model import Model
 from .PageRank import PageRankNX, Ranking
 from .workflows import workflow_Fang2012

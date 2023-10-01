@@ -1,8 +1,7 @@
 from random import randint
 
 import numpy as np
-import pytest
-from fixtures import *
+from fixtures import A_examples, S_examples
 
 from prankme import AdjacencyTransformation as at
 

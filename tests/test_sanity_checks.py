@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
-import pytest
-from fixtures import *
+from fixtures import models
 
 import prankme as pr
 

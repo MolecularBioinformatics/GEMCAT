@@ -1,9 +1,7 @@
 #!/usr/bin/python
 
 import logging
-import math
-from functools import reduce
-from typing import Iterable, List, Tuple, Union
+from typing import List, Tuple, Union
 
 import cobra
 import numpy as np
@@ -204,7 +202,6 @@ def _get_subset_cols(s: np.array, indeces: List[int]) -> np.array:
     :return: Matrix with only given columns included.
     :rtype: np.array (m x |indeces|)
     """
-
     return s[:, indeces]
 
 
@@ -265,8 +262,7 @@ def _get_reaction_ids(model: cobra.Model) -> List[str]:
         err = "The COBRA model contains no reactions"
         logging.error(err)
         raise ValueError(err)
-    r_ids = [r.id for r in model.reactions]
-    return r_ids
+    return [r.id for r in model.reactions]
 
 
 def _get_metabolite_ids(model: cobra.Model) -> List[str]:
@@ -285,8 +281,7 @@ def _get_metabolite_ids(model: cobra.Model) -> List[str]:
         err = "The COBRA model contains no metabolites"
         logging.error(err)
         raise ValueError(err)
-    m_ids = [m.id for m in model.metabolites]
-    return m_ids
+    return [m.id for m in model.metabolites]
 
 
 def _make_row_vector(arr: np.array) -> np.array:

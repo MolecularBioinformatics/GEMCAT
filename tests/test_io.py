@@ -1,9 +1,7 @@
 from pathlib import Path
 
-import cobra
 import numpy as np
-import pytest
-from fixtures import *
+from fixtures import S_models, model_files_json, model_files_sbml, models
 
 from prankme import io
 

@@ -1,6 +1,5 @@
-import numpy as np
 import pandas as pd
-from fixtures import *
+from fixtures import models
 
 from prankme import workflows as wf
 
