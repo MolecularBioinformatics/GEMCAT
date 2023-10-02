@@ -9,15 +9,16 @@ from prankme import cli
 
 @dataclass
 class MockNamespace:
-    expressionfile: Optional[str] = None
+    expressionfile: str
+    modelfile: str
     expressioncolumn: Optional[str] = None
     baseline: Optional[str] = None
     baselinecolumn: Optional[str] = None
     genefill: Optional[str] = None
-    modelfile: Optional[str] = None
     ranking: Optional[str] = None
     adjacency: Optional[str] = None
     outfile: Optional[str] = None
+    integration: Optional[str] = None
 
 
 args_minimal = MockNamespace(
@@ -30,11 +31,12 @@ args_minimal = MockNamespace(
     ranking=None,
     adjacency=None,
     outfile="./temp_outfile.csv",
+    integration="means",
 )
 
 
 def test_cli_workflow():
-    result, outfile = cli.cli_fang2012(args_minimal)
+    result, outfile = cli.cli_standard(args_minimal)
     print(result)
     assert isinstance(result, Series)
     assert outfile.stem == "temp_outfile"
