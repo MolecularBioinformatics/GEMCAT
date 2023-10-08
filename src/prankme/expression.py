@@ -10,8 +10,11 @@ from typing import Optional, Tuple
 import cobra
 import numpy as np
 import pandas as pd
+from sympy.parsing.sympy_parser import parse_expr
 
 from . import utils, verification
+
+geomean = utils.geometric_mean
 
 
 def read_simple_gpr_from_cobra(
@@ -195,7 +198,7 @@ class GeometricAndAverageMeans(ExpressionIntegration):
             gids = hit.split("and")
             gids = [x.strip() for x in gids]
             gids = ", ".join(gids)
-            new = f"utils.geometric_mean({gids})"
+            new = f"geomean({gids})"
             gpr = gpr.replace("(" + hit + ")", "(" + new + ")")
 
         return gpr
@@ -216,12 +219,12 @@ class GeometricAndAverageMeans(ExpressionIntegration):
         """
         if len(gpr) == 0:
             return np.nan
+        result = parse_expr(gpr, {"geomean": geomean})
         try:
-            result = eval(gpr)
-        except SyntaxError:
+            return float(result)
+        except TypeError:
             logging.debug("Failed: %s", gpr)
-            result = np.nan
-        return result
+            return np.nan
 
 
 class ExpressionMapSingleAverage(ExpressionIntegration):
