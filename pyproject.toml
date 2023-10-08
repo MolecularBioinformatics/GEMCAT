@@ -37,10 +37,10 @@ where = ["src"]
 [project.scripts]
 prankme = "prankme.cli:main"
 
-[tool.ruff]
-# Enable the  (`E`) and  (`F`) rules by default.
-# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+[tool.isort]
+profile = "black"
 
+[tool.ruff]
 select = [
   "E", # pycodestyle
   "F",  # Pyflakes
@@ -49,11 +49,9 @@ select = [
   "C901", # McCabe complexity
 ]
 ignore = []
-
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
 unfixable = []
-
 # Exclude a variety of commonly ignored directories. (default)
 exclude = [
     ".bzr",
@@ -79,12 +77,8 @@ exclude = [
     "venv",
 ]
 per-file-ignores = {}
-
 # Same as Black.
 line-length = 88
-
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-# Assume Python 3.8
 target-version = "py311"
