@@ -130,9 +130,11 @@ class GeometricAndAverageMeans(ExpressionIntegration):
         This adheres to the algorithm laid out by Fang et al. 2012.
         :param gpr: Gene product rule for each reaction, dict[Reaction: GPRstring]
         :type gpr: dict[str, str]
-        :param reaction_gene_mapping: Mapping which genes participate in which reactions, dict[reaction: list[geneString]]
+        :param reaction_gene_mapping: Mapping which genes participate 
+        in which reactions, dict[reaction: list[geneString]]
         :type reaction_gene_mapping: dict[str, list[str]]
-        :param data: Omics data mapped to genes, pd.Series[geneString: value]
+        :param data: Omics data mapped to genes, 
+        pd.Series[geneString: value]
         :type data: pd.Series
         :param gene_fill: value to fill in for genes missing in the data set
         :type gene_fill: float
@@ -179,10 +181,9 @@ class GeometricAndAverageMeans(ExpressionIntegration):
             return ""
 
         for gene in genes:
-            if isinstance(gene, float):
-                gene = str(gene)
-            gene_val = float(self.data.get(gene, self.gene_fill))
-            gpr = gpr.replace(gene, f"{gene_val}")
+            gene_str = str(gene)
+            gene_val = float(self.data.get(gene_str, self.gene_fill))
+            gpr = gpr.replace(gene_str, f"{gene_val}")
 
         gpr = gpr.replace("or", "+")
         re_float = "\d*\.\d*"

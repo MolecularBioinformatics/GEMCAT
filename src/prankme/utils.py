@@ -28,7 +28,8 @@ def _get_ids(
 
 def _get_n_reactions(stoich_matrix: np.array) -> np.array:
     """
-    Returns number of reactions involving each metabolite. (number of non-zero entries in a matrix)
+    Returns number of reactions involving each metabolite.
+    (number of non-zero entries in a matrix)
     :param stoich_matrix: Stoichiometric matrix (m x r)
     :type stoich_matrix: np.array
     :return: Vector of row-wise sums (total stoichiometries) (m x 1)
@@ -59,8 +60,9 @@ def split_matrix_pos_neg(matrix: np.array) -> Tuple[np.array, np.array]:
     :return: Tuple of (postive array, negative array)
     :rtype: Tuple[np.array, np.array]
     """
-    positive_part = matrix * (matrix > 0.001)
-    negative_part = matrix * (matrix < 0.001)
+    epsilon = 0.001
+    positive_part = matrix * (matrix > epsilon)
+    negative_part = matrix * (matrix < epsilon)
     return positive_part, negative_part
 
 

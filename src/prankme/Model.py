@@ -46,7 +46,8 @@ class Model:
     ):
         """
         Create a model object
-        :param stoichiometric_matrix: stoichiometric matrix, including reversible reactions
+        :param stoichiometric_matrix: stoichiometric matrix, 
+        including reversible reactions
         :type stoichiometric_matrix: np.array [m x r]
         :param metabolite_names: List of metabolite names in order
         :type metabolite_names: list[str]
@@ -186,7 +187,8 @@ class Model:
     def get_subnetworks(self):
         """
         Returns subnetworks (weakly connected) in the current A.
-        :return: List of weakly connected subnetworks (names of metabolites in the subnet)
+        :return: List of weakly connected subnetworks
+        (names of metabolites in the subnet)
         :rtype: list[list[str]]
         """
         self._check_and_reload_adjacencies()

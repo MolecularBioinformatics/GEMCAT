@@ -43,10 +43,12 @@ def convert_index_to_str(
 
 def raise_for_non_int_float_64_dtype(series: pd.Series):
     """
-    Checks a Series' content for whether it is numeric. If it isn't numeric raises a ValueError
+    Checks a Series' content for whether it is numeric.
+    If it isn't numeric raises a ValueError
     :param series: Series to check
     :type series: pd.Series
-    :raises ValueError: ValueError raised if Series content isn't NumPy type float64 or int64.
+    :raises ValueError: ValueError raised if Series content
+    isn't NumPy type float64 or int64.
     """
     if not series.dtype == "float64" or series.dtype == "int64":
         err = "Series contains no numerical values"

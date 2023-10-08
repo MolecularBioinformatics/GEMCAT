@@ -61,9 +61,9 @@ class PagerankNX(Ranking):
         :type seeds: List[float]
         :param names: Metabolite names for the metabolites in the graph
         :type names: List[str]
-        :param graph_args: Dictionary of arguments passed to networkx DiGraph, defaults to None
+        :param graph_args: Dictionary of arguments passed to networkx DiGraph
         :type graph_args: Optional[dict]
-        :param pr_args: Dictionary of arguments passed to networkx Pagerank, defaults to None
+        :param pr_args: Dictionary of arguments passed to networkx Pagerank
         :type pr_args: Optional[dict]
         :return: NumPy array of Pagerank scores
         :rtype: 1-D np.array (m x 1)
