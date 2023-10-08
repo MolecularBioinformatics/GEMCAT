@@ -1,10 +1,9 @@
 import numpy as np
-import pytest
-from fixtures import *
+from fixtures import S_examples
 
-from prankme.Model import Model
+from prankme.model import Model
 
-R_TOLERANCE = 10**-2  # why is the accuracy lower here than in test_pagerank?
+R_TOLERANCE = 10**-2  # why is the accuracy lower here than in test_Pagerank?
 
 
 def test_basic_linear_model():

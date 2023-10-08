@@ -1,6 +1,5 @@
 import pandas as pd
 import pytest
-from fixtures import *
 
 import prankme.verification as ver
 
@@ -8,7 +7,7 @@ import prankme.verification as ver
 def test_correct_df_index_str():
     testcase = pd.Series({1: 1})
     expected = pd.Series({"1": 1})
-    result = ver.convert_df_index_to_str(testcase)
+    result = ver.convert_index_to_str(testcase)
     assert (result == expected).all()
 
 

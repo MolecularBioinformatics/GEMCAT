@@ -30,7 +30,7 @@ def test_wrong_seed_load():
         model.load_metabolite_seeds(seeds)
 
 
-# found here: https://www.briggsby.com/personalized-pagerank
+# found here: https://www.briggsby.com/personalized-Pagerank
 def test_seed_integration():
     expected = Series(
         {
@@ -52,7 +52,7 @@ def test_seed_integration():
         "R6": ["G4"],
         "R7": ["G5"],
     }
-    ex = pr.Expression.ExpressionMapSingleAverage(gene_lvls, gpr)
+    ex = pr.expression.ExpressionMapSingleAverage(gene_lvls, gpr)
     model.load_expression(ex)
     model.load_metabolite_seeds(seeds)
     results = model.calculate()
@@ -80,7 +80,7 @@ def test_no_seed():
         "R6": ["G4"],
         "R7": ["G5"],
     }
-    ex = pr.Expression.ExpressionMapSingleAverage(gene_lvls, gpr)
+    ex = pr.expression.ExpressionMapSingleAverage(gene_lvls, gpr)
     model.load_expression(ex)
     results = model.calculate()
     assert model.seeds is None

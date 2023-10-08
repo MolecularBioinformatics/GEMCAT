@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
-from fixtures import *
+from fixtures import models
 
-from prankme import Expression as ex
+from prankme import expression as ex
 
 R_TOLERANCE = 10**-5
 gpr_mini = {
@@ -33,7 +33,7 @@ def test_ExpressionMapSingleAverage(models):
 
 def test_ExpressionMapFang2012_simple(models):
     gpr, gene_dict = ex.read_gpr_strings_from_cobra(models["mini_complex_gpr"])
-    exp = ex.ExpressionFang2012(
+    exp = ex.GeometricAndAverageMeans(
         gpr=gpr,
         reaction_gene_mapping=gene_dict,
         data=genes_mini_complex,
@@ -44,7 +44,7 @@ def test_ExpressionMapFang2012_simple(models):
 
 def test_ExpressionMapFang2012_complex(models):
     gpr, gene_dict = ex.read_gpr_strings_from_cobra(models["mini_complex_gpr"])
-    exp = ex.ExpressionFang2012(
+    exp = ex.GeometricAndAverageMeans(
         gpr=gpr,
         reaction_gene_mapping=gene_dict,
         data=genes_mini_complex,
@@ -55,7 +55,7 @@ def test_ExpressionMapFang2012_complex(models):
 
 def test_ExpressionMapFang2012_gids(models):
     gpr, gene_dict = ex.read_gpr_strings_from_cobra(models["mini_complex_gpr_gids"])
-    exp = ex.ExpressionFang2012(
+    exp = ex.GeometricAndAverageMeans(
         gpr,
         gene_dict,
         gids_mini_complex,

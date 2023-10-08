@@ -26,8 +26,8 @@ results = workflow_Fang2012(
     cobra_model: cobra.Model,
     mapped_genes_baseline: pd.Series,
     mapped_genes_comparison: pd.Series,
-    adjacency = pr.AdjacencyTransformation.ATPureAdjacency,
-    ranking = pr.PageRank.PageRankNX,
+    adjacency = pr.adjacency_transformation.ATPureAdjacency,
+    ranking = pr.ranking.PagerankNX,
     gene_fill = 0.,
     )
 ```
@@ -46,7 +46,7 @@ We offer alternatives and a platform to create custom algorithms for the model.
 ### Expression
 Module covering the mapping of gene values onto reactions in the model via gene product rules.
 Providing different algorithms along with a platform to create alternatives.
-### PageRank
+### Pagerank
 Module providing ranking algorithms for the models along with a platform to include custom algorithms.
 ### workflows
 The workflow module contains example workflows.

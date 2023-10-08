@@ -1,10 +1,9 @@
 from random import randint
 
 import numpy as np
-import pytest
-from fixtures import *
+from fixtures import A_examples, S_examples
 
-from prankme import AdjacencyTransformation as at
+from prankme import adjacency_transformation as at
 
 R_TOLERANCE = 10**-5
 
@@ -25,21 +24,21 @@ expression_complex = np.ones((1, 18))
 
 
 def test_AT_linear_ATHalf(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["linear"], reversibilities_linear, expression_linear, at.ATHalfStoich
     )
     assert np.allclose(result, A_examples["linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_linear_ATFull(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["linear"], reversibilities_linear, expression_linear, at.ATFullStoich
     )
     assert np.allclose(result, A_examples["linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_linear_ATPureAdj(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["linear"],
         reversibilities_linear,
         expression_linear,
@@ -49,7 +48,7 @@ def test_AT_linear_ATPureAdj(S_examples, A_examples):
 
 
 def test_AT_circular_ATHalf(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["circular"],
         reversibilities_circular,
         expression_circular,
@@ -59,7 +58,7 @@ def test_AT_circular_ATHalf(S_examples, A_examples):
 
 
 def test_AT_circular_ATFull(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["circular"],
         reversibilities_circular,
         expression_circular,
@@ -69,7 +68,7 @@ def test_AT_circular_ATFull(S_examples, A_examples):
 
 
 def test_AT_circular_ATPureAdj(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["circular"],
         reversibilities_circular,
         expression_circular,
@@ -79,7 +78,7 @@ def test_AT_circular_ATPureAdj(S_examples, A_examples):
 
 
 def test_AT_bidir_linear_ATHalf(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["bidir_linear"],
         reversibilities_bidir_linear,
         expression_bidir_linear,
@@ -89,7 +88,7 @@ def test_AT_bidir_linear_ATHalf(S_examples, A_examples):
 
 
 def test_AT_bidir_linear_ATFull(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["bidir_linear"],
         reversibilities_bidir_linear,
         expression_bidir_linear,
@@ -99,7 +98,7 @@ def test_AT_bidir_linear_ATFull(S_examples, A_examples):
 
 
 def test_AT_bidir_linear_ATPureAdj(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["bidir_linear"],
         reversibilities_bidir_linear,
         expression_bidir_linear,
@@ -109,7 +108,7 @@ def test_AT_bidir_linear_ATPureAdj(S_examples, A_examples):
 
 
 def test_AT_complex_ATHalf(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["complex"],
         reversibilities_complex,
         expression_complex,
@@ -119,7 +118,7 @@ def test_AT_complex_ATHalf(S_examples, A_examples):
 
 
 def test_AT_complex_ATFull(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["complex"],
         reversibilities_complex,
         expression_complex,
@@ -129,7 +128,7 @@ def test_AT_complex_ATFull(S_examples, A_examples):
 
 
 def test_AT_complex_ATPureAdj(S_examples, A_examples):
-    result = at.run_AT_normalize(
+    result = at.run_adjacencies_normalize(
         S_examples["complex"],
         reversibilities_complex,
         expression_complex,
@@ -141,7 +140,7 @@ def test_AT_complex_ATPureAdj(S_examples, A_examples):
 def test_A_rows_zero_or_one_ATHalf():
     rand_vals = [randint(-5, 5) for i in range(100)]
     S = np.array(rand_vals).reshape(10, 10)
-    A = at.run_AT_normalize(
+    A = at.run_adjacencies_normalize(
         S,
         reversibilities_rand_model,
         expression_rand_model,
@@ -157,7 +156,7 @@ def test_A_rows_zero_or_one_ATHalf():
 def test_A_rows_zero_or_one_ATFull():
     rand_vals = [randint(-5, 5) for i in range(100)]
     S = np.array(rand_vals).reshape(10, 10)
-    A = at.run_AT_normalize(
+    A = at.run_adjacencies_normalize(
         S,
         reversibilities_rand_model,
         expression_rand_model,
@@ -173,7 +172,7 @@ def test_A_rows_zero_or_one_ATFull():
 def test_A_rows_zero_or_one():
     rand_vals = [randint(-5, 5) for i in range(100)]
     S = np.array(rand_vals).reshape(10, 10)
-    A = at.run_AT_normalize(
+    A = at.run_adjacencies_normalize(
         S,
         reversibilities_rand_model,
         expression_rand_model,
