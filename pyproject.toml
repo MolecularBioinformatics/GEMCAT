@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "prankme"
-version = "0.8.0"
+version = "0.9.0"
 
 description = "Toolbox for finding reporter metabolites in genome-scale metabolic models using omics data"
 keywords = ["python", "bioinformatics","modeling", "metabolites", "omics"]
