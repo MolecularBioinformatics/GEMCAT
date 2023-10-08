@@ -46,7 +46,7 @@ class Model:
     ):
         """
         Create a model object
-        :param stoichiometric_matrix: stoichiometric matrix, 
+        :param stoichiometric_matrix: stoichiometric matrix,
         including reversible reactions
         :type stoichiometric_matrix: np.array [m x r]
         :param metabolite_names: List of metabolite names in order

@@ -130,10 +130,10 @@ class GeometricAndAverageMeans(ExpressionIntegration):
         This adheres to the algorithm laid out by Fang et al. 2012.
         :param gpr: Gene product rule for each reaction, dict[Reaction: GPRstring]
         :type gpr: dict[str, str]
-        :param reaction_gene_mapping: Mapping which genes participate 
+        :param reaction_gene_mapping: Mapping which genes participate
         in which reactions, dict[reaction: list[geneString]]
         :type reaction_gene_mapping: dict[str, list[str]]
-        :param data: Omics data mapped to genes, 
+        :param data: Omics data mapped to genes,
         pd.Series[geneString: value]
         :type data: pd.Series
         :param gene_fill: value to fill in for genes missing in the data set
