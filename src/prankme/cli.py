@@ -13,12 +13,8 @@ import cobra
 from pandas import DataFrame, Series, read_csv
 
 from .adjacency_transformation import AdjacencyTransformation, ATPureAdjacency
-from .expression import (
-    ExpressionIntegration,
-    ExpressionMapSingleAverage,
-    GeometricAndAverageMeans,
-    read_gpr_strings_from_cobra,
-)
+from .expression import (ExpressionIntegration, ExpressionMapSingleAverage,
+                         GeometricAndAverageMeans, read_gpr_strings_from_cobra)
 from .io import convert_cobra_model, load_sbml_cobra
 from .ranking import PagerankNX, Ranking
 
