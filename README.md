@@ -1,15 +1,15 @@
-# PRankMerter: a tool for reporter metabolite analysis
+# PRankMe: Predictive Ranking of Metabolites
 
 ## Compatibility
 The package is tested for compatibility with Python >= 3.9 on Ubuntu.
 
 ## Installation
 Install from pip:
-````pip install prankme``
+```pip install prankme```
 NOTE: This will only work after publishing. 
 
-Install from locally cloned repository using pip: 
-Create a standard installation for usage: ```pip install . ```
+Install from the locally cloned repository using pip: 
+Create a standard installation for usage: ```pip install .```
 Or an editable installation for development: ```pip install -e .```
 
 
