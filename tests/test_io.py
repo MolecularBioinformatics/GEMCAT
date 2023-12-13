@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 from fixtures import S_models, model_files_json, model_files_sbml, models
 
-from prankme import io
+from gemcat import io
 
 
 def test_convert_cobra_model(models, S_models):

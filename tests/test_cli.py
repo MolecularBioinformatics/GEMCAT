@@ -4,7 +4,7 @@ from typing import Optional
 from numpy import isclose
 from pandas import Series
 
-from prankme import cli
+from gemcat import cli
 
 
 @dataclass

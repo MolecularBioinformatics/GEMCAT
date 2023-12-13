@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from pandas import Series
 
-import prankme as pr
+import gemcat as pr
 
 base_path = Path("./tests")
 model_path = base_path / "test_models"

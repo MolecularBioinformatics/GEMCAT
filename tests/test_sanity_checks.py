@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from fixtures import models
 
-import prankme as pr
+import gemcat as pr
 
 
 def test_sanity_double_all(models):

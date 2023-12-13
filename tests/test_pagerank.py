@@ -1,6 +1,6 @@
 import numpy as np
 
-import prankme.ranking as pr
+import gemcat.ranking as pr
 
 TOLERANCE = 10**-3
 
