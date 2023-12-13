@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-import prankme.verification as ver
+import gemcat.verification as ver
 
 
 def test_correct_df_index_str():

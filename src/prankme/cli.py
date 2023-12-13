@@ -229,8 +229,8 @@ def build_parser() -> argparse.ArgumentParser:
     :rtype: argparse.ArgumentParser
     """
     parser = argparse.ArgumentParser(
-        prog="PRankMe",
-        description="PRankMe tool for metabolomics predictions",
+        prog="gemcat",
+        description="GEMCAT tool for metabolomics predictions",
     )
     parser.add_argument("expressionfile")
     parser.add_argument("modelfile")

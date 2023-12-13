@@ -1,7 +1,7 @@
 import pandas as pd
 from fixtures import models
 
-from prankme import workflows as wf
+from gemcat import workflows as wf
 
 
 def test_workflow_single(models):

@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from prankme import utils
+from gemcat import utils
 
 R_TOLERANCE = 10**-5
 A_TOLERANCE = 10**-3

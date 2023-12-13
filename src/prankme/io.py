@@ -92,7 +92,7 @@ def pickle_model(
     model: Model, file_path: Union[Path, str], pickle_args: Optional[dict] = None
 ) -> Path:
     """
-    Write a PRankMe model to a pickle file
+    Write a gemcat model to a pickle file
     :param model: Model to pickle
     :type model: Model
     :param file_path: Path/name to save pickle file to
@@ -112,7 +112,7 @@ def load_pickled(
     file_path: Union[Path, str], pickle_args: Optional[dict] = None
 ) -> Model:
     """
-    Load a pickled PRankMe model
+    Load a pickled gemcat model
     :param file_path: Path to pickle file
     :type file_path: str
     :param pickle_args: Arguments to pass to pickle.load, defaults to None

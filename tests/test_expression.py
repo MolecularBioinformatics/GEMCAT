@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from fixtures import models
 
-from prankme import expression as ex
+from gemcat import expression as ex
 
 R_TOLERANCE = 10**-5
 gpr_mini = {

@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Test PRankMe on Python versions
+name: Test GEMCAT on Python versions
 
 on:
   push:
@@ -46,7 +46,7 @@ jobs:
       run: black --check .
     - name: Lint with pylint
       run: |
-        pylint --fail-under=9.0 ./src/prankme
+        pylint --fail-under=9.0 ./src/gemcat
     - name: Test with pytest
       run: |
         pytest .
