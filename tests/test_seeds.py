@@ -1,10 +1,9 @@
 from pathlib import Path
 
+import gemcat as pr
 import numpy as np
 import pytest
 from pandas import Series
-
-import gemcat as pr
 
 base_path = Path("./tests")
 model_path = base_path / "test_models"

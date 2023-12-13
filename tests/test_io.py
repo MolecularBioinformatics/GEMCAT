@@ -2,7 +2,6 @@ from pathlib import Path
 
 import numpy as np
 from fixtures import S_models, model_files_json, model_files_sbml, models
-
 from gemcat import io
 
 

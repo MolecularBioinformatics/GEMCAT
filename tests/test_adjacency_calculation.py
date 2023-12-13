@@ -2,7 +2,6 @@ from random import randint
 
 import numpy as np
 from fixtures import A_examples, S_examples
-
 from gemcat import adjacency_transformation as at
 
 R_TOLERANCE = 10**-5

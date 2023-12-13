@@ -4,7 +4,6 @@ import cobra
 import numpy as np
 import pandas as pd
 import pytest
-
 from gemcat import utils
 
 R_TOLERANCE = 10**-5
