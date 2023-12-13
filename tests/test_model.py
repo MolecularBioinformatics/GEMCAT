@@ -1,5 +1,6 @@
 import numpy as np
 from fixtures import S_examples
+
 from gemcat.model import Model
 
 R_TOLERANCE = 10**-2  # why is the accuracy lower here than in test_Pagerank?

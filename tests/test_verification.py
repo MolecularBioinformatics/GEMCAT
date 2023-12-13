@@ -1,6 +1,7 @@
-import gemcat.verification as ver
 import pandas as pd
 import pytest
+
+import gemcat.verification as ver
 
 
 def test_correct_df_index_str():

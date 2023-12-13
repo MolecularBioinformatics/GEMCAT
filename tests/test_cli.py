@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from gemcat import cli
 from numpy import isclose
 from pandas import Series
+
+from gemcat import cli
 
 
 @dataclass

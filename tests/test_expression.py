@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from fixtures import models
+
 from gemcat import expression as ex
 
 R_TOLERANCE = 10**-5

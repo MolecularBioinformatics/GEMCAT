@@ -1,5 +1,6 @@
-import gemcat.ranking as pr
 import numpy as np
+
+import gemcat.ranking as pr
 
 TOLERANCE = 10**-3
 
