@@ -3,8 +3,8 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "prankme"
-version = "0.7.0"
+name = "gemcat"
+version = "0.10.1"
 
 description = "Toolbox for finding reporter metabolites in genome-scale metabolic models using omics data"
 keywords = ["python", "bioinformatics","modeling", "metabolites", "omics"]
@@ -13,24 +13,73 @@ authors = [
 ]
 readme = "README.md"
 
-requires-python=">=3.9"
+requires-python=">=3.10"
 dependencies = [
-    "numpy==1.23.5",
-    "pandas==1.5.3",
-    "cobra==0.26.3",
-    "networkx==3.1",
-    "scipy==1.11.1",
+    "numpy>=1.26.2",
+    "pandas>=2.1.4",
+    "cobra>=0.29.0",
+    "networkx>=3.2.1",
+    "scipy>=1.11.4",
+    "sympy>=1.12",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "pytest==7.4.0",
-  "flake8==6.0.0",
-  "black==23.7.0"
+  "pytest>=7.4.0",
+  "black>=23.7.0",
+  "isort>=5.12.0",
+  "pylint>=2.17.7",
+  "ruff>=0.0.292",
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [project.scripts]
-prankme = "prankme.cli:main"
+gemcat = "gemcat.cli:main"
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+select = [
+  "E", # pycodestyle
+  "F",  # Pyflakes
+  "NPY", # NumPy
+  "PL", # PyLint
+  "C901", # McCabe complexity
+]
+ignore = []
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+# Exclude a variety of commonly ignored directories. (default)
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+per-file-ignores = {}
+# Same as Black.
+line-length = 88
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+target-version = "py312"

@@ -1,9 +1,11 @@
-import pytest
-from prankme import utils
-import numpy as np
-import cobra
-import pandas as pd
 from pathlib import Path
+
+import cobra
+import numpy as np
+import pandas as pd
+import pytest
+
+from gemcat import utils
 
 R_TOLERANCE = 10**-5
 A_TOLERANCE = 10**-3
@@ -168,7 +170,7 @@ def test_split_matrix_pos_neg():
             ],
         ]
     )
-    result_pos, result_neg = utils._split_matrix_pos_neg(S)
+    result_pos, result_neg = utils.split_matrix_pos_neg(S)
     expected_pos = np.array(
         [
             [
@@ -232,7 +234,7 @@ def test_split_matrix_pos_neg():
 def test_annotate():
     A = np.array([0, 1, 2])
     mets = ["m1", "m2", "m3"]
-    result = utils._annotate(A, mets)
+    result = utils.annotate_scores(A, mets)
     assert isinstance(result, pd.Series)
     assert len(result) == 3
     assert np.allclose(result.values, A, rtol=R_TOLERANCE)
@@ -241,7 +243,7 @@ def test_annotate():
 
 def test_stoich_matrix_mini(models):
     model = models["mini"]
-    result = utils._get_stoich_matrix(model)
+    result = utils.get_stoich_matrix_from_cobra(model)
     expected = np.array(
         [
             [
@@ -289,7 +291,7 @@ def test_linearization(models):
 
 def test_linearization_already_linear(models):
     model = models["mini"]
-    expected = utils._get_stoich_matrix(model)
+    expected = utils.get_stoich_matrix_from_cobra(model)
     result = utils._get_unidirectional_matrix(model)
     assert np.allclose(result, expected, rtol=R_TOLERANCE)
 
@@ -883,7 +885,7 @@ def test_make_unidirectional():
     )
     reversibilities = [0, 0, 0, 1, 1, 0, 1, 0, 1]
     reversibilities = [bool(r) for r in reversibilities]
-    result = utils._make_unidirectional(S, reversibilities)
+    result = utils.make_unidirectional(S, reversibilities)
     assert np.allclose(result, expected, rtol=R_TOLERANCE)
 
 
@@ -1028,20 +1030,20 @@ def test_make_unidirectional_wrong_type_int():
     )
     reversibilities = [0, 0, 0, 1, 1, 0, 1, 0, 1]
     with pytest.raises(TypeError):
-        result = utils._make_unidirectional(S, reversibilities)
+        result = utils.make_unidirectional(S, reversibilities)
 
 
 def test_get_reversibilities_mini(models):
     model = models["mini"]
     expected = [False, False, False, False]
-    result = utils._get_reversibilities(model)
+    result = utils.get_reversibilities(model)
     assert result == expected
 
 
 def test_get_reversibilities_reversible(models):
     model = models["mini_reversible"]
     expected = [True, False, False, False]
-    result = utils._get_reversibilities(model)
+    result = utils.get_reversibilities(model)
     assert result == expected
 
 
@@ -1054,21 +1056,21 @@ def test_get_reaction_ids(models):
 
 def test_get_metabolite_ids(models):
     model = models["mini"]
-    result = utils._get_metabolite_ids(model)
+    result = utils.get_metabolite_ids(model)
     expected = ["A", "B", "C", "D"]
     assert result == expected
 
 
 def test_make_row_vector():
     arr = np.array([1, 2, 3])
-    result = utils._make_row_vector(arr)
+    result = utils.make_row_vector(arr)
     expected = np.array([[1, 2, 3]])
     assert np.allclose(result, expected, rtol=R_TOLERANCE)
 
 
 def test_make_column_vector():
     arr = np.array([1, 2, 3])
-    result = utils._make_column_vector(arr)
+    result = utils.make_column_vector(arr)
     expected = np.array(
         [
             [1],

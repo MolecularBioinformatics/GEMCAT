@@ -1,13 +1,13 @@
-import prankme.verification as ver
 import pandas as pd
-from fixtures import *
 import pytest
+
+import gemcat.verification as ver
 
 
 def test_correct_df_index_str():
     testcase = pd.Series({1: 1})
     expected = pd.Series({"1": 1})
-    result = ver.convert_df_index_to_str(testcase)
+    result = ver.convert_index_to_str(testcase)
     assert (result == expected).all()
 
 
@@ -37,12 +37,16 @@ def test_duplicate_indeces_raise():
             "G3": 3.0,
         }
     )
-    testcase = testcase.append(
-        pd.Series(
-            {
-                "G2": 1.5,
-            }
-        )
+    testcase = pd.concat(
+        (
+            testcase,
+            pd.Series(
+                {
+                    "G2": 1.5,
+                }
+            ),
+        ),
+        axis=0,
     )
     with pytest.raises(ValueError):
         ver.raise_for_duplicated_index(testcase)

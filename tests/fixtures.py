@@ -1,7 +1,8 @@
-import pytest
-import cobra
 from pathlib import Path
+
+import cobra
 import numpy as np
+import pytest
 
 
 @pytest.fixture

@@ -1,9 +1,9 @@
-from prankme.Model import Model
 import numpy as np
-import pytest
-from fixtures import *
+from fixtures import S_examples
 
-R_TOLERANCE = 10**-2  # why is the accuracy lower here than in test_pagerank?
+from gemcat.model import Model
+
+R_TOLERANCE = 10**-2  # why is the accuracy lower here than in test_Pagerank?
 
 
 def test_basic_linear_model():
