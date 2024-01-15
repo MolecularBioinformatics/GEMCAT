@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gemcat"
-version = "0.10.1"
+version = "1.0.0"
 
-description = "Toolbox for finding reporter metabolites in genome-scale metabolic models using omics data"
-keywords = ["python", "bioinformatics","modeling", "metabolites", "omics"]
+description = "A toolbox for gene expression-based prediction of metabolic alterations"
+keywords = ["python", "bioinformatics", "modeling", "metabolites", "omics"]
 authors = [
     {name = "Roland Sauter", email = "roland.sauter@uit.no"}
 ]
