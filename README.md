@@ -1,23 +1,23 @@
 # GEMCAT: Gene Expression based Metabolite Centrality Analyses Tool
 
-[Find us on PyPI](https://pypi.org/project/gemcat/)
-
 ## Compatibility
 The package is tested for compatibility with Python >= 3.10 on Ubuntu and Windows.
 
 ## Installation
 Install from pip:
+
 ```pip install gemcat```
 
 Or clone the repository and install GEMCAT from there using:  
+
 ```pip install .```
 
 
 ## Usage
 
 ### Standard workflow from the Command-Line Interface (CLI)
-` gemcat ./expression_file.csv ./model_file.xml -e column_name -a pure -g 1.0 -o result_file.csv`
-will run the standard workflow.
+
+``` gemcat ./expression_file.csv ./model_file.xml -e column_name -a pure -g 1.0 -o result_file.csv```
 
 ### Standard workflow in Python using a CobraPy model
 ```
@@ -30,12 +30,12 @@ results = gc.workflows.workflow_standard(cobra_model: cobra.Model,
                                         gene_fill = 1.0
                                         )
 ```
-This will return the relative changes in centrality in the comparison relative to the baseline in a Pandas Series.
-When using fold-changes as the mapped expression, use a vector of all ones as comparison.
+This will return the changes in centrality relative to the baseline in a Pandas Series.
+When using fold-changes as the mapped expression, use a vector of all ones as a comparison.
 
 ## Modularity and Configuration
-GEMCAT is designed to be modular, and its central components can easily be swapped out or appended by other components adhering to the specifications laid out in the module base classes. 
-(primarily adjacency transformation, expression integration, and ranking components)
+GEMCAT is designed to be modular, and its central components can easily be swapped out or appended by other components 
+adhering to the specifications laid out in the module base classes (primarily adjacency transformation, expression integration, and ranking components).
 All classes inheriting from the abstract base classes laid out in the modules are swappable.
 
 ## Core modules
