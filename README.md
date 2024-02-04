@@ -1,4 +1,5 @@
 # GEMCAT: Gene Expression based Metabolite Centrality Analyses Tool
+A computational toolbox associated with the manuscript entitled "GEMCAT - A new algorithm for gene expression-based prediction of metabolic alterations". [BioRxiv link](https://www.biorxiv.org/content/10.1101/2024.01.15.575710v1)
 
 ## Compatibility
 The package is tested for compatibility with Python >= 3.10 on Ubuntu and Windows.
