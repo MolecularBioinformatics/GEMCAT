@@ -1,11 +1,11 @@
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional
 
 from numpy import isclose
 from pandas import Series
 
 from gemcat import cli
-from pathlib import Path
 
 
 @dataclass

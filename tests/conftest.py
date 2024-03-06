@@ -1,6 +1,7 @@
-import requests
 from pathlib import Path
+
 import pytest
+import requests
 
 model_path = Path("./tests/test_models/")
 expression_path = Path("./tests/test_seq/")

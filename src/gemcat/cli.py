@@ -5,12 +5,12 @@ Command line interface functionality
 """
 
 import argparse
+import csv
 import logging
 from pathlib import Path
 from typing import Any, Optional
 
 import cobra
-import csv
 from pandas import DataFrame, Series, read_csv
 
 from .adjacency_transformation import AdjacencyTransformation, ATPureAdjacency
