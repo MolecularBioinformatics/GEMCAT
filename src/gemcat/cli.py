@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 import cobra
+import csv
 from pandas import DataFrame, Series, read_csv
 
 from .adjacency_transformation import AdjacencyTransformation, ATPureAdjacency
@@ -58,6 +59,14 @@ MODELS = {
 }
 
 
+def get_delimiter(file_path, bytes=4096):
+    sniffer = csv.Sniffer()
+    data = open(file_path, "r").read(bytes)
+    delimiter = sniffer.sniff(data).delimiter
+    return delimiter
+
+
+
 def parse_cobra_model(model_path: str) -> cobra.Model:
     """
     Parse selected cobra model
@@ -90,14 +99,15 @@ def read_expression(expression_file: str) -> DataFrame:
         error_str = f"File {expression_file} could not be found"
         logging.error(error_str)
         raise FileNotFoundError(error_str)
-    if file_path.suffix == ".csv":
-        content = read_csv(file_path, sep=",", index_col=0)
-    elif file_path.suffix == ".tsv":
-        content = read_csv(file_path, sep="\t", index_col=0)
+    if (file_path.suffix == ".csv" or file_path.suffix == "tsv"):
+        delimiter = get_delimiter(file_path)
+        content = read_csv(file_path, sep=delimiter, index_col=0)
     else:
-        error_str = f"Unknown file format {file_path.suffix} in file {expression_file}"
+        error_str = f"Unsupported file format {file_path.suffix} in file {expression_file}"
         logging.error(error_str)
         raise ValueError(error_str)
+    if isinstance(content, Series):
+        return DataFrame(content)
     return content
 
 
@@ -113,18 +123,15 @@ def parse_expression(expression_file: str, col_name: Optional[str]) -> Series:
     :rtype: Series
     """
     content = read_expression(expression_file)
-    if not content.shape[1] or (content.shape[1] == 1):
-        content = content.squeeze()
-    else:
-        content = content.loc[:, col_name]
-    if not isinstance(content, Series):
-        error_str = """
-        Expression file must be in the format of a pandas Series, 
-        mapping a gene column to a value column.
-        """
-        logging.error(error_str)
-        raise ValueError(error_str)
-    return content
+    if content.shape[1] == 1:
+        return content.iloc[:, 0]
+    if col_name:
+        return content.loc[:, col_name]
+    raise ValueError("""
+                     If your expression file contains more than 1 column, 
+                     please provide the name of the column with the expression data
+                     to the -e flag of the command.
+                     """)
 
 
 def parse_integration(integration: str) -> ExpressionIntegration:
