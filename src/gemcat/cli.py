@@ -5,12 +5,12 @@ Command line interface functionality
 """
 
 import argparse
+import csv
 import logging
 from pathlib import Path
 from typing import Any, Optional
 
 import cobra
-import csv
 from pandas import DataFrame, Series, read_csv
 
 from .adjacency_transformation import AdjacencyTransformation, ATPureAdjacency
@@ -66,7 +66,6 @@ def get_delimiter(file_path, bytes=4096):
     return delimiter
 
 
-
 def parse_cobra_model(model_path: str) -> cobra.Model:
     """
     Parse selected cobra model
@@ -99,11 +98,13 @@ def read_expression(expression_file: str) -> DataFrame:
         error_str = f"File {expression_file} could not be found"
         logging.error(error_str)
         raise FileNotFoundError(error_str)
-    if (file_path.suffix == ".csv" or file_path.suffix == "tsv"):
+    if file_path.suffix == ".csv" or file_path.suffix == "tsv":
         delimiter = get_delimiter(file_path)
         content = read_csv(file_path, sep=delimiter, index_col=0)
     else:
-        error_str = f"Unsupported file format {file_path.suffix} in file {expression_file}"
+        error_str = (
+            f"Unsupported file format {file_path.suffix} in file {expression_file}"
+        )
         logging.error(error_str)
         raise ValueError(error_str)
     if isinstance(content, Series):
@@ -127,11 +128,13 @@ def parse_expression(expression_file: str, col_name: Optional[str]) -> Series:
         return content.iloc[:, 0]
     if col_name:
         return content.loc[:, col_name]
-    raise ValueError("""
+    raise ValueError(
+        """
                      If your expression file contains more than 1 column, 
                      please provide the name of the column with the expression data
                      to the -e flag of the command.
-                     """)
+                     """
+    )
 
 
 def parse_integration(integration: str) -> ExpressionIntegration:

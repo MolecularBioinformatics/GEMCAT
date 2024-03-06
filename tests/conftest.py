@@ -1,6 +1,7 @@
-import requests
 from pathlib import Path
+
 import pytest
+import requests
 
 model_path = Path("./tests/test_models/")
 expression_path = Path("./tests/test_seq/")
@@ -9,7 +10,7 @@ expression_path = Path("./tests/test_seq/")
 def download_link(link, file_name, file_path):
     file_path = file_path / file_name
     if file_path.is_file():
-        print(f'Skipping existing {file_name}')
+        print(f"Skipping existing {file_name}")
         return
     response = requests.get(link)
     try:

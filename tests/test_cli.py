@@ -1,11 +1,11 @@
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional
 
 from numpy import isclose
 from pandas import Series
 
 from gemcat import cli
-from pathlib import Path
 
 
 @dataclass
@@ -21,8 +21,9 @@ class MockNamespace:
     outfile: Optional[str] = None
     integration: Optional[str] = None
 
-expression_path = Path('./tests/test_seq/')
-model_path = Path('./tests/test_models/')
+
+expression_path = Path("./tests/test_seq/")
+model_path = Path("./tests/test_models/")
 
 args_minimal = MockNamespace(
     expressionfile=str(expression_path / "expression_mini.csv"),
