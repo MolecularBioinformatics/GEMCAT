@@ -13,7 +13,7 @@ from typing import Any, Optional
 import cobra
 from pandas import DataFrame, Series, read_csv
 
-from .adjacency_transformation import AdjacencyTransformation, ATPureAdjacency
+from .adjacency_transformation import AdjacencyTransformation, ATPureAdjacency, ATHalfStoich, ATFullStoich
 from .expression import (
     ExpressionIntegration,
     ExpressionMapSingleAverage,
@@ -25,6 +25,8 @@ from .ranking import PagerankNX, Ranking
 
 ADJACENCIES = {
     "pure": ATPureAdjacency,
+    "half": ATHalfStoich,
+    "full": ATFullStoich,
 }
 ALLOWED_ADJ = ", ".join(ADJACENCIES.keys())
 
