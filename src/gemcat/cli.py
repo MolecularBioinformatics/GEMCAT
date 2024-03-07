@@ -13,7 +13,12 @@ from typing import Any, Optional
 import cobra
 from pandas import DataFrame, Series, read_csv
 
-from .adjacency_transformation import AdjacencyTransformation, ATPureAdjacency, ATHalfStoich, ATFullStoich
+from .adjacency_transformation import (
+    AdjacencyTransformation,
+    ATFullStoich,
+    ATHalfStoich,
+    ATPureAdjacency,
+)
 from .expression import (
     ExpressionIntegration,
     ExpressionMapSingleAverage,

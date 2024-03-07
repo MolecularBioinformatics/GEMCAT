@@ -7,7 +7,17 @@ model_path = Path("./tests/test_models/")
 expression_path = Path("./tests/test_seq/")
 
 
-def download_link(link, file_name, file_path):
+def download_link(link: str, file_name: str, file_path: Path):
+    """
+    Download the file from a link to a given path and name.
+    Skip with a print if it already exists at that location.
+    :param link: Link to file.
+    :type link: string
+    :param file_name: file name
+    :type file_name: string
+    :param file_path: path to save file at
+    :type file_path: Path
+    """
     file_path = file_path / file_name
     if file_path.is_file():
         print(f"Skipping existing {file_name}")
@@ -25,6 +35,9 @@ def download_link(link, file_name, file_path):
 
 
 def download_models():
+    """
+    Download all models used for testing
+    """
     print("Downloading models for testing...")
     models_to_download = {
         "recon3d.xml": "http://bigg.ucsd.edu/static/models/Recon3D.xml",
@@ -36,6 +49,9 @@ def download_models():
 
 
 def download_expression():
+    """
+    Download all expression files used for testing
+    """
     print("Downloading expression data for testing...")
     expression_to_download = {
         "test_prot_uc_vs_healthy.csv": "https://media.githubusercontent.com/media/MolecularBioinformatics/prm_manuscript/main/data/prot_uc_vs_healthy.csv",
@@ -48,5 +64,8 @@ def download_expression():
 
 
 def pytest_sessionstart():
+    """
+    Tasks to perform when a test session is started
+    """
     download_models()
     download_expression()

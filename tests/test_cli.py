@@ -77,6 +77,7 @@ args_293_xml = MockNamespace(
     integration="means",
 )
 
+
 def test_cli_mini():
     result, outfile = cli.cli_standard(args_minimal)
     print(result)
