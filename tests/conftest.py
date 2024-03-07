@@ -38,8 +38,6 @@ def download_models():
 def download_expression():
     print("Downloading expression data for testing...")
     expression_to_download = {
-        "test_pr_prot_uc_vs_healthy.csv": "https://github.com/MolecularBioinformatics/prm_manuscript/raw/main/data/pr_prot_uc_vs_healthy.csv",
-        "test_pr_slc25a51ko_wt.csv": "https://github.com/MolecularBioinformatics/prm_manuscript/raw/main/data/pr_slc25a51ko_wt.csv",
         "test_prot_uc_vs_healthy.csv": "https://media.githubusercontent.com/media/MolecularBioinformatics/prm_manuscript/main/data/prot_uc_vs_healthy.csv",
         "test_rnaseq_HEK293_complete.csv": "https://media.githubusercontent.com/media/MolecularBioinformatics/prm_manuscript/main/data/rnaseq_HEK293_complete.csv",
         "test_rnaseq_slc25a51ko_vs_parental.csv": "https://media.githubusercontent.com/media/MolecularBioinformatics/prm_manuscript/main/data/rnaseq_slc25a51ko_vs_parental.csv",

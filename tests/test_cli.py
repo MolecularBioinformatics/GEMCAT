@@ -51,6 +51,31 @@ args_uc_xml = MockNamespace(
     integration="means",
 )
 
+args_uc_json = MockNamespace(
+    expressionfile=str(expression_path / "test_prot_uc_vs_healthy.csv"),
+    expressioncolumn="foldchange",
+    baseline=None,
+    baselinecolumn=None,
+    genefill="1.0",
+    modelfile=str(model_path / "recon3d.json"),
+    ranking=None,
+    adjacency=None,
+    outfile="./temp_outfile.csv",
+    integration="means",
+)
+
+args_293_xml = MockNamespace(
+    expressionfile=str(expression_path / "test_rnaseq_HEK293_complete.csv"),
+    expressioncolumn="wtHEK293_1",
+    baseline=str(expression_path / "test_rnaseq_HEK293_complete.csv"),
+    baselinecolumn="wtHEK293_2",
+    genefill="1.0",
+    modelfile=str(model_path / "recon3d.xml"),
+    ranking=None,
+    adjacency=None,
+    outfile="./temp_outfile.csv",
+    integration="means",
+)
 
 def test_cli_mini():
     result, outfile = cli.cli_standard(args_minimal)
@@ -63,8 +88,16 @@ def test_cli_mini():
     assert len(result) == 4
 
 
-def test_cli_uc_xml():
+def test_cli_293_xml():
     result, outfile = cli.cli_standard(args_uc_xml)
+    print(result)
+    assert isinstance(result, Series)
+    assert outfile.stem == "temp_outfile"
+    assert outfile.suffix == ".csv"
+
+
+def test_cli_uc_xml():
+    result, outfile = cli.cli_standard(args_293_xml)
     print(result)
     assert isinstance(result, Series)
     assert outfile.stem == "temp_outfile"

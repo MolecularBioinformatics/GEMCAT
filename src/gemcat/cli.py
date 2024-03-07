@@ -288,7 +288,7 @@ def cli_standard(args: argparse.Namespace):
     """
     expression = parse_expression(args.expressionfile, args.expressioncolumn)
     if args.baseline:
-        baseline = parse_expression(args.baseline, args.baseline_column)
+        baseline = parse_expression(args.baseline, args.baselinecolumn)
     else:
         print("Empty baseline expression. Defaulting to all ones.")
         baseline = get_all_ones(expression)
