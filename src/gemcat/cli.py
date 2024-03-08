@@ -249,19 +249,50 @@ def build_parser() -> argparse.ArgumentParser:
         prog="gemcat",
         description="GEMCAT tool for metabolomics predictions",
     )
-    parser.add_argument("expressionfile")
-    parser.add_argument("modelfile")
+    parser.add_argument(
+        "expressionfile", help="Path to file containing the condition expression data"
+    )
+    parser.add_argument("modelfile", help="Path to model file to use (XML/SBML format)")
 
-    parser.add_argument("-i", "--integration")
-    parser.add_argument("-e", "--expressioncolumn")
-    parser.add_argument("-r", "--ranking")
-    parser.add_argument("-b", "--baseline")
-    parser.add_argument("-c", "--baselinecolumn")
-    parser.add_argument("-a", "--adjacency")
-    parser.add_argument("-g", "--genefill")
-    parser.add_argument("-v", "--verbose")
-    parser.add_argument("-o", "--outfile")
-    parser.add_argument("-l", "--logfile")
+    parser.add_argument(
+        "-i",
+        "--integration",
+        choices=("means", "averages"),
+        help="Algorithm for the integration of expression data to use",
+    )
+    parser.add_argument(
+        "-e",
+        "--expressioncolumn",
+        help="Name of the column containing the condition expression data",
+    )
+    parser.add_argument(
+        "-r", "--ranking", choices=["Pagerank"], help="Ranking method to use"
+    )
+    parser.add_argument(
+        "-b", "--baseline", help="File containing expression data for the baseline"
+    )
+    parser.add_argument(
+        "-c",
+        "--baselinecolumn",
+        help="Name of the column contianing the baseline expression data",
+    )
+    parser.add_argument(
+        "-a",
+        "--adjacency",
+        choices=("pure", "half", "full"),
+        help="Algorithm for the calculation of the adjacency matrix",
+    )
+    parser.add_argument(
+        "-g",
+        "--genefill",
+        type=float,
+        help="Value to fill in for missing expression values",
+    )
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="Use for more verbose output"
+    )
+    parser.add_argument("-o", "--outfile", help="Write outputs to the specified file")
+    parser.add_argument("-l", "--logfile", help="Write logs to the specified file")
 
     return parser
 
