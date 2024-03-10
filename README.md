@@ -28,8 +28,12 @@ Alternatively, use two files (or one file) with expression values for condition 
 ``` gemcat <./condition_file.csv> <./model_file.xml> -e <condition_column_name> -b <./baseline_file> -c <baseline_column_name> -o <result_file.csv>```
 
 Currently only models in XML/SBML format are supported in the CLI.
-Further models can used from the Python library.
-Support will come to the CLI.
+Further models can be used from the Python library.
+Support will come to the CLI soon.
+
+Important points to remember:
+Make sure the gene or protein identifiers in your expression data file exactly match those in the model.
+A results list of all 1.0 is a sure sign of no identifier matching.
 
 positional arguments:
 - expression file path
@@ -56,13 +60,14 @@ All parameters:
 ### Standard workflow in Python using a CobraPy model
 ```
 import gemcat as gc
-results = gc.workflows.workflow_standard(cobra_model: cobra.Model,
-                                        mapped_genes_baseline: pd.Series,
-                                        mapped_genes_comparison: pd.Series,
-                                        adjacency = gc.adjacency_transformation.ATPureAdjacency,
-                                        ranking = gc.ranking.PagerankNX,
-                                        gene_fill = 1.0
-                                        )
+results = gc.workflows.workflow_standard(
+  cobra_model: cobra.Model,
+  mapped_genes_baseline: pd.Series,
+  mapped_genes_comparison: pd.Series,
+  adjacency = gc.adjacency_transformation.ATPureAdjacency,
+  ranking = gc.ranking.PagerankNX,
+  gene_fill = 1.0
+)
 ```
 This will return the changes in centrality relative to the baseline in a Pandas Series.
 When using fold-changes as the mapped expression, use a vector of all ones as a comparison.
