@@ -25,7 +25,8 @@ from .expression import (
     GeometricAndAverageMeans,
     read_gpr_strings_from_cobra,
 )
-from .io import convert_cobra_model, load_sbml_cobra
+from .model import Model
+from .io import convert_cobra_model, load_sbml_cobra, load_json_cobra
 from .ranking import PagerankNX, Ranking
 
 ADJACENCIES = {
@@ -58,13 +59,22 @@ def not_implemented(whatever: Any):
 
 
 MODELS = {
-    ".sbml": load_sbml_cobra,
-    ".xml": load_sbml_cobra,
-    ".json": not_implemented,
-    ".csv": not_implemented,
-    ".mat": not_implemented,
+    "sbml": load_sbml_cobra,
+    "xml": load_sbml_cobra,
+    "json": load_json_cobra,
+    "csv": not_implemented,
+    "mat": not_implemented,
 }
 
+def wrong_filetype(any: Any):
+    raise NotImplementedError(f"Not implemented for {any}")
+
+
+def parse_model(model_path: str) -> tuple[Model, cobra.Model]:
+    model_path = Path(model_path)
+    throw_for_missing_model(model_path)
+    parsing_fn = MODELS[model_path.suffix[1:]]
+    return parsing_fn(model_path)
 
 def get_delimiter(file_path, bytes=4096):
     sniffer = csv.Sniffer()
@@ -83,11 +93,32 @@ def parse_cobra_model(model_path: str) -> cobra.Model:
     :rtype: cobra.Model
     """
     model_path = Path(model_path)
-    if not model_path.exists():
+    return cobra.io.read_sbml_model(model_path.as_posix())
+
+
+def parse_json_model(model_path: str) -> cobra.Model:
+    """
+    Parse selected cobra model
+    :param model_path: Path to model file
+    :type model_path: str
+    :raises FileNotFoundError: If model file does not exist at path
+    :return: Loaded cobra model
+    :rtype: cobra.Model
+    """
+    model_path = Path(model_path)
+    return (model_path.as_posix())
+
+def throw_for_missing_model(model_path: Path):
+    """
+    Throw FileNotFoundError in case there is no model at the given path.
+    :param model_path: _description_
+    :type model_path: str
+    :raises FileNotFoundError: _description_
+    """
+    if not model_path.is_file():
         error_str = f"The model file at {model_path} cannot be found."
         logging.error(error_str)
         raise FileNotFoundError(error_str)
-    return cobra.io.read_sbml_model(model_path.as_posix())
 
 
 def read_expression(expression_file: str) -> DataFrame:
@@ -252,7 +283,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "expressionfile", help="Path to file containing the condition expression data"
     )
-    parser.add_argument("modelfile", help="Path to model file to use (XML/SBML format)")
+    parser.add_argument("modelfile", help="Path to model file to use (XML/SBML, JSON format)")
 
     parser.add_argument(
         "-i",
@@ -336,8 +367,7 @@ def cli_standard(args: argparse.Namespace):
         print("Empty or invalid gene-fill value. Defaulting to 1.0 .")
         gene_fill = 1.0
 
-    cobra_model = parse_cobra_model(args.modelfile)
-    model = convert_cobra_model(cobra_model)
+    model, cobra_model = parse_model(args.modelfile)
     model.adjacency_transformation = parse_adjacency(args.adjacency)
     model.ranking = parse_ranking(args.ranking)
     gpr, rxn_gene_mapping = read_gpr_strings_from_cobra(cobra_model)
