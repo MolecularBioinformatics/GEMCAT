@@ -97,3 +97,8 @@ Input and output functions that create GEMCAT models from different sources.
 Contains common utility functions used throughout the package.
 ## verification
 Functions to verify data integrity.
+
+
+## Development
+To run tests, make sure you have [git lfs](https://git-lfs.com/) installed and all the Tests are running.
+Make sure to run `isort` and `black` to have properly formatted code.
