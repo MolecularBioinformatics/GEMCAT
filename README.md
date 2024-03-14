@@ -17,10 +17,6 @@ Or clone the repository and install GEMCAT from there using:
 
 ## Usage
 
-### Standard workflow from the Command-Line Interface (CLI)
-
-``` gemcat ./expression_file.csv ./model_file.xml -e column_name -a pure -g 1.0 -o result_file.csv```
-
 ### Standard workflow in Python using a CobraPy model
 ```
 import gemcat as gc
