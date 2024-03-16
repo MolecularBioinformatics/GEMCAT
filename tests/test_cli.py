@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from numpy import isclose, allclose
+import pytest
+from numpy import allclose, isclose
 from pandas import Series, read_csv
 
 from gemcat import cli
-import pytest
 
 
 @dataclass
@@ -110,7 +110,7 @@ def test_cli_paper_uc():
     assert len(result) > 1000
     assert outfile.stem == "temp_outfile"
     assert outfile.suffix == ".csv"
-    expected = read_csv(results_path / 'uc.csv', sep=',', index_col=0).iloc[:, 0]
+    expected = read_csv(results_path / "uc.csv", sep=",", index_col=0).iloc[:, 0]
     assert allclose(expected.values, result.values, atol=0.1)
     # when run with pytest, maximum deviation is at .09,
     # when run as a normal Python function, it's at 0.01

@@ -25,8 +25,8 @@ from .expression import (
     GeometricAndAverageMeans,
     read_gpr_strings_from_cobra,
 )
+from .io import convert_cobra_model, load_json_cobra, load_sbml_cobra
 from .model import Model
-from .io import convert_cobra_model, load_sbml_cobra, load_json_cobra
 from .ranking import PagerankNX, Ranking
 
 ADJACENCIES = {
@@ -66,6 +66,7 @@ MODELS = {
     "mat": not_implemented,
 }
 
+
 def wrong_filetype(any: Any):
     raise NotImplementedError(f"Not implemented for {any}")
 
@@ -75,6 +76,7 @@ def parse_model(model_path: str) -> tuple[Model, cobra.Model]:
     throw_for_missing_model(model_path)
     parsing_fn = MODELS[model_path.suffix[1:]]
     return parsing_fn(model_path)
+
 
 def get_delimiter(file_path, bytes=4096):
     sniffer = csv.Sniffer()
@@ -106,7 +108,8 @@ def parse_json_model(model_path: str) -> cobra.Model:
     :rtype: cobra.Model
     """
     model_path = Path(model_path)
-    return (model_path.as_posix())
+    return model_path.as_posix()
+
 
 def throw_for_missing_model(model_path: Path):
     """
@@ -283,7 +286,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "expressionfile", help="Path to file containing the condition expression data"
     )
-    parser.add_argument("modelfile", help="Path to model file to use (XML/SBML, JSON format)")
+    parser.add_argument(
+        "modelfile", help="Path to model file to use (XML/SBML, JSON format)"
+    )
 
     parser.add_argument(
         "-i",
