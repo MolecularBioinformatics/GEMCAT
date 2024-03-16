@@ -1,0 +1,2 @@
+tests/test_seq/prot_uc_vs_healthy_gid.csv filter=lfs diff=lfs merge=lfs -text
+tests/test_models/Recon3D.json filter=lfs diff=lfs merge=lfs -text
