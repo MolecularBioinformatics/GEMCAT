@@ -20,7 +20,7 @@ Or clone the repository and install GEMCAT from there using:
 ### Standard workflow from the Command-Line Interface (CLI)
 
 Use a single file containing per-gene fold-changes to calculate the resulting differential centralities:
-``` gemcat ./expression_file.csv ./model_file.xml -e column_name -a pure -o <result_file.csv>```
+``` gemcat ./expression_file.csv ./model_file.xml -e column_name -o <result_file.csv>```
 Make sure the .csv file is either comma- or tab-delimited.
 `column_name` is the name of the column in the file containing the fold-change.
 
@@ -32,6 +32,7 @@ Further models can be used from the Python library.
 Support will come to the CLI soon.
 
 Important points to remember:
+Your gene or protein identifiers should be the first column of the expression file.
 Make sure the gene or protein identifiers in your expression data file exactly match those in the model.
 A results list of all 1.0 is a sure sign of no identifier matching.
 
