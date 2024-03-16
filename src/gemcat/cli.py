@@ -283,11 +283,12 @@ def build_parser() -> argparse.ArgumentParser:
         prog="gemcat",
         description="GEMCAT tool for metabolomics predictions",
     )
-    parser.add_argument(
-        "expressionfile", help="Path to file containing the condition expression data"
-    )
+
     parser.add_argument(
         "modelfile", help="Path to model file to use (XML/SBML, JSON format)"
+    )
+    parser.add_argument(
+        "expressionfile", help="Path to file containing the condition expression data"
     )
 
     parser.add_argument(
