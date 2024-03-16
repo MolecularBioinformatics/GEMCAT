@@ -101,5 +101,11 @@ Functions to verify data integrity.
 
 
 ## Development
+You can run all local tests with `pytest .`. Default behavior is to also run integration tests, which takes time.
+You can exclude slow running tests by using `pytest . -m "not slow"`.
+These slow running tests are integration tests with "real world data" and will take 10-30s each according to your hardware.
+
 To run tests, make sure you have [git lfs](https://git-lfs.com/) installed and all the Tests are running.
 Make sure to run `isort` and `black` to have properly formatted code.
+
+The CI pipeline in Github will check with isort, black, and pytest.

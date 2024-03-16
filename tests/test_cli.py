@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from numpy import isclose
-from pandas import Series
+from numpy import isclose, allclose
+from pandas import Series, read_csv
 
 from gemcat import cli
 
@@ -24,6 +24,7 @@ class MockNamespace:
 
 expression_path = Path("./tests/test_seq/")
 model_path = Path("./tests/test_models/")
+results_path = Path("./tests/test_results/")
 
 args_uc_json = MockNamespace(
     expressionfile=str(expression_path / "test_prot_uc_vs_healthy.csv"),
@@ -98,5 +99,8 @@ def test_cli_293_xml():
     result, outfile = cli.cli_standard(args_293_xml)
     print(result)
     assert isinstance(result, Series)
+    assert len(result) > 1000
     assert outfile.stem == "temp_outfile"
     assert outfile.suffix == ".csv"
+    expected = read_csv(results_path / 'uc.csv', sep=',', index_col=0)
+    assert allclose(result.values, expected.values, rtol=.01)

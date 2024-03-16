@@ -84,3 +84,9 @@ line-length = 88
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 target-version = "py312"
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: Slow running (usually integration) tests. Run only fast tests with '-m \"not slow\"')",
+    "serial",
+]
