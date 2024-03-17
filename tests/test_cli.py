@@ -99,7 +99,7 @@ def test_cli_paper_uc():
         baseline=None,
         baselinecolumn=None,
         genefill="1.0",
-        modelfile=str(model_path / "recon3d.json"),
+        modelfile=str(model_path / "Recon3D.json"),
         ranking=None,
         adjacency="pure",
         outfile="./temp_outfile.csv",
