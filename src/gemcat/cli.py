@@ -5,6 +5,7 @@ Command line interface functionality
 """
 
 import argparse
+import csv
 import logging
 from pathlib import Path
 from typing import Any, Optional
@@ -12,18 +13,26 @@ from typing import Any, Optional
 import cobra
 from pandas import DataFrame, Series, read_csv
 
-from .adjacency_transformation import AdjacencyTransformation, ATPureAdjacency
+from .adjacency_transformation import (
+    AdjacencyTransformation,
+    ATFullStoich,
+    ATHalfStoich,
+    ATPureAdjacency,
+)
 from .expression import (
     ExpressionIntegration,
     ExpressionMapSingleAverage,
     GeometricAndAverageMeans,
     read_gpr_strings_from_cobra,
 )
-from .io import convert_cobra_model, load_sbml_cobra
+from .io import convert_cobra_model, load_json_cobra, load_sbml_cobra
+from .model import Model
 from .ranking import PagerankNX, Ranking
 
 ADJACENCIES = {
     "pure": ATPureAdjacency,
+    "half": ATHalfStoich,
+    "full": ATFullStoich,
 }
 ALLOWED_ADJ = ", ".join(ADJACENCIES.keys())
 
@@ -50,12 +59,30 @@ def not_implemented(whatever: Any):
 
 
 MODELS = {
-    ".sbml": load_sbml_cobra,
-    ".xml": load_sbml_cobra,
-    ".json": not_implemented,
-    ".csv": not_implemented,
-    ".mat": not_implemented,
+    "sbml": load_sbml_cobra,
+    "xml": load_sbml_cobra,
+    "json": load_json_cobra,
+    "csv": not_implemented,
+    "mat": not_implemented,
 }
+
+
+def wrong_filetype(any: Any):
+    raise NotImplementedError(f"Not implemented for {any}")
+
+
+def parse_model(model_path: str) -> tuple[Model, cobra.Model]:
+    model_path = Path(model_path)
+    throw_for_missing_model(model_path)
+    parsing_fn = MODELS[model_path.suffix[1:]]
+    return parsing_fn(model_path)
+
+
+def get_delimiter(file_path, bytes=4096):
+    sniffer = csv.Sniffer()
+    data = open(file_path, "r").read(bytes)
+    delimiter = sniffer.sniff(data).delimiter
+    return delimiter
 
 
 def parse_cobra_model(model_path: str) -> cobra.Model:
@@ -68,11 +95,33 @@ def parse_cobra_model(model_path: str) -> cobra.Model:
     :rtype: cobra.Model
     """
     model_path = Path(model_path)
-    if not model_path.exists():
+    return cobra.io.read_sbml_model(model_path.as_posix())
+
+
+def parse_json_model(model_path: str) -> cobra.Model:
+    """
+    Parse selected cobra model
+    :param model_path: Path to model file
+    :type model_path: str
+    :raises FileNotFoundError: If model file does not exist at path
+    :return: Loaded cobra model
+    :rtype: cobra.Model
+    """
+    model_path = Path(model_path)
+    return model_path.as_posix()
+
+
+def throw_for_missing_model(model_path: Path):
+    """
+    Throw FileNotFoundError in case there is no model at the given path.
+    :param model_path: _description_
+    :type model_path: str
+    :raises FileNotFoundError: _description_
+    """
+    if not model_path.is_file():
         error_str = f"The model file at {model_path} cannot be found."
         logging.error(error_str)
         raise FileNotFoundError(error_str)
-    return cobra.io.read_sbml_model(model_path.as_posix())
 
 
 def read_expression(expression_file: str) -> DataFrame:
@@ -90,14 +139,17 @@ def read_expression(expression_file: str) -> DataFrame:
         error_str = f"File {expression_file} could not be found"
         logging.error(error_str)
         raise FileNotFoundError(error_str)
-    if file_path.suffix == ".csv":
-        content = read_csv(file_path, sep=",", index_col=0)
-    elif file_path.suffix == ".tsv":
-        content = read_csv(file_path, sep="\t", index_col=0)
+    if file_path.suffix == ".csv" or file_path.suffix == "tsv":
+        delimiter = get_delimiter(file_path)
+        content = read_csv(file_path, sep=delimiter, index_col=0)
     else:
-        error_str = f"Unknown file format {file_path.suffix} in file {expression_file}"
+        error_str = (
+            f"Unsupported file format {file_path.suffix} in file {expression_file}"
+        )
         logging.error(error_str)
         raise ValueError(error_str)
+    if isinstance(content, Series):
+        return DataFrame(content)
     return content
 
 
@@ -113,18 +165,17 @@ def parse_expression(expression_file: str, col_name: Optional[str]) -> Series:
     :rtype: Series
     """
     content = read_expression(expression_file)
-    if not content.shape[1] or (content.shape[1] == 1):
-        content = content.squeeze()
-    else:
-        content = content.loc[:, col_name]
-    if not isinstance(content, Series):
-        error_str = """
-        Expression file must be in the format of a pandas Series, 
-        mapping a gene column to a value column.
+    if content.shape[1] == 1:
+        return content.iloc[:, 0]
+    if col_name:
+        return content.loc[:, col_name]
+    raise ValueError(
         """
-        logging.error(error_str)
-        raise ValueError(error_str)
-    return content
+                     If your expression file contains more than 1 column, 
+                     please provide the name of the column with the expression data
+                     to the -e flag of the command.
+                     """
+    )
 
 
 def parse_integration(integration: str) -> ExpressionIntegration:
@@ -232,19 +283,53 @@ def build_parser() -> argparse.ArgumentParser:
         prog="gemcat",
         description="GEMCAT tool for metabolomics predictions",
     )
-    parser.add_argument("expressionfile")
-    parser.add_argument("modelfile")
 
-    parser.add_argument("-i", "--integration")
-    parser.add_argument("-e", "--expressioncolumn")
-    parser.add_argument("-r", "--ranking")
-    parser.add_argument("-b", "--baseline")
-    parser.add_argument("-c", "--baselinecolumn")
-    parser.add_argument("-a", "--adjacency")
-    parser.add_argument("-g", "--genefill")
-    parser.add_argument("-v", "--verbose")
-    parser.add_argument("-o", "--outfile")
-    parser.add_argument("-l", "--logfile")
+    parser.add_argument(
+        "modelfile", help="Path to model file to use (XML/SBML, JSON format)"
+    )
+    parser.add_argument(
+        "expressionfile", help="Path to file containing the condition expression data"
+    )
+
+    parser.add_argument(
+        "-i",
+        "--integration",
+        choices=("means", "averages"),
+        help="Algorithm for the integration of expression data to use",
+    )
+    parser.add_argument(
+        "-e",
+        "--expressioncolumn",
+        help="Name of the column containing the condition expression data",
+    )
+    parser.add_argument(
+        "-r", "--ranking", choices=["Pagerank"], help="Ranking method to use"
+    )
+    parser.add_argument(
+        "-b", "--baseline", help="File containing expression data for the baseline"
+    )
+    parser.add_argument(
+        "-c",
+        "--baselinecolumn",
+        help="Name of the column contianing the baseline expression data",
+    )
+    parser.add_argument(
+        "-a",
+        "--adjacency",
+        choices=("pure", "half", "full"),
+        help="Algorithm for the calculation of the adjacency matrix",
+    )
+    parser.add_argument(
+        "-g",
+        "--genefill",
+        type=float,
+        help="Value to fill in for missing expression values",
+    )
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="Use for more verbose output"
+    )
+    parser.add_argument("-o", "--outfile", help="Write outputs to the specified file")
+    parser.add_argument("-l", "--logfile", help="Write logs to the specified file")
 
     return parser
 
@@ -278,7 +363,7 @@ def cli_standard(args: argparse.Namespace):
     """
     expression = parse_expression(args.expressionfile, args.expressioncolumn)
     if args.baseline:
-        baseline = parse_expression(args.baseline, args.baseline_column)
+        baseline = parse_expression(args.baseline, args.baselinecolumn)
     else:
         print("Empty baseline expression. Defaulting to all ones.")
         baseline = get_all_ones(expression)
@@ -288,8 +373,7 @@ def cli_standard(args: argparse.Namespace):
         print("Empty or invalid gene-fill value. Defaulting to 1.0 .")
         gene_fill = 1.0
 
-    cobra_model = parse_cobra_model(args.modelfile)
-    model = convert_cobra_model(cobra_model)
+    model, cobra_model = parse_model(args.modelfile)
     model.adjacency_transformation = parse_adjacency(args.adjacency)
     model.ranking = parse_ranking(args.ranking)
     gpr, rxn_gene_mapping = read_gpr_strings_from_cobra(cobra_model)
