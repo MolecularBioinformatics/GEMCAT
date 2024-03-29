@@ -14,13 +14,14 @@ def test_convert_cobra_model(models, S_models):
 
 def test_json_io(model_files_json, S_models):
     model_file = model_files_json["mini"]
-    model, _ = io.load_json_cobra(model_file)
+    model = io.convert_cobra_model(io.load_json_cobra(model_file))
     assert np.allclose(model.stoichiometric_matrix, S_models["mini"])
 
 
 def test_sbml_io(model_files_sbml, S_models):
     model_file = model_files_sbml["mini"]
-    model, _ = io.load_sbml_cobra(model_file)
+    cobra_model = io.load_sbml_cobra(model_file)
+    model = io.convert_cobra_model(cobra_model)
     assert np.allclose(model.stoichiometric_matrix, S_models["mini"])
 
 

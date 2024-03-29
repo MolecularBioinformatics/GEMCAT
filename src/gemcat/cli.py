@@ -7,45 +7,15 @@ Command line interface functionality
 import argparse
 import csv
 import logging
+from copy import deepcopy
 from pathlib import Path
 from typing import Any, Optional
 
 import cobra
 from pandas import DataFrame, Series, read_csv
 
-from .adjacency_transformation import (
-    AdjacencyTransformation,
-    ATFullStoich,
-    ATHalfStoich,
-    ATPureAdjacency,
-)
-from .expression import (
-    ExpressionIntegration,
-    ExpressionMapSingleAverage,
-    GeometricAndAverageMeans,
-    read_gpr_strings_from_cobra,
-)
-from .io import convert_cobra_model, load_json_cobra, load_sbml_cobra
-from .model import Model
-from .ranking import PagerankNX, Ranking
-
-ADJACENCIES = {
-    "pure": ATPureAdjacency,
-    "half": ATHalfStoich,
-    "full": ATFullStoich,
-}
-ALLOWED_ADJ = ", ".join(ADJACENCIES.keys())
-
-RANKINGS = {
-    "Pagerank": PagerankNX,
-}
-
-EXPRESSION_INTEGRATIONS = {
-    "means": GeometricAndAverageMeans,
-    "average": ExpressionMapSingleAverage,
-}
-
-ALLOWED_RANKINGS = ", ".join(RANKINGS.keys())
+from .io import load_json_cobra, load_sbml_cobra
+from .workflows import workflow_standard
 
 
 def not_implemented(whatever: Any):
@@ -71,7 +41,7 @@ def wrong_filetype(any: Any):
     raise NotImplementedError(f"Not implemented for {any}")
 
 
-def parse_model(model_path: str) -> tuple[Model, cobra.Model]:
+def parse_model(model_path: str) -> cobra.Model:
     model_path = Path(model_path)
     throw_for_missing_model(model_path)
     parsing_fn = MODELS[model_path.suffix[1:]]
@@ -83,32 +53,6 @@ def get_delimiter(file_path, bytes=4096):
     data = open(file_path, "r").read(bytes)
     delimiter = sniffer.sniff(data).delimiter
     return delimiter
-
-
-def parse_cobra_model(model_path: str) -> cobra.Model:
-    """
-    Parse selected cobra model
-    :param model_path: Path to model file
-    :type model_path: str
-    :raises FileNotFoundError: If model file does not exist at path
-    :return: Loaded cobra model
-    :rtype: cobra.Model
-    """
-    model_path = Path(model_path)
-    return cobra.io.read_sbml_model(model_path.as_posix())
-
-
-def parse_json_model(model_path: str) -> cobra.Model:
-    """
-    Parse selected cobra model
-    :param model_path: Path to model file
-    :type model_path: str
-    :raises FileNotFoundError: If model file does not exist at path
-    :return: Loaded cobra model
-    :rtype: cobra.Model
-    """
-    model_path = Path(model_path)
-    return model_path.as_posix()
 
 
 def throw_for_missing_model(model_path: Path):
@@ -165,83 +109,17 @@ def parse_expression(expression_file: str, col_name: Optional[str]) -> Series:
     :rtype: Series
     """
     content = read_expression(expression_file)
-    if content.shape[1] == 1:
+    if col_name is None and len(content.columns) > 1:
+        raise ValueError(
+            """
+            If your expression file contains more than 1 column, 
+            please provide the name of the column with the expression data
+            to the -e flag of the command.
+            """
+        )
+    if col_name is None:
         return content.iloc[:, 0]
-    if col_name:
-        return content.loc[:, col_name]
-    raise ValueError(
-        """
-                     If your expression file contains more than 1 column, 
-                     please provide the name of the column with the expression data
-                     to the -e flag of the command.
-                     """
-    )
-
-
-def parse_integration(integration: str) -> ExpressionIntegration:
-    """
-    Choice function for expression integration algorithms
-    :param integration: Name for expression integration algorithm
-    :type integration: str
-    :raises ValueError: In case of invalid name
-    :return: Selected expression integration algorithm
-    :rtype: ExpressionIntegration
-    """
-    if integration is None:
-        return GeometricAndAverageMeans
-    try:
-        return EXPRESSION_INTEGRATIONS[integration]
-    except KeyError as original_err:
-        error_str = f"""
-        Expression integration method {integration} does not exist. 
-        Allowed methods: {EXPRESSION_INTEGRATIONS}
-        """
-        logging.error(error_str)
-        raise ValueError(error_str) from original_err
-
-
-def parse_adjacency(adjacency: Optional[str]) -> AdjacencyTransformation:
-    """
-    Choice function for adjacency calculation algorithms
-    :param adjacency: Name for adjacency calculation algorithm
-    :type adjacency: Optional[str]
-    :raises ValueError: In case of invalid name
-    :return: Selected adjacency transformation algorithm
-    :rtype: AdjacencyTransformation
-    """
-    if adjacency is None:
-        return ATPureAdjacency
-    try:
-        return ADJACENCIES[adjacency]
-    except KeyError as original_err:
-        error_str = f"""
-        Adjacency model {adjacency} does not exist. 
-        Allowed models: {ALLOWED_ADJ}
-        """
-        logging.error(error_str)
-        raise ValueError(error_str) from original_err
-
-
-def parse_ranking(ranking: Optional[str]) -> Ranking:
-    """
-    Choice function for ranking algorithms
-    :param ranking: Name of the ranking algorithm to use
-    :type ranking: Optional[str]
-    :raises ValueError: In case of unknown ranking algorithm name
-    :return: Ranking algorithm
-    :rtype: Ranking
-    """
-    if ranking is None:
-        return PagerankNX
-    try:
-        return RANKINGS[ranking]
-    except KeyError as original_err:
-        error_str = f"""
-        {ranking} is not a valid ranking method. 
-        Available methods are: {ALLOWED_RANKINGS}
-        """
-        logging.error(error_str)
-        raise ValueError(error_str) from original_err
+    return content.loc[:, col_name]
 
 
 def get_all_ones(expression: Series) -> Series:
@@ -252,7 +130,7 @@ def get_all_ones(expression: Series) -> Series:
     :return: Identical expression series with all entries set to one
     :rtype: pd.Series
     """
-    return Series(index=expression.index, data=1.0)
+    return Series(index=deepcopy(expression.index), data=1.0)
 
 
 def parse_outfile(outfile: Optional[str]) -> Path:
@@ -292,18 +170,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
-        "-i",
-        "--integration",
-        choices=("means", "averages"),
-        help="Algorithm for the integration of expression data to use",
-    )
-    parser.add_argument(
         "-e",
         "--expressioncolumn",
         help="Name of the column containing the condition expression data",
-    )
-    parser.add_argument(
-        "-r", "--ranking", choices=["Pagerank"], help="Ranking method to use"
     )
     parser.add_argument(
         "-b", "--baseline", help="File containing expression data for the baseline"
@@ -312,12 +181,6 @@ def build_parser() -> argparse.ArgumentParser:
         "-c",
         "--baselinecolumn",
         help="Name of the column contianing the baseline expression data",
-    )
-    parser.add_argument(
-        "-a",
-        "--adjacency",
-        choices=("pure", "half", "full"),
-        help="Algorithm for the calculation of the adjacency matrix",
     )
     parser.add_argument(
         "-g",
@@ -370,22 +233,12 @@ def cli_standard(args: argparse.Namespace):
     try:
         gene_fill = float(args.genefill)
     except (TypeError, ValueError):
-        print("Empty or invalid gene-fill value. Defaulting to 1.0 .")
+        logging.info("Empty or invalid gene-fill value. Defaulting to 1.0 .")
         gene_fill = 1.0
-
-    model, cobra_model = parse_model(args.modelfile)
-    model.adjacency_transformation = parse_adjacency(args.adjacency)
-    model.ranking = parse_ranking(args.ranking)
-    gpr, rxn_gene_mapping = read_gpr_strings_from_cobra(cobra_model)
-    integration = parse_integration(args.integration)
-    expression_obj = integration(gpr, rxn_gene_mapping, expression, gene_fill=gene_fill)
-    baseline_obj = integration(gpr, rxn_gene_mapping, baseline, gene_fill=gene_fill)
-    model.load_expression(expression_obj)
-    results = model.calculate()
-    model.load_expression(baseline_obj)
-    results_baseline = model.calculate()
-
-    return results / results_baseline, parse_outfile(args.outfile)
+    cobra_model = parse_model(args.modelfile)
+    return workflow_standard(
+        cobra_model, baseline, expression, gene_fill
+    ), parse_outfile(args.outfile)
 
 
 def main():

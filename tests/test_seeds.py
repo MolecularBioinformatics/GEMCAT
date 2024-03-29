@@ -18,14 +18,14 @@ eps = 10**-5
 
 def test_seed_load():
     seeds = [1.0, 2.0, 3.0, 4.0]
-    model, _ = pr.io.load_sbml_cobra(mini_path)
+    model = pr.io.convert_cobra_model(pr.io.load_sbml_cobra(mini_path))
     model.load_metabolite_seeds(seeds)
     assert model.seeds == seeds
 
 
 def test_wrong_seed_load():
     seeds = [1.0, 2.0, 3.0, 4.0, 5.0]
-    model, _ = pr.io.load_sbml_cobra(mini_path)
+    model = pr.io.convert_cobra_model(pr.io.load_sbml_cobra(mini_path))
     with pytest.raises(ValueError):
         model.load_metabolite_seeds(seeds)
 

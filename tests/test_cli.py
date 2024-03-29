@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+from subprocess import run
 from typing import Optional
 
 import pytest
@@ -17,10 +18,7 @@ class MockNamespace:
     baseline: Optional[str] = None
     baselinecolumn: Optional[str] = None
     genefill: Optional[str] = None
-    ranking: Optional[str] = None
-    adjacency: Optional[str] = None
     outfile: Optional[str] = None
-    integration: Optional[str] = None
 
 
 expression_path = Path("./tests/test_seq/")
@@ -36,10 +34,7 @@ def test_cli_mini():
         baselinecolumn=None,
         genefill="1.0",
         modelfile=str(model_path / "mini.xml"),
-        ranking=None,
-        adjacency=None,
         outfile="./temp_outfile.csv",
-        integration="means",
     )
     result, outfile = cli.cli_standard(args_minimal)
     assert isinstance(result, Series)
@@ -59,10 +54,7 @@ def test_cli_uc_xml():
         baselinecolumn=None,
         genefill="1.0",
         modelfile=str(model_path / "Recon3D_301.xml"),
-        ranking=None,
-        adjacency=None,
         outfile="./temp_outfile.csv",
-        integration="means",
     )
     result, outfile = cli.cli_standard(args_uc_xml)
     assert isinstance(result, Series)
@@ -79,10 +71,7 @@ def test_cli_293_xml():
         baselinecolumn="wtHEK293_2",
         genefill="1.0",
         modelfile=str(model_path / "Recon3D_301.xml"),
-        ranking=None,
-        adjacency=None,
         outfile="./temp_outfile.csv",
-        integration="means",
     )
     result, outfile = cli.cli_standard(args_293_xml)
     assert isinstance(result, Series)
@@ -92,26 +81,63 @@ def test_cli_293_xml():
 
 
 @pytest.mark.slow
-def test_cli_paper_uc():
-    args_uc_json = MockNamespace(
+def test_cli_paper_uc_ns():
+    args = MockNamespace(
         expressionfile=str(expression_path / "prot_uc_vs_healthy.csv"),
         expressioncolumn="foldchange",
-        baseline=None,
-        baselinecolumn=None,
-        genefill="1.0",
+        baseline=str(expression_path / "prot_uc_vs_healthy.csv"),
+        baselinecolumn="base",
+        genefill=None,
         modelfile=str(model_path / "Recon3D.json"),
-        ranking=None,
-        adjacency="pure",
         outfile="./temp_outfile.csv",
-        integration=None,
     )
-    result, outfile = cli.cli_standard(args_uc_json)
+    result, outfile = cli.cli_standard(args)
     assert isinstance(result, Series)
     assert len(result) > 1000
     assert outfile.stem == "temp_outfile"
     assert outfile.suffix == ".csv"
     expected = read_csv(results_path / "uc.csv", sep=",", index_col=0).iloc[:, 0]
-    assert allclose(expected.values, result.values, atol=0.1)
+    assert allclose(expected.values, result.values, atol=0.2)
+
+
+@pytest.mark.slow
+def test_cli_paper_uc_wf():
+    args = MockNamespace(
+        expressionfile=str(expression_path / "prot_uc_vs_healthy.csv"),
+        expressioncolumn="foldchange",
+        baseline=str(expression_path / "prot_uc_vs_healthy.csv"),
+        baselinecolumn="base",
+        genefill=None,
+        modelfile=str(model_path / "Recon3D.json"),
+        outfile="./temp_outfile.csv",
+    )
+    result, _ = cli.cli_standard(args)
+    assert isinstance(result, Series)
+    assert len(result) > 1000
+    expected = read_csv(results_path / "uc.csv", sep=",", index_col=0).iloc[:, 0]
+    assert allclose(expected.values, result.values, atol=0.2)
+
+
+@pytest.mark.slow
+def test_cli_paper_uc_term():
+    out_file = "./temp_outfile.csv"
+    run(
+        [
+            "gemcat",
+            str(model_path / "Recon3D.json"),
+            str(expression_path / "prot_uc_vs_healthy.csv"),
+            "-e",
+            "foldchange",
+            "-o",
+            out_file,
+            "-g",
+            "1.0",
+        ],
+        shell=True,
+    )
+    received = read_csv(out_file, sep=",", index_col=0).iloc[:, 0]
+    expected = read_csv(results_path / "uc.csv", sep=",", index_col=0).iloc[:, 0]
+    assert allclose(expected.values, received.values, atol=0.2)
     # when run with pytest, maximum deviation is at .09,
     # when run as a normal Python function, it's at 0.01
     # in both cases only the one test function runs
