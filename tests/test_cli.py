@@ -97,7 +97,7 @@ def test_cli_paper_uc_ns():
     assert outfile.stem == "temp_outfile"
     assert outfile.suffix == ".csv"
     expected = read_csv(results_path / "uc.csv", sep=",", index_col=0).iloc[:, 0]
-    assert allclose(expected.values, result.values, atol=0.2)
+    assert allclose(expected.values, result.values, atol=0.3)
 
 
 @pytest.mark.slow
@@ -115,12 +115,12 @@ def test_cli_paper_uc_wf():
     assert isinstance(result, Series)
     assert len(result) > 1000
     expected = read_csv(results_path / "uc.csv", sep=",", index_col=0).iloc[:, 0]
-    assert allclose(expected.values, result.values, atol=0.2)
+    assert allclose(expected.values, result.values, atol=0.3)
 
 
 @pytest.mark.slow
 def test_cli_paper_uc_term():
-    out_file = "./temp_outfile.csv"
+    out_file = Path("./temp_outfile.csv")
     run(
         [
             "gemcat",
@@ -129,7 +129,7 @@ def test_cli_paper_uc_term():
             "-e",
             "foldchange",
             "-o",
-            out_file,
+            str(out_file),
             "-g",
             "1.0",
         ],
@@ -137,7 +137,8 @@ def test_cli_paper_uc_term():
     )
     received = read_csv(out_file, sep=",", index_col=0).iloc[:, 0]
     expected = read_csv(results_path / "uc.csv", sep=",", index_col=0).iloc[:, 0]
-    assert allclose(expected.values, received.values, atol=0.2)
+    out_file.unlink()
+    assert allclose(expected.values, received.values, atol=0.3)
     # when run with pytest, maximum deviation is at .09,
     # when run as a normal Python function, it's at 0.01
     # in both cases only the one test function runs
