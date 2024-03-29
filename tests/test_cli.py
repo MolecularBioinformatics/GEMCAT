@@ -133,7 +133,7 @@ def test_cli_paper_uc_term():
             "-g",
             "1.0",
         ],
-        shell=True,
+        shell=False,
     )
     received = read_csv(out_file, sep=",", index_col=0).iloc[:, 0]
     expected = read_csv(results_path / "uc.csv", sep=",", index_col=0).iloc[:, 0]
