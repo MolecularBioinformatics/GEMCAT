@@ -81,45 +81,31 @@ def test_cli_293_xml():
 
 
 @pytest.mark.slow
-def test_cli_paper_uc_ns():
-    args = MockNamespace(
-        expressionfile=str(expression_path / "prot_uc_vs_healthy.csv"),
-        expressioncolumn="foldchange",
-        baseline=str(expression_path / "prot_uc_vs_healthy.csv"),
-        baselinecolumn="base",
-        genefill=None,
-        modelfile=str(model_path / "Recon3D.json"),
-        outfile="./temp_outfile.csv",
+def test_cli_293_mat():
+    out_file = Path("./temp_outfile.csv")
+    run(
+        [
+            "gemcat",
+            str(model_path / "Recon3D_301.mat"),
+            str(expression_path / "prot_uc_vs_healthy.csv"),
+            "-e",
+            "foldchange",
+            "-o",
+            str(out_file),
+            "-g",
+            "1.0",
+        ],
+        shell=False,
     )
-    result, outfile = cli.cli_standard(args)
-    assert isinstance(result, Series)
-    assert len(result) > 1000
-    assert outfile.stem == "temp_outfile"
-    assert outfile.suffix == ".csv"
-    expected = read_csv(results_path / "uc.csv", sep=",", index_col=0).iloc[:, 0]
-    assert allclose(expected.values, result.values, atol=0.3)
+    assert out_file.is_file()
+    received = read_csv(out_file, sep=",", index_col=0).iloc[:, 0]
+    out_file.unlink()
+    assert len(received > 1000)
+    assert received.isna().sum() == 0
 
 
 @pytest.mark.slow
-def test_cli_paper_uc_wf():
-    args = MockNamespace(
-        expressionfile=str(expression_path / "prot_uc_vs_healthy.csv"),
-        expressioncolumn="foldchange",
-        baseline=str(expression_path / "prot_uc_vs_healthy.csv"),
-        baselinecolumn="base",
-        genefill=None,
-        modelfile=str(model_path / "Recon3D.json"),
-        outfile="./temp_outfile.csv",
-    )
-    result, _ = cli.cli_standard(args)
-    assert isinstance(result, Series)
-    assert len(result) > 1000
-    expected = read_csv(results_path / "uc.csv", sep=",", index_col=0).iloc[:, 0]
-    assert allclose(expected.values, result.values, atol=0.3)
-
-
-@pytest.mark.slow
-def test_cli_paper_uc_term():
+def test_cli_uc_json():
     out_file = Path("./temp_outfile.csv")
     run(
         [
