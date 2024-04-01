@@ -41,10 +41,7 @@ def load_json_cobra(json_file: Union[str, Path]) -> cobra.Model:
     :return: Model object created from the COBRA model
     :rtype: Model
     """
-    if isinstance(json_file, Path):
-        json_file = json_file.as_posix()
-    cobra_model = cobra.io.load_json_model(json_file)
-
+    cobra_model = cobra.io.load_json_model(str(json_file))
     return cobra_model
 
 
@@ -56,10 +53,19 @@ def load_sbml_cobra(sbml_file: Union[str, Path]) -> cobra.Model:
     :return: Model object created from the COBRA model
     :rtype: Model
     """
-    if isinstance(sbml_file, Path):
-        sbml_file = sbml_file.as_posix()
-    cobra_model = cobra.io.read_sbml_model(sbml_file)
+    cobra_model = cobra.io.read_sbml_model(str(sbml_file))
+    return cobra_model
 
+
+def load_mat_cobra(mat_file: Union[str, Path]) -> cobra.Model:
+    """
+    Loads a Pagerank-based Model from a COBRA SBML file.
+    :param mat_file: Path to json SBML file
+    :type mat_file: Union[str, Path]
+    :return: COBRA model object
+    :rtype: Model
+    """
+    cobra_model = cobra.io.load_matlab_model(str(mat_file))
     return cobra_model
 
 

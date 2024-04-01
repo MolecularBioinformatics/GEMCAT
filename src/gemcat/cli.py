@@ -14,7 +14,7 @@ from typing import Any, Optional
 import cobra
 from pandas import DataFrame, Series, read_csv
 
-from .io import load_json_cobra, load_sbml_cobra
+from .io import load_json_cobra, load_mat_cobra, load_sbml_cobra
 from .workflows import workflow_standard
 
 
@@ -33,7 +33,7 @@ MODELS = {
     "xml": load_sbml_cobra,
     "json": load_json_cobra,
     "csv": not_implemented,
-    "mat": not_implemented,
+    "mat": load_mat_cobra,
 }
 
 
