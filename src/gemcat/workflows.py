@@ -14,6 +14,36 @@ from . import io
 from . import ranking as pr
 
 
+def workflow_single(
+    cobra_model: cobra.Model, mapped_genes: pd.Series, gene_fill: float
+) -> pd.Series:
+    """
+    Workflow using Expression data integration via simple averaging,
+    provides only the output from a single expression data set.
+    :param cobra_model: cobra Model used as a base for modeling
+    :type cobra_model: cobra.Model
+    :param mapped_genes: Levels of gene/protein expression values
+    :type mapped_genes: pd.Series
+    :param gene_fill: Value to fill empty genes with
+    :type gene_fill: float
+    :return: Normalized metabolite scores
+    :rtype: pd.Series
+    """
+    model = io.convert_cobra_model(cobra_model)
+    gpr, rxn_gene_mapping = ex.read_gpr_strings_from_cobra(cobra_model)
+    model.adjacency_transformation = at.ATPureAdjacency()
+    model.ranking = pr.PagerankNX()
+    ex_comparison = ex.GeometricAndAverageMeans(
+        gpr=gpr,
+        reaction_gene_mapping=rxn_gene_mapping,
+        data=mapped_genes,
+        gene_fill=gene_fill,
+    )
+    model.load_expression(ex_comparison)
+    results = model.calculate()
+    return results
+
+
 def workflow_avg_single(
     cobra_model: cobra.Model,
     mapped_genes: pd.Series,

@@ -17,16 +17,49 @@ Or clone the repository and install GEMCAT from there using:
 
 ## Usage
 
+### Standard workflow from the Command-Line Interface (CLI)
+
+Use a single file containing per-gene fold-changes to calculate the resulting differential centralities:
+``` gemcat ./expression_file.csv ./model_file.xml -e column_name -o <result_file.csv>```
+Make sure the .csv file is either comma- or tab-delimited.
+`column_name` is the name of the column in the file containing the fold-change.
+
+Alternatively, use two files (or one file) with expression values for condition and baseline:
+``` gemcat <./condition_file.csv> <./model_file.xml> -e <condition_column_name> -b <./baseline_file> -c <baseline_column_name> -o <result_file.csv>```
+
+Currently only models in XML/SBML format are supported in the CLI.
+Further models can be used from the Python library.
+Support will come to the CLI soon.
+
+Important points to remember:
+Your gene or protein identifiers should be the first column of the expression file.
+Make sure the gene or protein identifiers in your expression data file exactly match those in the model.
+A results list of all 1.0 is a sure sign of no identifier matching.
+
+positional arguments:
+- expression file path
+- model file path
+
+All parameters:
+`-e --expressioncolumn` name of column containing condition expression data
+`-b BASELINE, --baseline` file containing baseline expression data
+`-c BASELINECOLUMN, --baselinecolumn` name of column containing baseline expression data
+`-v VERBOSE, --verbose` enables verbose output
+`-o OUTFILE, --outfile` write output to this file
+`-l LOGFILE, --logfile` write logs to this file
+
+
 ### Standard workflow in Python using a CobraPy model
 ```
 import gemcat as gc
-results = gc.workflows.workflow_standard(cobra_model: cobra.Model,
-                                        mapped_genes_baseline: pd.Series,
-                                        mapped_genes_comparison: pd.Series,
-                                        adjacency = gc.adjacency_transformation.ATPureAdjacency,
-                                        ranking = gc.ranking.PagerankNX,
-                                        gene_fill = 1.0
-                                        )
+results = gc.workflows.workflow_standard(
+  cobra_model: cobra.Model,
+  mapped_genes_baseline: pd.Series,
+  mapped_genes_comparison: pd.Series,
+  adjacency = gc.adjacency_transformation.ATPureAdjacency,
+  ranking = gc.ranking.PagerankNX,
+  gene_fill = 1.0
+)
 ```
 This will return the changes in centrality relative to the baseline in a Pandas Series.
 When using fold-changes as the mapped expression, use a vector of all ones as a comparison.
@@ -56,3 +89,14 @@ Input and output functions that create GEMCAT models from different sources.
 Contains common utility functions used throughout the package.
 ## verification
 Functions to verify data integrity.
+
+
+## Development
+You can run all local tests with `pytest .`. Default behavior is to also run integration tests, which takes time.
+You can exclude slow running tests by using `pytest . -m "not slow"`.
+These slow running tests are integration tests with "real world data" and will take 10-30s each according to your hardware.
+
+To run tests, make sure you have [git lfs](https://git-lfs.com/) installed and all the Tests are running.
+Make sure to run `isort` and `black` to have properly formatted code.
+
+The CI pipeline in Github will check with isort, black, and pytest.
