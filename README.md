@@ -41,19 +41,9 @@ positional arguments:
 - model file path
 
 All parameters:
-`-i --integration` method to use for expression integration into GPR rules
-  - `means`: geometric means for AND, arithmetic means for OR [default, recommended]
-  - `average`: simply average across all genes involved in reaction
 `-e --expressioncolumn` name of column containing condition expression data
-`-r RANKING, --ranking` method to use for ranking 
-  - currently only `Pagerank`
 `-b BASELINE, --baseline` file containing baseline expression data
 `-c BASELINECOLUMN, --baselinecolumn` name of column containing baseline expression data
-`-a ADJACENCY, --adjacency` method for adjacency calculation
-  - `pure`: interaction between metabolites has unit strength [default, recommended]
-  - `half`: interaction between metabolites depends on product stoichiometry
-  - `full`: interaction between metabolites depends on product and educt stoichiometry 
-`-g GENEFILL, --genefill` value to missing expression entries with
 `-v VERBOSE, --verbose` enables verbose output
 `-o OUTFILE, --outfile` write output to this file
 `-l LOGFILE, --logfile` write logs to this file

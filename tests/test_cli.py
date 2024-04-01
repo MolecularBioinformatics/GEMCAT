@@ -139,7 +139,4 @@ def test_cli_paper_uc_term():
     expected = read_csv(results_path / "uc.csv", sep=",", index_col=0).iloc[:, 0]
     out_file.unlink()
     assert allclose(expected.values, received.values, atol=0.3)
-    # when run with pytest, maximum deviation is at .09,
-    # when run as a normal Python function, it's at 0.01
-    # in both cases only the one test function runs
-    # weird
+    # the vast majority of metabolites is well behaved, a few show "larger" but inconsequential deviations
