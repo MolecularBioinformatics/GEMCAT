@@ -33,7 +33,7 @@ def convert_cobra_model(cobra_model: cobra.Model) -> Model:
     return Model(stoich_matrix, metabolites, rev)
 
 
-def load_json_cobra(json_file: Union[str, Path]) -> Model:
+def load_json_cobra(json_file: Union[str, Path]) -> cobra.Model:
     """
     Loads a Pagerank-based Model from a COBRA json file.
     :param json_file: Path to json model file
@@ -45,10 +45,10 @@ def load_json_cobra(json_file: Union[str, Path]) -> Model:
         json_file = json_file.as_posix()
     cobra_model = cobra.io.load_json_model(json_file)
 
-    return convert_cobra_model(cobra_model)
+    return cobra_model
 
 
-def load_sbml_cobra(sbml_file: Union[str, Path]):
+def load_sbml_cobra(sbml_file: Union[str, Path]) -> cobra.Model:
     """
     Loads a Pagerank-based Model from a COBRA SBML file.
     :param sbml_file: Path to json SBML file
@@ -60,7 +60,7 @@ def load_sbml_cobra(sbml_file: Union[str, Path]):
         sbml_file = sbml_file.as_posix()
     cobra_model = cobra.io.read_sbml_model(sbml_file)
 
-    return convert_cobra_model(cobra_model)
+    return cobra_model
 
 
 def load_csv(

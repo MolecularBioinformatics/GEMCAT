@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gemcat"
-version = "1.0.1"
+version = "1.1.0"
 
 description = "A toolbox for gene expression-based prediction of metabolic alterations"
 keywords = ["python", "bioinformatics", "modeling", "metabolites", "omics"]
@@ -30,6 +30,7 @@ dev = [
   "isort>=5.12.0",
   "pylint>=2.17.7",
   "ruff>=0.0.292",
+  "requests>=2.31.0",
 ]
 
 [tool.setuptools.packages.find]
@@ -83,3 +84,9 @@ line-length = 88
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 target-version = "py312"
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: Slow running (usually integration) tests. Run only fast tests with '-m \"not slow\"')",
+    "serial",
+]
