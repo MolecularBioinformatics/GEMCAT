@@ -2,6 +2,8 @@
 A computational toolbox associated with the manuscript entitled "GEMCAT - A new algorithm for gene expression-based prediction of metabolic alterations". 
 Cite using: https://www.biorxiv.org/content/10.1101/2024.01.15.575710v1
 
+Note: We are still refining the tool. Particularly, GEMCAT does not yet provide guidance for significance of predicted changes or any other measure of prediction quallity. We suggest to filter the predictions  for consistency. We do not recomment to prefilter the transcriptomics and proteomics data based on significance as this is affecting the network coverage which might negatively impact the prediction quallity as genes/proteins not present in the dataset are assumed to be unchanged. 
+
 ## Compatibility
 The package is tested for compatibility with Python >= 3.10 on Ubuntu and Windows.
 
