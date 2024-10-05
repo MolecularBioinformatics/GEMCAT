@@ -162,7 +162,7 @@ class GeometricAndAverageMeans(ExpressionIntegration):
 
     def rewrite_gpr(self):
         """
-        Rewrite all GPRs to evaluable strings
+        Rewrite all GPRs to strings that can be evaluated
         """
         quant_gpr = self.gpr.index.map(self.rewrite_single_gpr)
         self.quant_gpr = pd.Series(list(quant_gpr), self.gpr.index)
