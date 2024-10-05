@@ -183,8 +183,18 @@ class GeometricAndAverageMeans(ExpressionIntegration):
         if not isinstance(gpr, str):
             return ""
 
-        for gene in genes:
-            gene_str = str(gene)
+        # sort gene list according to reverse length to avoid partial substitutions
+        # imagine a GPR: "ABC and ABCD"
+        # typically we would first, we would start with ABC and would substitute f.ex. 1.0
+        # we would then receive "1.0 and 1.0D", which is obviously false
+        # sorting the list of genes solves that issue
+
+        sorted_genes = sorted(
+            [str(gene) for gene in genes], key=len, reverse=True
+        )  # longest to shortest gene
+
+        for gene in sorted_genes:
+            gene_str = gene
             gene_val = float(self.data.get(gene_str, self.gene_fill))
             gpr = gpr.replace(gene_str, f"{gene_val}")
 

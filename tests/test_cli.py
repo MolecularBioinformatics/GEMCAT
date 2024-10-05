@@ -126,3 +126,21 @@ def test_cli_uc_json():
     out_file.unlink()
     assert allclose(expected.values, received.values, atol=0.3)
     # the vast majority of metabolites is well behaved, a few show "larger" but inconsequential deviations
+
+
+@pytest.mark.slow
+def test_cli_auto_rat():
+    out_file = Path("./temp_outfile.csv")
+    run(
+        [
+            "gemcat",
+            "ratgem",
+            str(expression_path / "prot_uc_vs_healthy.csv"),
+            "-e",
+            "foldchange",
+            "-o",
+            "temp_outfile.csv",
+        ]
+    )
+    assert out_file.exists()
+    out_file.unlink()

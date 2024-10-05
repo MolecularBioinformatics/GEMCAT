@@ -15,6 +15,7 @@ import cobra
 from pandas import DataFrame, Series, read_csv
 
 from .io import load_json_cobra, load_mat_cobra, load_sbml_cobra
+from .model_manager import ModelManager
 from .workflows import workflow_standard
 
 
@@ -35,6 +36,8 @@ MODELS = {
     "csv": not_implemented,
     "mat": load_mat_cobra,
 }
+
+model_manager = ModelManager()
 
 
 def wrong_filetype(any: Any):
@@ -163,7 +166,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
-        "modelfile", help="Path to model file to use (XML/SBML, JSON format)"
+        "modelfile",
+        help=f"Path to model file to use (XML/SBML, JSON, or MAT format), or one of: {model_manager.get_managed_models_str()}",
     )
     parser.add_argument(
         "expressionfile", help="Path to file containing the condition expression data"
@@ -235,7 +239,11 @@ def cli_standard(args: argparse.Namespace):
     except (TypeError, ValueError):
         logging.info("Empty or invalid gene-fill value. Defaulting to 1.0 .")
         gene_fill = 1.0
-    cobra_model = parse_model(args.modelfile)
+    if args.modelfile in model_manager.get_managed_models():
+        model_path = model_manager.get_model(args.modelfile)
+        cobra_model = parse_model(model_path)
+    else:
+        cobra_model = parse_model(args.modelfile)
     return workflow_standard(
         cobra_model, baseline, expression, gene_fill
     ), parse_outfile(args.outfile)
