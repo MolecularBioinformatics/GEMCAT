@@ -4,6 +4,7 @@ from . import (
     expression,
     io,
     model,
+    model_manager,
     ranking,
     utils,
     verification,

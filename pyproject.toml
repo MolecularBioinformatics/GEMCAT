@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gemcat"
-version = "1.3.0"
+version = "1.4.0"
 
 description = "A toolbox for gene expression-based prediction of metabolic alterations"
 keywords = ["python", "bioinformatics", "modeling", "metabolites", "omics"]
