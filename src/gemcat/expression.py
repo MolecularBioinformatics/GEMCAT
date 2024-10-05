@@ -189,7 +189,9 @@ class GeometricAndAverageMeans(ExpressionIntegration):
         # we would then receive "1.0 and 1.0D", which is obviously false
         # sorting the list of genes solves that issue
 
-        sorted_genes = sorted([str(gene) for gene in genes], key=len, reverse=True) # longest to shortest gene
+        sorted_genes = sorted(
+            [str(gene) for gene in genes], key=len, reverse=True
+        )  # longest to shortest gene
 
         for gene in sorted_genes:
             gene_str = gene
