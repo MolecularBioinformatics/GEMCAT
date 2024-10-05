@@ -220,7 +220,7 @@ def save_to_file(outfile: Path, results: Series) -> None:
     else:
         # We should never end up here, as we only have .csv and .tsv output
         raise ValueError(
-            "An unknown issue occured with the output file. Output is not being saved."
+            "An unknown issue occurred with the output file. Output is not being saved."
         )
 
 

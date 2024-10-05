@@ -1,11 +1,11 @@
 # GEMCAT: Gene Expression-based Metabolite Centrality Analyses Tool
-A computational toolbox associated with the manuscript entitled "GEMCAT - A new algorithm for gene expression-based prediction of metabolic alterations". 
+A computational toolbox associated with the manuscript entitled _GEMCAT — A new algorithm for gene expression-based prediction of metabolic alterations_. 
 Cite using: https://www.biorxiv.org/content/10.1101/2024.01.15.575710v1
 
-Note: We are still refining the tool. Particularly, GEMCAT does not yet provide guidance for significance of predicted changes or any other measure of prediction quallity. We suggest to filter the predictions  for consistency. We do not recomment to prefilter the transcriptomics and proteomics data based on significance as this is affecting the network coverage which might negatively impact the prediction quallity as genes/proteins not present in the dataset are assumed to be unchanged. 
+Note: We are still refining the tool. Particularly, GEMCAT does not yet provide guidance for significance of predicted changes or any other measure of prediction quality. We suggest filtering the predictions for consistency. We do not recommend pre-filtering the transcriptomics and proteomics data based on significance as this is affecting the network coverage which might negatively impact the prediction quality as genes/proteins not present in the dataset should be unchanged. 
 
 ## Compatibility
-The package is tested for compatibility with Python >= 3.10 on Ubuntu and Windows.
+We tested the package for compatibility with Python >= 3.10 on Ubuntu and Windows.
 
 ## Installation
 Install from pip:
@@ -37,16 +37,14 @@ Model names currently supported are:
 - ```ratgem```: [Rat-GEM](https://github.com/SysBioChalmers/Rat-GEM)
 
 
-Currently only models in XML/SBML format are supported in the CLI.
-Further models can be used from the Python library.
-Support will come to the CLI soon.
+Currently, GEMCAT supports models in SBML, JSON, and MAT formats.
 
 Important points to remember:
 Your gene or protein identifiers should be the first column of the expression file.
 Make sure the gene or protein identifiers in your expression data file exactly match those in the model.
 A results list of all 1.0 is a sure sign of no identifier matching.
 
-positional arguments:
+Positional arguments:
 - expression file path
 - model file path
 
@@ -75,9 +73,9 @@ This will return the changes in centrality relative to the baseline in a Pandas 
 When using fold-changes as the mapped expression, use a vector of all ones as a comparison.
 
 ## Modularity and Configuration
-GEMCAT is designed to be modular, and its central components can easily be swapped out or appended by other components 
+GEMCAT is modular, and its central components can easily be swapped out or appended by other components 
 adhering to the specifications laid out in the module base classes (primarily adjacency transformation, expression integration, and ranking components).
-All classes inheriting from the abstract base classes laid out in the modules are swappable.
+All classes inheriting from the abstract base classes laid out in the modules are exchangeable.
 
 ## Core modules
 ### Model
@@ -102,15 +100,15 @@ Contains common utility functions used throughout the package.
 ### verification
 Functions to verify data integrity.
 ### model_manager
-Funationality for automatic downloading, storing, and retrieving of common models.
+Functionality for automatic downloading, storing, and retrieving of common models.
 
 
 ## Development
 You can run all local tests with `pytest .`. Default behavior is to also run integration tests, which takes time.
 You can exclude slow running tests by using `pytest . -m "not slow"`.
-These slow running tests are integration tests with "real world data" and will take 10-30s each according to your hardware.
+These slow running tests are integration tests with _real world data_ and will take 10-30s each according to your hardware.
 
 To run tests, make sure you have [git lfs](https://git-lfs.com/) installed and all the Tests are running.
 Make sure to run `isort` and `black` to have properly formatted code.
 
-The CI pipeline in Github will check with isort, black, and pytest.
+The CI pipeline in GitHub will check with isort, black, and pytest.
