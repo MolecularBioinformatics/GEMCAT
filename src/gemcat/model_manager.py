@@ -14,10 +14,24 @@ SUPPORTED_MODELS = MODEL_URLS.keys()
 
 
 def ratgem_processing(response: requests.Response) -> Any:
+    """
+    Parse request containing Rat-GEM .mat file.
+    :param response: Response containing Rat-GEM model .mat binary
+    :type response: requests.Response
+    :return: Binary (.mat) representation of Rat-GEM
+    :rtype: Any | Bytes
+    """
     return response.content
 
 
 def recon_processing(response: requests.Response) -> str:
+    """
+    Parse request containing Recon3D JSON
+    :param response: Response containing Recon3D JSON
+    :type response: requests.Response
+    :return: String representation of Recon3D JSON
+    :rtype: str
+    """
     return response.text.replace("_AT", ".")
 
 
@@ -29,7 +43,14 @@ processing = {
 
 # TODO: make singleton
 class ModelManager:
+    """
+    ModelManager class in charge of management of auto-downloading, storing and retrieving model files
+    """
+
     def __init__(self):
+        """
+        Initialize ModelManager
+        """
         self.model_files = {
             name: f"{name}.{MODEL_URLS[name][1]}" for name in MODEL_URLS.keys()
         }
@@ -42,11 +63,25 @@ class ModelManager:
         self.managed_models_str = ", ".join(SUPPORTED_MODELS)
 
     def get_model(self, model: str) -> Path:
+        """
+        Retrieve a given model by its name
+        :param model: Name given to the model (see allowed models above)
+        :type model: str
+        :return: Path to model file
+        :rtype: Path
+        """
         if not self.model_file_paths[model].exists():
             self.download_model(model)
         return self.model_file_paths[model]
 
     def download_model(self, model: str):
+        """
+        Download a given model by its name from a hardcoded URL
+        :param model: Name given to the model (see allowed models above)
+        :type model: str
+        :raises ValueError: Raised if the model name is unknown
+        :raises requests.HTTPError: Raised if the download fails
+        """
         if not model in MODEL_URLS.keys():
             raise ValueError(
                 f"Illegal model: {model} . Supported models are: {self.managed_models_str}"
@@ -63,13 +98,27 @@ class ModelManager:
         with open(save_file, mode) as f:
             f.write(content)
 
-    def get_managed_models(self):
+    def get_managed_models(self) -> list[str]:
+        """
+        Return a list of the names of supported models
+        :return: List of supported models' names
+        :rtype: list[str]
+        """
         return SUPPORTED_MODELS
 
-    def get_managed_models_str(self):
+    def get_managed_models_str(self) -> str:
+        """
+        Return all supported models in a string representation
+        :return: String of supported models
+        :rtype: str
+        """
         return self.managed_models_str
 
     def wipe(self):
+        """
+        Wipes all previously downloaded model files and deletes the models folder
+        :raises OSError: Raised if any file or the model folder cannot be deleted
+        """
         try:
             for model in self.model_file_paths.values():
                 if not model.exists():

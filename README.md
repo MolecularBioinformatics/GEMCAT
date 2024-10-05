@@ -22,12 +22,20 @@ Or clone the repository and install GEMCAT from there using:
 ### Standard workflow from the Command-Line Interface (CLI)
 
 Use a single file containing per-gene fold-changes to calculate the resulting differential centralities:
-``` gemcat ./expression_file.csv ./model_file.xml -e column_name -o <result_file.csv>```
+``` gemcat <./expression_file.csv> <./model_file.xml> -e <column_name> -o <result_file.csv>```
 Make sure the .csv file is either comma- or tab-delimited.
 `column_name` is the name of the column in the file containing the fold-change.
 
 Alternatively, use two files (or one file) with expression values for condition and baseline:
 ``` gemcat <./condition_file.csv> <./model_file.xml> -e <condition_column_name> -b <./baseline_file> -c <baseline_column_name> -o <result_file.csv>```
+
+If you do not have a model file ready, some models can be automatically accessed using their names:
+``` gemcat ./expression_file.csv <model_name> -e column_name -o <result_file.csv>```
+
+Model names currently supported are:
+- ```recon3d```: [Recon3D](http://bigg.ucsd.edu/models/Recon3D)
+- ```ratgem```: [Rat-GEM](https://github.com/SysBioChalmers/Rat-GEM)
+
 
 Currently only models in XML/SBML format are supported in the CLI.
 Further models can be used from the Python library.
@@ -74,23 +82,27 @@ All classes inheriting from the abstract base classes laid out in the modules ar
 ## Core modules
 ### Model
 The core of the package is the GEMCAT model structure that contains the model data, integrates the workflow, and calculates the results.
-### Adjacency
+### adjacency_transformation
 Different approaches can be used to calculate adjacency in the networks.
 We offer alternatives and a platform to create custom algorithms for the model.
-### Expression
+### expression
 Module covering the mapping of gene values onto reactions in the model via gene product rules.
 Providing different algorithms along with a platform to create alternatives.
-### Pagerank
+### ranking
 Module providing ranking algorithms for the models along with a platform to include custom algorithms.
 ### workflows
 The workflow module contains example workflows.
 To customize the workflow to your needs simply copy the provided functions and switch out the desired steps.
+### cli
+Command-line interface for GEMCAT.
 ### io
 Input and output functions that create GEMCAT models from different sources.
-## utils
+### utils
 Contains common utility functions used throughout the package.
-## verification
+### verification
 Functions to verify data integrity.
+### model_manager
+Funationality for automatic downloading, storing, and retrieving of common models.
 
 
 ## Development
