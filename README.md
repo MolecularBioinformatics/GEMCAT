@@ -1,6 +1,6 @@
-# GEMCAT: Gene Expression-based Metabolite Centrality Analyses Tool
+  # GEMCAT: Gene Expression-based Metabolite Centrality Analyses Tool
 A computational toolbox associated with the manuscript entitled _GEMCAT — A new algorithm for gene expression-based prediction of metabolic alterations_. 
-Cite using: https://www.biorxiv.org/content/10.1101/2024.01.15.575710v1
+Cite using: https://doi.org/10.1093/nargab/lqaf003
 
 Note: We are still refining the tool. Particularly, GEMCAT does not yet provide guidance for significance of predicted changes or any other measure of prediction quality. We suggest filtering the predictions for consistency. We do not recommend pre-filtering the transcriptomics and proteomics data based on significance as this is affecting the network coverage which might negatively impact the prediction quality as genes/proteins not present in the dataset should be unchanged. 
 
