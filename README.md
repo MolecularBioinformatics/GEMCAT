@@ -1,114 +1,192 @@
-  # GEMCAT: Gene Expression-based Metabolite Centrality Analyses Tool
-A computational toolbox associated with the manuscript entitled _GEMCAT — A new algorithm for gene expression-based prediction of metabolic alterations_. 
-Cite using: https://doi.org/10.1093/nargab/lqaf003
+# GEMCAT: Gene Expression-based Metabolite Centrality Analyses Tool
 
-Note: We are still refining the tool. Particularly, GEMCAT does not yet provide guidance for significance of predicted changes or any other measure of prediction quality. We suggest filtering the predictions for consistency. We do not recommend pre-filtering the transcriptomics and proteomics data based on significance as this is affecting the network coverage which might negatively impact the prediction quality as genes/proteins not present in the dataset should be unchanged. 
+GEMCAT is a computational toolbox designed to predict metabolic alterations based on gene expression data. It's the 
+accompanying software for our manuscript, "_GEMCAT — A new algorithm for gene expression-based prediction of metabolic alterations_."
+
+## Quick links:
+* **How to Cite:** [https://doi.org/10.1093/nargab/lqaf003](https://doi.org/10.1093/nargab/lqaf003)
+* **PyPI:** [https://pypi.org/project/gemcat/](https://pypi.org/project/gemcat/)
+* **Source Code (GitHub):** [https://github.com/MolecularBioinformatics/GEMCAT](https://github.com/MolecularBioinformatics/GEMCAT) 
+
+## Important Considerations
+
+* **Prediction Quality:** GEMCAT is still under refinement. It doesn't yet provide guidance on the
+  statistical significance of predicted changes or any other measure of prediction quality. We
+  recommend **filtering predictions for consistency** based on your domain knowledge.
+* **Data Pre-filtering:** We **don't recommend pre-filtering transcriptomics and proteomics data based
+  on significance**. This can negatively impact network coverage, as genes/proteins not present in the
+  filtered dataset are implicitly considered "unchanged" by GEMCAT.
+* **Graphical User Interface (GUI):** We are actively developing a user-friendly GUI for GEMCAT,
+  which will be released soon. Stay tuned for updates on our GitHub repository and PyPI page! A **development version**
+  of the GUI is currently hosted in a private repository; if you're interested in gaining early access,
+  please contact **suraj.sharma@uib.no**.
+
+---
 
 ## Compatibility
-We tested the package for compatibility with Python >= 3.10 on Ubuntu and Windows.
+GEMCAT has been tested and is compatible with **Python >= 3.10** on Ubuntu and Windows operating systems.
 
 ## Installation
-Install from pip:
+You can install GEMCAT in two ways:
 
-```pip install gemcat```
+1.  **Using pip (recommended):**
+    ```bash
+    pip install gemcat
+    ```
+2.  **From source (for developers or specific versions):**
+    First, clone the repository, then install:
+    ```bash
+    git clone https://github.com/MolecularBioinformatics/GEMCAT.git
+    cd gemcat
+    pip install .
+    ```
+---
 
-Or clone the repository and install GEMCAT from there using:  
+## How to Use GEMCAT
 
-```pip install .```
+GEMCAT offers both a Python API for flexible, programmatic access and a command-line interface (CLI) for straightforward, scriptable use.
 
+### Python Workflow with CobraPy
 
-## Usage
+For more control and integration into existing Python projects, use the `workflow_standard` function:
 
-### Standard workflow from the Command-Line Interface (CLI)
-
-Use a single file containing per-gene fold-changes to calculate the resulting differential centralities:
-``` gemcat <./expression_file.csv> <./model_file.xml> -e <column_name> -o <result_file.csv>```
-Make sure the .csv file is either comma- or tab-delimited.
-`column_name` is the name of the column in the file containing the fold-change.
-
-Alternatively, use two files (or one file) with expression values for condition and baseline:
-``` gemcat <./condition_file.csv> <./model_file.xml> -e <condition_column_name> -b <./baseline_file> -c <baseline_column_name> -o <result_file.csv>```
-
-If you do not have a model file ready, some models can be automatically accessed using their names:
-``` gemcat ./expression_file.csv <model_name> -e column_name -o <result_file.csv>```
-
-Model names currently supported are:
-- ```recon3d```: [Recon3D](http://bigg.ucsd.edu/models/Recon3D)
-- ```ratgem```: [Rat-GEM](https://github.com/SysBioChalmers/Rat-GEM)
-
-
-Currently, GEMCAT supports models in SBML, JSON, and MAT formats.
-
-Important points to remember:
-Your gene or protein identifiers should be the first column of the expression file.
-Make sure the gene or protein identifiers in your expression data file exactly match those in the model.
-A results list of all 1.0 is a sure sign of no identifier matching.
-
-Positional arguments:
-- expression file path
-- model file path
-
-All parameters:
-`-e --expressioncolumn` name of column containing condition expression data
-`-b BASELINE, --baseline` file containing baseline expression data
-`-c BASELINECOLUMN, --baselinecolumn` name of column containing baseline expression data
-`-v VERBOSE, --verbose` enables verbose output
-`-o OUTFILE, --outfile` write output to this file
-`-l LOGFILE, --logfile` write logs to this file
-
-
-### Standard workflow in Python using a CobraPy model
-```
+```python
 import gemcat as gc
+import cobra # Assuming cobrapy is installed for model handling
+import pandas as pd # For pd.Series
+
+# Example usage (replace with your actual data and model)
+# Make sure your mapped_genes_baseline and mapped_genes_comparison are pandas Series
+# with gene/protein identifiers as the index.
+
+# Example: Load a CobraPy model
+# model = cobra.io.read_sbml_model("your_model.xml")
+
+# Example: Create dummy mapped gene series
+# mapped_genes_baseline = pd.Series([10, 20, 30], index=['geneA', 'geneB', 'geneC'])
+# mapped_genes_comparison = pd.Series([15, 25, 35], index=['geneA', 'geneB', 'geneC'])
+
 results = gc.workflows.workflow_standard(
-  cobra_model: cobra.Model,
-  mapped_genes_baseline: pd.Series,
-  mapped_genes_comparison: pd.Series,
-  adjacency = gc.adjacency_transformation.ATPureAdjacency,
-  ranking = gc.ranking.PagerankNX,
-  gene_fill = 1.0
+    cobra_model=your_cobra_model, # Your loaded cobra.Model object
+    mapped_genes_baseline=your_baseline_series, # pd.Series of baseline expression
+    mapped_genes_comparison=your_comparison_series, # pd.Series of comparison expression
+    adjacency=gc.adjacency_transformation.ATPureAdjacency, # Optional: Customize adjacency method
+    ranking=gc.ranking.PagerankNX, # Optional: Customize ranking algorithm
+    gene_fill=1.0 # Value to fill for genes not present in mapped_genes_comparison
 )
+
+print(results)
 ```
-This will return the changes in centrality relative to the baseline in a Pandas Series.
-When using fold-changes as the mapped expression, use a vector of all ones as a comparison.
+This function returns the changes in centrality relative to the baseline as a Pandas Series. If you're 
+using fold-changes as your mapped_genes_comparison, you should provide a vector of all 1.0s for mapped_genes_baseline.
 
-## Modularity and Configuration
-GEMCAT is modular, and its central components can easily be swapped out or appended by other components 
-adhering to the specifications laid out in the module base classes (primarily adjacency transformation, expression integration, and ranking components).
-All classes inheriting from the abstract base classes laid out in the modules are exchangeable.
+For further examples of using genome-scale metabolic networks from two different organisms refer: 
+[An engineered human cell line with a functional deletion of the mitochondrial NAD transporter](https://github.com/MolecularBioinformatics/prm_manuscript/blob/main/jupyter_notebooks/pr_SLC25A51ko.ipynb),
+[Patients with inflammatory bowel disease](https://github.com/MolecularBioinformatics/prm_manuscript/blob/main/jupyter_notebooks/pr_UC.ipynb),
+[Training-induced metabolic changes in rats](https://github.com/MolecularBioinformatics/prm_manuscript/blob/main/jupyter_notebooks/pr_rats.ipynb),
 
-## Core modules
-### Model
-The core of the package is the GEMCAT model structure that contains the model data, integrates the workflow, and calculates the results.
-### adjacency_transformation
-Different approaches can be used to calculate adjacency in the networks.
-We offer alternatives and a platform to create custom algorithms for the model.
-### expression
-Module covering the mapping of gene values onto reactions in the model via gene product rules.
-Providing different algorithms along with a platform to create alternatives.
-### ranking
-Module providing ranking algorithms for the models along with a platform to include custom algorithms.
-### workflows
-The workflow module contains example workflows.
-To customize the workflow to your needs simply copy the provided functions and switch out the desired steps.
-### cli
-Command-line interface for GEMCAT.
-### io
-Input and output functions that create GEMCAT models from different sources.
-### utils
-Contains common utility functions used throughout the package.
-### verification
-Functions to verify data integrity.
-### model_manager
-Functionality for automatic downloading, storing, and retrieving of common models.
+### Command-Line Interface (CLI)
 
+The CLI allows you to calculate differential centralities using gene expression data.
+
+**Key Requirements for Input Files:**
+
+* Your gene or protein identifiers **must be in the first column** of your expression file.
+* These identifiers **must exactly match** those in your metabolic model. If you see a results list of all 1.0, it's
+  a strong indicator of an identifier mismatch.
+* Expression `.csv` files can be either comma- or tab-delimited.
+
+**Common Workflows:**
+
+1.  **Using a single file with pre-calculated fold-changes:**
+    ```bash
+    gemcat <expression_file.csv> <model_file.xml> -e <column_name> -o <result_file.csv>
+    ```
+    * `<expression_file.csv>`: Path to your input file.
+    * `<model_file.xml>`: Path to your metabolic model file (SBML, JSON, or MAT format).
+    * `<column_name>`: The name of the column in your CSV containing the fold-change values.
+    * `<result_file.csv>`: The desired output file path.
+
+2.  **Using two files (or one) with condition and baseline expression values:**
+    ```bash
+    gemcat <condition_file.csv> <model_file.xml> -e <condition_column_name> -b <baseline_file.csv> -c <baseline_column_name> -o <result_file.csv>
+    ```
+    * `<condition_file.csv>`: Path to the file with expression values for your experimental condition.
+    * `<baseline_file.csv>`: Path to the file with baseline expression values. If this is the same as the condition file, you can omit the `-b` flag and just use `<condition_file.csv>` as the second positional argument.
+    * `<condition_column_name>`: Name of the column with condition expression data.
+    * `<baseline_column_name>`: Name of the column with baseline expression data.
+
+3.  **Using built-in models:**
+    If you don't have a model file, GEMCAT can automatically access some common models by name:
+    ```bash
+    gemcat <expression_file.csv> <model_name> -e <column_name> -o <result_file.csv>
+    ```
+    Currently supported model names:
+    * `recon3d`: [Recon3D](http://bigg.ucsd.edu/models/Recon3D)
+    * `ratgem`: [Rat-GEM](https://github.com/SysBioChalmers/Rat-GEM)
+
+**All CLI Parameters:**
+
+* **Positional Arguments:**
+    * `expression_file_path`: Path to your expression data file.
+    * `model_file_path`: Path to your metabolic model file (or model name).
+* **Optional Arguments:**
+    * `-e --expressioncolumn`: Name of the column containing condition expression data (required for expression files).
+    * `-b BASELINE, --baseline`: Path to the file containing baseline expression data.
+    * `-c BASELINECOLUMN, --baselinecolumn`: Name of the column containing baseline expression data.
+    * `-o OUTFILE, --outfile`: Path to write the output results.
+    * `-v VERBOSE, --verbose`: Enables verbose output for detailed execution information.
+    * `-l LOGFILE, --logfile`: Path to write logs.
+ 
+---
+
+## Modularity and Customization
+
+GEMCAT is designed with a modular architecture, allowing you to easily swap out or append central components 
+to customize its behavior. This is achieved by adhering to specifications laid out in the module base classes, particularly for:
+
+* **Adjacency Transformation:** Defines how network adjacencies are calculated.
+* **Expression Integration:** Handles mapping gene expression values onto reactions.
+* **Ranking Components:** Implements different centrality ranking algorithms.
+
+Any class inheriting from the abstract base classes in these modules can be exchanged.
+
+---
+
+## Core Modules Overview
+
+* **`model`**: The central GEMCAT model structure, responsible for integrating workflows and calculating results.
+* **`adjacency_transformation`**: Provides various approaches for calculating network adjacency and a platform for custom algorithms.
+* **`expression`**: Manages the mapping of gene values onto reactions in the model via gene product rules, offering different algorithms along with a platform to create alternatives.
+* **`ranking`**: Offers various ranking algorithms for the models along with a platform to include custom algorithms.
+* **`workflows`**: Contains example workflows. To customize the workflow to your needs simply copy the provided functions and switch out the desired steps.
+* **`cli`**: Command-line interface for GEMCAT.
+* **`io`**: Input and output functions that create GEMCAT models from different sources.
+* **`utils`**: Contains common utility functions used throughout the package.
+* **`verification`**: Functions to verify data integrity.
+* **`model_manager`**: Functionality for automatic downloading, storing, and retrieving of common models.
+
+---
 
 ## Development
-You can run all local tests with `pytest .`. Default behavior is to also run integration tests, which takes time.
-You can exclude slow running tests by using `pytest . -m "not slow"`.
-These slow running tests are integration tests with _real world data_ and will take 10-30s each according to your hardware.
 
-To run tests, make sure you have [git lfs](https://git-lfs.com/) installed and all the Tests are running.
-Make sure to run `isort` and `black` to have properly formatted code.
+If you're contributing to GEMCAT:
 
-The CI pipeline in GitHub will check with isort, black, and pytest.
+* **Running Tests:**
+    * Run all local tests with `pytest .`.
+    * You can exclude slow-running tests by using `pytest . -m "not slow"`. These slow-running tests are
+      integration tests with *real-world data* and will take 10-30 seconds each depending on your hardware.
+* **Prerequisites:** Ensure you have [git lfs](https://git-lfs.com/) installed for tests that rely on large files.
+* **Code Formatting:** Before committing, make sure your code is properly formatted using `isort` and `black`.
+* **CI Pipeline:** The GitHub CI pipeline automatically checks for `isort`, `black`, and `pytest` compliance.
+
+---
+
+## Contact and Support
+
+For questions, bug reports, or support, please open an issue on the 
+[GitHub Issues page](https://github.com/MolecularBioinformatics/GEMCAT/issues). We will do our best to respond promptly.
+
+For direct inquiries about the **development version of the GEMCAT GUI** or other specific questions, you can also contact:
+
+* **Suraj Sharma:** suraj.sharma@uib.no
