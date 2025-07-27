@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import sparse
 from fixtures import models
 
 from gemcat import expression as ex
@@ -28,7 +29,7 @@ def test_ExpressionMapSingleAverage(models):
     gene_map = pd.Series({"G1": 2.0, "G2": 2.0, "G3": 2.0, "G4": 2.0})
     gpr = ex.read_simple_gpr_from_cobra(models["mini"])
     exp = ex.ExpressionMapSingleAverage(gene_map, gpr)
-    expected = np.array([2, 2, 2, 2])
+    expected = sparse.COO([2, 2, 2, 2])
     assert all_close(exp.get_mapped_values(), expected)
 
 

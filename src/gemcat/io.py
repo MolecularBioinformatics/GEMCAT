@@ -9,6 +9,7 @@ from typing import Optional, Union
 
 import cobra
 import pandas as pd
+import sparse
 
 from . import utils
 from .model import Model
@@ -27,7 +28,7 @@ def convert_cobra_model(cobra_model: cobra.Model) -> Model:
         err = f"Expected a COBRA Model but received {received}"
         logging.error(err)
         raise TypeError(err)
-    stoich_matrix = utils.get_stoich_matrix_from_cobra(cobra_model)
+    stoich_matrix = sparse.COO(utils.get_stoich_matrix_from_cobra(cobra_model))
     rev = utils.get_reversibilities(cobra_model)
     metabolites = utils.get_metabolite_ids(cobra_model)
     return Model(stoich_matrix, metabolites, rev)

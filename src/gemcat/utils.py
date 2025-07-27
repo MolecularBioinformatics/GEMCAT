@@ -11,6 +11,7 @@ from typing import List, Tuple, Union
 import cobra
 import numpy as np
 import pandas as pd
+import sparse
 
 
 def _get_ids(
@@ -114,7 +115,8 @@ def make_unidirectional(
             raise TypeError(err)
     reversible_part = stoich_matrix[:, reversibilities]
     reversible_part = -1.0 * reversible_part
-    return np.append(stoich_matrix, reversible_part, axis=1)
+    reversible_part.fill_value = 0.0
+    return sparse.concatenate([stoich_matrix, reversible_part], axis=1)
 
 
 def _get_unidirectional_matrix(model: cobra.Model) -> np.array:
@@ -313,7 +315,7 @@ def make_column_vector(arr: np.array) -> np.array:
     :return: [description]
     :rtype: np.array
     """
-    return arr.reshape(arr.size, 1)
+    return arr.reshape([arr.size, 1])
 
 
 def _is_np_array(arr):
@@ -365,6 +367,10 @@ def all_close(arr1: np.array, arr2: np.array, atol = None, rtol = None) -> bool:
     :return: True if arrays are close, False otherwise
     :rtype: bool
     """
+    if isinstance(arr1, sparse.COO):
+        arr1 = arr1.todense()
+    if isinstance(arr2, sparse.COO):
+        arr2 = arr2.todense()
     if atol:
         return np.allclose(arr1, arr2, atol=atol)
     elif rtol:
@@ -385,11 +391,13 @@ def is_close(a, b, atol=None, rtol=None) -> bool:
     :return: True if numbers are close, False otherwise
     :rtype: bool
     """
+    a = float(a)
+    b = float(b)
     if atol:
-        return np.isclose(a, b, atol=atol)
+        return abs(a - b) < atol
     elif rtol:
-        return np.isclose(a, b, rtol=rtol)
-    return np.isclose(a, b)
+        return abs(a - b) < max(1e-5 * abs(b), 1e-12)
+    return abs(a - b) < 1e-5
 
 
 def geometric_mean(*numbers):

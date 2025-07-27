@@ -3,6 +3,7 @@ from pathlib import Path
 import cobra
 import numpy as np
 import pytest
+import sparse
 
 
 @pytest.fixture
@@ -52,7 +53,7 @@ def model_files_json():
 @pytest.fixture
 def S_examples():
     S = {}
-    S["complex"] = np.array(
+    S["complex"] = sparse.COO(np.array(
         [
             [-1, +1, -1, +1, -1, -1, +1, +1, -1, 00, 00, 00, 00, 00, 00, 00, 00, 00],
             [+1, -1, 00, 00, 00, 00, 00, 00, 00, +1, +1, 00, 00, 00, 00, 00, 00, 00],
@@ -62,8 +63,8 @@ def S_examples():
             [00, 00, 00, 00, 00, 00, 00, -1, 00, 00, 00, 00, 00, 00, 00, +1, -1, 00],
             [00, 00, 00, 00, 00, 00, 00, 00, +1, 00, 00, 00, 00, 00, 00, 00, 00, -1],
         ]
-    )
-    S["circular"] = np.array(
+    ))
+    S["circular"] = sparse.COO(np.array(
         [
             [-1, 0, 0, 0, 0, 1],
             [1, -1, 0, 0, 0, 0],
@@ -72,8 +73,8 @@ def S_examples():
             [0, 0, 0, 1, -1, 0],
             [0, 0, 0, 0, 1, -1],
         ]
-    )
-    S["linear"] = np.array(
+    ))
+    S["linear"] = sparse.COO(np.array(
         [
             [-1, 0, 0, 0, 0, 0],
             [1, -1, 0, 0, 0, 0],
@@ -82,8 +83,8 @@ def S_examples():
             [0, 0, 0, 1, -1, 0],
             [0, 0, 0, 0, 1, 0],
         ]
-    )
-    S["bidir_linear"] = np.array(
+    ))
+    S["bidir_linear"] = sparse.COO(np.array(
         [
             [
                 -1,
@@ -118,14 +119,14 @@ def S_examples():
                 -1,
             ],
         ]
-    )
+    ))
     return S
 
 
 @pytest.fixture
 def A_examples():
     A = {}
-    A["complex"] = np.array(
+    A["complex"] = sparse.COO(np.array(
         [
             [
                 000,
@@ -191,8 +192,8 @@ def A_examples():
                 000,
             ],
         ]
-    )
-    A["circular"] = np.array(
+    ))
+    A["circular"] = sparse.COO(np.array(
         [
             [0, 1, 0, 0, 0, 0],
             [0, 0, 1, 0, 0, 0],
@@ -201,8 +202,8 @@ def A_examples():
             [0, 0, 0, 0, 0, 1],
             [1, 0, 0, 0, 0, 0],
         ]
-    )
-    A["linear"] = np.array(
+    ))
+    A["linear"] = sparse.COO(np.array(
         [
             [0, 1, 0, 0, 0, 0],
             [0, 0, 1, 0, 0, 0],
@@ -211,27 +212,27 @@ def A_examples():
             [0, 0, 0, 0, 0, 1],
             [0, 0, 0, 0, 0, 0],
         ]
-    )
-    A["bidir_linear"] = np.array(
+    ))
+    A["bidir_linear"] = sparse.COO(np.array(
         [
             [000, 1 / 1, 000, 000],
             [1 / 2, 000, 1 / 2, 000],
             [000, 1 / 2, 000, 1 / 2],
             [000, 000, 1 / 1, 000],
         ]
-    )
+    ))
     return A
 
 
 @pytest.fixture
 def S_models():
     S_models = {}
-    S_models["mini"] = np.array(
+    S_models["mini"] = sparse.COO(np.array(
         [
             [-1, -1, 00, 00],
             [+1, 00, -1, 00],
             [00, +1, 00, -1],
             [00, 00, +1, +1],
         ]
-    )
+    ))
     return S_models

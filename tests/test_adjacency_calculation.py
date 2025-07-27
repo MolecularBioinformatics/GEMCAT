@@ -1,6 +1,7 @@
 from random import randint
 
 import numpy as np
+import sparse
 from fixtures import A_examples, S_examples
 
 from gemcat import adjacency_transformation as at
@@ -140,7 +141,7 @@ def test_AT_complex_ATPureAdj(S_examples, A_examples):
 
 def test_A_rows_zero_or_one_ATHalf():
     rand_vals = [randint(-5, 5) for i in range(100)]
-    S = np.array(rand_vals).reshape(10, 10)
+    S = sparse.COO(rand_vals).reshape(10, 10)
     A = at.run_adjacencies_normalize(
         S,
         reversibilities_rand_model,
@@ -156,7 +157,7 @@ def test_A_rows_zero_or_one_ATHalf():
 
 def test_A_rows_zero_or_one_ATFull():
     rand_vals = [randint(-5, 5) for i in range(100)]
-    S = np.array(rand_vals).reshape(10, 10)
+    S = sparse.COO((np.array(rand_vals)).reshape(10, 10))
     A = at.run_adjacencies_normalize(
         S,
         reversibilities_rand_model,
@@ -172,7 +173,7 @@ def test_A_rows_zero_or_one_ATFull():
 
 def test_A_rows_zero_or_one():
     rand_vals = [randint(-5, 5) for i in range(100)]
-    S = np.array(rand_vals).reshape(10, 10)
+    S = sparse.COO(rand_vals).reshape(10, 10)
     A = at.run_adjacencies_normalize(
         S,
         reversibilities_rand_model,

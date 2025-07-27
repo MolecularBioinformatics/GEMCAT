@@ -77,7 +77,7 @@ class PagerankNX(Ranking):
             pr_args["personalization"] = dict(zip(names, seeds))
             graph = PagerankNX.rename_unnamed_graph(graph, names)
         results = nx.algorithms.link_analysis.pagerank(graph, **pr_args)
-        return np.array(list(results.values()))
+        return sparse.COO(list(results.values()))
 
     @staticmethod
     def rename_unnamed_graph(graph: nx.DiGraph, names: list[str]) -> nx.DiGraph:

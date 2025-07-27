@@ -4,6 +4,7 @@ import cobra
 import numpy as np
 import pandas as pd
 import pytest
+import sparse
 
 from gemcat import utils
 
@@ -26,7 +27,7 @@ def models():
 
 
 def test_l1_norm_1():
-    a = np.array([1, 2, 3, 4, 5])
+    a = sparse.COO([1, 2, 3, 4, 5])
     l1 = utils._l1_norm(a)
 
     assert utils.is_close(l1, 15.0, rtol=R_TOLERANCE)
@@ -47,7 +48,7 @@ def test_l1_norm_zeroes():
 
 
 def test_l1_empty():
-    a = np.array([])
+    a = sparse.COO([])
     with pytest.raises(ValueError):
         utils._l1_norm(a)
 
@@ -62,7 +63,7 @@ def test_get_ids():
 
 
 def test_get_n_reactions():
-    S = np.array(
+    S = sparse.COO(
         [
             [
                 0,
@@ -91,7 +92,7 @@ def test_get_n_reactions():
         ]
     )
     result = utils._get_n_reactions(S)
-    expected = np.array(
+    expected = sparse.COO(
         [
             4,
             4,
@@ -102,7 +103,7 @@ def test_get_n_reactions():
 
 
 def test_get_total_stoich():
-    S = np.array(
+    S = sparse.COO(
         [
             [
                 0,
@@ -131,7 +132,7 @@ def test_get_total_stoich():
         ]
     )
     result = utils._get_total_stoich(S)
-    expected = np.array(
+    expected = sparse.COO(
         [
             5,
             11,
@@ -142,7 +143,7 @@ def test_get_total_stoich():
 
 
 def test_split_matrix_pos_neg():
-    S = np.array(
+    S = sparse.COO(
         [
             [
                 0,
@@ -171,7 +172,7 @@ def test_split_matrix_pos_neg():
         ]
     )
     result_pos, result_neg = utils.split_matrix_pos_neg(S)
-    expected_pos = np.array(
+    expected_pos = sparse.COO(
         [
             [
                 0,
@@ -199,7 +200,7 @@ def test_split_matrix_pos_neg():
             ],
         ]
     )
-    expected_neg = np.array(
+    expected_neg = sparse.COO(
         [
             [
                 0,
@@ -232,7 +233,7 @@ def test_split_matrix_pos_neg():
 
 
 def test_annotate():
-    A = np.array([0, 1, 2])
+    A = sparse.COO([0, 1, 2])
     mets = ["m1", "m2", "m3"]
     result = utils.annotate_scores(A, mets)
     assert isinstance(result, pd.Series)
@@ -244,7 +245,7 @@ def test_annotate():
 def test_stoich_matrix_mini(models):
     model = models["mini"]
     result = utils.get_stoich_matrix_from_cobra(model)
-    expected = np.array(
+    expected = sparse.COO(
         [
             [
                 -1,
@@ -277,7 +278,7 @@ def test_stoich_matrix_mini(models):
 
 def test_linearization(models):
     model = models["mini_reversible"]
-    expected = np.array(
+    expected = sparse.COO(
         [
             [-1, -1, 00, 00, +1],
             [+1, 00, -1, 00, -1],
@@ -297,7 +298,7 @@ def test_linearization_already_linear(models):
 
 
 def test_replace_zeroes_nan():
-    A = np.array(
+    A = sparse.COO(
         [
             [
                 0,
@@ -316,7 +317,7 @@ def test_replace_zeroes_nan():
             ],
         ]
     )
-    expected = np.array(
+    expected = sparse.COO(
         [
             [
                 0,
@@ -340,7 +341,7 @@ def test_replace_zeroes_nan():
 
 
 def test_replace_zeroes_inf():
-    A = np.array(
+    A = sparse.COO(
         [
             [
                 0,
@@ -359,7 +360,7 @@ def test_replace_zeroes_inf():
             ],
         ]
     )
-    expected = np.array(
+    expected = sparse.COO(
         [
             [
                 0,
@@ -383,7 +384,7 @@ def test_replace_zeroes_inf():
 
 
 def test_replace_zeroes_neg_inf():
-    A = np.array(
+    A = sparse.COO(
         [
             [
                 0,
@@ -402,7 +403,7 @@ def test_replace_zeroes_neg_inf():
             ],
         ]
     )
-    expected = np.array(
+    expected = sparse.COO(
         [
             [
                 0,
@@ -426,7 +427,7 @@ def test_replace_zeroes_neg_inf():
 
 
 def test_replace_zeroes_mixed():
-    A = np.array(
+    A = sparse.COO(
         [
             [
                 0,
@@ -445,7 +446,7 @@ def test_replace_zeroes_mixed():
             ],
         ]
     )
-    expected = np.array(
+    expected = sparse.COO(
         [
             [
                 0,
@@ -478,7 +479,7 @@ def test_calc_zscore():
             "E": 5,
         }
     )
-    expected = np.array([-1.26491106, -0.63245553, 0.0, 0.63245553, 1.26491106])
+    expected = sparse.COO([-1.26491106, -0.63245553, 0.0, 0.63245553, 1.26491106])
     result = utils._calc_zscore(scores).values
     assert utils.all_close(result, expected, atol=0.01)
 
@@ -533,7 +534,7 @@ def test_is_exchange():
 
 def test_get_subset_cols():
     indeces = [0, 1, 2, 8]
-    S = np.array(
+    S = sparse.COO(
         [
             [
                 5,
@@ -592,7 +593,7 @@ def test_get_subset_cols():
             ],
         ]
     )
-    expected = np.array(
+    expected = sparse.COO(
         [
             [
                 5,
@@ -631,7 +632,7 @@ def test_get_subset_cols():
 
 
 def test_remove_exchanges():
-    S = np.array(
+    S = sparse.COO(
         [
             [
                 5,
@@ -701,7 +702,7 @@ def test_remove_exchanges():
         "E_lac",
         "EX_lac",
     ]
-    expected = np.array(
+    expected = sparse.COO(
         [
             [
                 0,
@@ -745,7 +746,7 @@ def test_remove_exchanges():
 
 
 def test_make_unidirectional():
-    S = np.array(
+    S = sparse.COO(
         [
             [
                 5,
@@ -804,7 +805,7 @@ def test_make_unidirectional():
             ],
         ]
     )
-    expected = np.array(
+    expected = sparse.COO(
         [
             [
                 +5,
@@ -890,7 +891,7 @@ def test_make_unidirectional():
 
 
 def test_make_unidirectional_wrong_type_int():
-    S = np.array(
+    S = sparse.COO(
         [
             [
                 5,
@@ -949,7 +950,7 @@ def test_make_unidirectional_wrong_type_int():
             ],
         ]
     )
-    expected = np.array(
+    expected = sparse.COO(
         [
             [
                 +5,
@@ -1062,16 +1063,16 @@ def test_get_metabolite_ids(models):
 
 
 def test_make_row_vector():
-    arr = np.array([1, 2, 3])
+    arr = sparse.COO([1, 2, 3])
     result = utils.make_row_vector(arr)
-    expected = np.array([[1, 2, 3]])
+    expected = sparse.COO([[1, 2, 3]])
     assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_make_column_vector():
-    arr = np.array([1, 2, 3])
+    arr = sparse.COO([1, 2, 3])
     result = utils.make_column_vector(arr)
-    expected = np.array(
+    expected = sparse.COO(
         [
             [1],
             [2],
@@ -1095,7 +1096,7 @@ def test_is_array():
 
 
 def test_check_array_shape():
-    Si = np.array(
+    Si = sparse.COO(
         [
             [-1, 0, 0, 0, 0, 0],
             [1, -1, 0, 0, 0, 0],
@@ -1105,7 +1106,7 @@ def test_check_array_shape():
             [0, 0, 0, 0, 1, 0],
         ]
     )
-    Sj = np.array(
+    Sj = sparse.COO(
         [
             [1, -1, 0, 0, 0, 0],
             [0, 1, -1, 0, 0, 0],
@@ -1119,7 +1120,7 @@ def test_check_array_shape():
 
 
 def test_is_all_ones_true():
-    S = np.array(
+    S = sparse.COO(
         [
             [-1, 0, 0, 0, 0, 0],
             [1, -1, 0, 0, 0, 0],

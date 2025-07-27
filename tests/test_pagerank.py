@@ -1,4 +1,5 @@
 import numpy as np
+import sparse
 
 import gemcat.ranking as pr
 from gemcat.utils import all_close
@@ -7,7 +8,7 @@ TOLERANCE = 10**-3
 
 
 def test_simple_linear():
-    A = np.array(
+    A = sparse.COO(
         [
             [0, 1, 0, 0, 0, 0],
             [0, 0, 1, 0, 0, 0],
@@ -23,7 +24,7 @@ def test_simple_linear():
 
 
 def test_simple_circular_nx():
-    A = np.array(
+    A = sparse.COO(
         [
             [
                 0,
@@ -68,7 +69,7 @@ def test_simple_circular_nx():
 
 
 def test_simple_bidir():
-    A = np.array(
+    A = sparse.COO(
         [
             [0.0, 1.0, 0.0, 0.0],
             [0.5, 0.0, 0.5, 0.0],
@@ -76,13 +77,13 @@ def test_simple_bidir():
             [0.0, 0.0, 1.0, 0.0],
         ]
     )
-    expected = np.array([0.175, 0.325, 0.325, 0.175])
+    expected = sparse.COO([0.175, 0.325, 0.325, 0.175])
     result = pr.PagerankNX.simple_pagerank_nx(A)
     assert all_close(result, expected, atol=TOLERANCE)
 
 
 def test_complex():
-    A = np.array(
+    A = sparse.COO(
         [
             [
                 000,

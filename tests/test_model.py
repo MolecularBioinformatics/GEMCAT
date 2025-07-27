@@ -1,4 +1,5 @@
 import numpy as np
+import sparse
 from fixtures import S_examples
 
 from gemcat.model import Model
@@ -8,7 +9,7 @@ R_TOLERANCE = 10**-2  # why is the accuracy lower here than in test_Pagerank?
 
 
 def test_basic_linear_model():
-    S = np.array(
+    S = sparse.COO(
         [
             [-1, 0, 0, 0, 0, 0],
             [1, -1, 0, 0, 0, 0],
@@ -38,7 +39,7 @@ def test_circular_model_w_expression(S_examples):
 
 
 def test_bidir_model():
-    S = np.array(
+    S = sparse.COO(
         [
             [
                 -1,
@@ -64,14 +65,14 @@ def test_bidir_model():
     )
     rev = [True for i in range(3)]
     met_names = ["M" + str(x) for x in range(4)]
-    expected = np.array([0.175, 0.325, 0.325, 0.175])
+    expected = sparse.COO([0.175, 0.325, 0.325, 0.175])
     m = Model(S, met_names, rev)
     m.calculate()
     assert all_close(m.scores, expected, rtol=R_TOLERANCE)
 
 
 def test_check_and_reshape_expression_vector():
-    S = np.array(
+    S = sparse.COO(
         [
             [-1, 0, 0, 0, 0, 1],
             [1, -1, 0, 0, 0, 0],
@@ -91,7 +92,7 @@ def test_check_and_reshape_expression_vector():
 
 
 def test_get_subnetworks():
-    S = np.array(
+    S = sparse.COO(
         [
             [-1, 0, 0, 0, 0],
             [1, -1, 0, 0, 0],
