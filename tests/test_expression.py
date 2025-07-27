@@ -3,6 +3,7 @@ import pandas as pd
 from fixtures import models
 
 from gemcat import expression as ex
+from gemcat.utils import all_close, is_close
 
 R_TOLERANCE = 10**-5
 gpr_mini = {
@@ -28,7 +29,7 @@ def test_ExpressionMapSingleAverage(models):
     gpr = ex.read_simple_gpr_from_cobra(models["mini"])
     exp = ex.ExpressionMapSingleAverage(gene_map, gpr)
     expected = np.array([2, 2, 2, 2])
-    assert np.allclose(exp.get_mapped_values(), expected)
+    assert all_close(exp.get_mapped_values(), expected)
 
 
 def test_ExpressionMapFang2012_simple(models):
@@ -39,7 +40,7 @@ def test_ExpressionMapFang2012_simple(models):
         data=genes_mini_complex,
     )
     assert isinstance(exp.gpr, pd.Series)
-    assert np.isclose(exp.mapped_values["R4"], 4.0, rtol=R_TOLERANCE)
+    assert is_close(exp.mapped_values["R4"], 4.0, rtol=R_TOLERANCE)
 
 
 def test_ExpressionMapFang2012_complex(models):
@@ -50,7 +51,7 @@ def test_ExpressionMapFang2012_complex(models):
         data=genes_mini_complex,
     )
     assert isinstance(exp.gpr, pd.Series)
-    assert np.isclose(exp.mapped_values["R3"], 15.4157, rtol=R_TOLERANCE)
+    assert is_close(exp.mapped_values["R3"], 15.4157, rtol=R_TOLERANCE)
 
 
 def test_ExpressionMapFang2012_gids(models):
@@ -61,7 +62,7 @@ def test_ExpressionMapFang2012_gids(models):
         gids_mini_complex,
     )
     assert isinstance(exp.gpr, pd.Series)
-    assert np.isclose(exp.mapped_values["R3"], 15.4157, rtol=R_TOLERANCE)
+    assert is_close(exp.mapped_values["R3"], 15.4157, rtol=R_TOLERANCE)
 
 
 def test_read_complex_gpr_structure(models):

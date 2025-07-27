@@ -351,7 +351,45 @@ def _is_all_ones(arr: np.array) -> bool:
     :rtype: bool
     """
     ones = np.ones(arr.shape)
-    return np.allclose(arr, ones)
+    return all_close(arr, ones)
+
+def all_close(arr1: np.array, arr2: np.array, atol = None, rtol = None) -> bool:
+    """
+    Checks if two arrays are close to each other within a given tolerance.
+    :param arr1: First array
+    :type arr1: np.array
+    :param arr2: Second array
+    :type arr2: np.array
+    :param atol: Absolute tolerance
+    :type atol: float
+    :return: True if arrays are close, False otherwise
+    :rtype: bool
+    """
+    if atol:
+        return np.allclose(arr1, arr2, atol=atol)
+    elif rtol:
+        return np.allclose(arr1, arr2, rtol=rtol)
+    return np.allclose(arr1, arr2)
+
+def is_close(a, b, atol=None, rtol=None) -> bool:
+    """
+    Checks if two numbers are close to each other within a given tolerance.
+    :param a: First number
+    :type a: float
+    :param b: Second number
+    :type b: float
+    :param atol: Absolute tolerance
+    :type atol: float
+    :param rtol: Relative tolerance
+    :type rtol: float
+    :return: True if numbers are close, False otherwise
+    :rtype: bool
+    """
+    if atol:
+        return np.isclose(a, b, atol=atol)
+    elif rtol:
+        return np.isclose(a, b, rtol=rtol)
+    return np.isclose(a, b)
 
 
 def geometric_mean(*numbers):

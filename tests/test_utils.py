@@ -29,21 +29,21 @@ def test_l1_norm_1():
     a = np.array([1, 2, 3, 4, 5])
     l1 = utils._l1_norm(a)
 
-    assert np.isclose(l1, 15.0, rtol=R_TOLERANCE)
+    assert utils.is_close(l1, 15.0, rtol=R_TOLERANCE)
 
 
 def test_l1_norm_long():
     a = np.ones(100)
     l1 = utils._l1_norm(a)
 
-    assert np.isclose(l1, 100.0, rtol=R_TOLERANCE)
+    assert utils.is_close(l1, 100.0, rtol=R_TOLERANCE)
 
 
 def test_l1_norm_zeroes():
     a = np.zeros(100)
     l1 = utils._l1_norm(a)
 
-    assert np.isclose(l1, 0.0, rtol=R_TOLERANCE)
+    assert utils.is_close(l1, 0.0, rtol=R_TOLERANCE)
 
 
 def test_l1_empty():
@@ -98,7 +98,7 @@ def test_get_n_reactions():
             3,
         ]
     )
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_get_total_stoich():
@@ -138,7 +138,7 @@ def test_get_total_stoich():
             8,
         ]
     )
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_split_matrix_pos_neg():
@@ -227,8 +227,8 @@ def test_split_matrix_pos_neg():
             ],
         ]
     )
-    assert np.allclose(result_pos, expected_pos, rtol=R_TOLERANCE)
-    assert np.allclose(result_neg, expected_neg, rtol=R_TOLERANCE)
+    assert utils.all_close(result_pos, expected_pos, rtol=R_TOLERANCE)
+    assert utils.all_close(result_neg, expected_neg, rtol=R_TOLERANCE)
 
 
 def test_annotate():
@@ -237,7 +237,7 @@ def test_annotate():
     result = utils.annotate_scores(A, mets)
     assert isinstance(result, pd.Series)
     assert len(result) == 3
-    assert np.allclose(result.values, A, rtol=R_TOLERANCE)
+    assert utils.all_close(result.values, A, rtol=R_TOLERANCE)
     assert (result.index == mets).all()
 
 
@@ -272,7 +272,7 @@ def test_stoich_matrix_mini(models):
             ],
         ]
     )
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_linearization(models):
@@ -286,14 +286,14 @@ def test_linearization(models):
         ]
     )
     result = utils._get_unidirectional_matrix(model)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_linearization_already_linear(models):
     model = models["mini"]
     expected = utils.get_stoich_matrix_from_cobra(model)
     result = utils._get_unidirectional_matrix(model)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_replace_zeroes_nan():
@@ -336,7 +336,7 @@ def test_replace_zeroes_nan():
         ]
     )
     result = utils._replace_zeroes(A)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_replace_zeroes_inf():
@@ -379,7 +379,7 @@ def test_replace_zeroes_inf():
         ]
     )
     result = utils._replace_zeroes(A)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_replace_zeroes_neg_inf():
@@ -422,7 +422,7 @@ def test_replace_zeroes_neg_inf():
         ]
     )
     result = utils._replace_zeroes(A)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_replace_zeroes_mixed():
@@ -465,7 +465,7 @@ def test_replace_zeroes_mixed():
         ]
     )
     result = utils._replace_zeroes(A)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_calc_zscore():
@@ -480,7 +480,7 @@ def test_calc_zscore():
     )
     expected = np.array([-1.26491106, -0.63245553, 0.0, 0.63245553, 1.26491106])
     result = utils._calc_zscore(scores).values
-    assert np.allclose(result, expected, atol=0.01)
+    assert utils.all_close(result, expected, atol=0.01)
 
 
 def test_scale():
@@ -503,7 +503,7 @@ def test_scale():
             "E": 5 / 15,
         }
     )
-    assert np.allclose(result, expected, atol=0.01)
+    assert utils.all_close(result, expected, atol=0.01)
 
 
 def test_find_indeces():
@@ -627,7 +627,7 @@ def test_get_subset_cols():
         ]
     )
     result = utils._get_subset_cols(S, indeces)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_remove_exchanges():
@@ -741,7 +741,7 @@ def test_remove_exchanges():
         ]
     )
     result = utils._remove_exchanges(S, rxns)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_make_unidirectional():
@@ -886,7 +886,7 @@ def test_make_unidirectional():
     reversibilities = [0, 0, 0, 1, 1, 0, 1, 0, 1]
     reversibilities = [bool(r) for r in reversibilities]
     result = utils.make_unidirectional(S, reversibilities)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_make_unidirectional_wrong_type_int():
@@ -1065,7 +1065,7 @@ def test_make_row_vector():
     arr = np.array([1, 2, 3])
     result = utils.make_row_vector(arr)
     expected = np.array([[1, 2, 3]])
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_make_column_vector():
@@ -1078,7 +1078,7 @@ def test_make_column_vector():
             [3],
         ]
     )
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.all_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_is_array():
@@ -1159,21 +1159,21 @@ def test_geometric_mean():
     nums = [1, 2, 3, 4, 5, 6, 7]
     result = utils.geometric_mean(*nums)
     expected = 3.3800
-    assert np.isclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.is_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_geometric_mean_zero():
     nums = [0, 0, 0]
     result = utils.geometric_mean(*nums)
     expected = 0.0
-    assert np.isclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.is_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_geometric_mean_one():
     nums = [17]
     result = utils.geometric_mean(*nums)
     expected = 17.0
-    assert np.isclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.is_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_multiply_list():
@@ -1182,18 +1182,18 @@ def test_multiply_list():
     expected = 1 * 2 * 3 * 4 * 5
     print(result)
     print(expected)
-    assert np.isclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.is_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_multiply_single():
     testcase = 3
     result = utils.multiply(testcase)
     expected = 3
-    assert np.isclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.is_close(result, expected, rtol=R_TOLERANCE)
 
 
 def test_multiply_numbers():
     testcase = [1, 2, 3, 4, 5]
     result = utils.multiply(*testcase)
     expected = 1 * 2 * 3 * 4 * 5
-    assert np.isclose(result, expected, rtol=R_TOLERANCE)
+    assert utils.is_close(result, expected, rtol=R_TOLERANCE)

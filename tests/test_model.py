@@ -2,6 +2,7 @@ import numpy as np
 from fixtures import S_examples
 
 from gemcat.model import Model
+from gemcat.utils import all_close
 
 R_TOLERANCE = 10**-2  # why is the accuracy lower here than in test_Pagerank?
 
@@ -22,7 +23,7 @@ def test_basic_linear_model():
     met_names = ["M" + str(x) for x in range(6)]
     m = Model(S, met_names, rev)
     scores = m.calculate()
-    assert np.allclose(m.scores, expected, rtol=R_TOLERANCE)
+    assert all_close(m.scores, expected, rtol=R_TOLERANCE)
 
 
 def test_circular_model_w_expression(S_examples):
@@ -33,7 +34,7 @@ def test_circular_model_w_expression(S_examples):
     m = Model(S, met_names, rev)
     m.expression_vector = np.ones((1, 6)) * 2
     scores = m.calculate()
-    assert np.allclose(m.scores, expected, rtol=R_TOLERANCE)
+    assert all_close(m.scores, expected, rtol=R_TOLERANCE)
 
 
 def test_bidir_model():
@@ -66,7 +67,7 @@ def test_bidir_model():
     expected = np.array([0.175, 0.325, 0.325, 0.175])
     m = Model(S, met_names, rev)
     m.calculate()
-    assert np.allclose(m.scores, expected, rtol=R_TOLERANCE)
+    assert all_close(m.scores, expected, rtol=R_TOLERANCE)
 
 
 def test_check_and_reshape_expression_vector():

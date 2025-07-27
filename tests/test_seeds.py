@@ -5,6 +5,7 @@ import pytest
 from pandas import Series
 
 import gemcat as pr
+from gemcat.utils import all_close
 
 base_path = Path("./tests")
 model_path = base_path / "test_models"
@@ -57,7 +58,7 @@ def test_seed_integration():
     model.load_metabolite_seeds(seeds)
     results = model.calculate()
     assert isinstance(results, Series)
-    assert np.allclose(results.values, expected.values)
+    assert all_close(results.values, expected.values)
 
 
 def test_no_seed():
@@ -84,4 +85,4 @@ def test_no_seed():
     model.load_expression(ex)
     results = model.calculate()
     assert model.seeds is None
-    assert np.allclose(results.values, expected.values, atol=10**-2)
+    assert all_close(results.values, expected.values, atol=10**-2)

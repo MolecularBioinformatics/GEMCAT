@@ -3,6 +3,7 @@ import pandas as pd
 from fixtures import models
 
 import gemcat as pr
+from gemcat.utils import all_close
 
 
 def test_sanity_double_all(models):
@@ -12,4 +13,4 @@ def test_sanity_double_all(models):
     mini = models["mini"]
     result_single = pr.workflows.workflow_avg_single(mini, genes_mapped_single)
     result_double = pr.workflows.workflow_avg_single(mini, genes_mapped_double)
-    assert np.allclose(result_single.values, result_double.values)
+    assert all_close(result_single.values, result_double.values)

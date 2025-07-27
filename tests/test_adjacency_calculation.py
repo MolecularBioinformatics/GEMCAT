@@ -4,6 +4,7 @@ import numpy as np
 from fixtures import A_examples, S_examples
 
 from gemcat import adjacency_transformation as at
+from gemcat.utils import all_close, is_close
 
 R_TOLERANCE = 10**-5
 
@@ -27,14 +28,14 @@ def test_AT_linear_ATHalf(S_examples, A_examples):
     result = at.run_adjacencies_normalize(
         S_examples["linear"], reversibilities_linear, expression_linear, at.ATHalfStoich
     )
-    assert np.allclose(result, A_examples["linear"], rtol=R_TOLERANCE)
+    assert all_close(result, A_examples["linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_linear_ATFull(S_examples, A_examples):
     result = at.run_adjacencies_normalize(
         S_examples["linear"], reversibilities_linear, expression_linear, at.ATFullStoich
     )
-    assert np.allclose(result, A_examples["linear"], rtol=R_TOLERANCE)
+    assert all_close(result, A_examples["linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_linear_ATPureAdj(S_examples, A_examples):
@@ -44,7 +45,7 @@ def test_AT_linear_ATPureAdj(S_examples, A_examples):
         expression_linear,
         at.ATPureAdjacency,
     )
-    assert np.allclose(result, A_examples["linear"], rtol=R_TOLERANCE)
+    assert all_close(result, A_examples["linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_circular_ATHalf(S_examples, A_examples):
@@ -54,7 +55,7 @@ def test_AT_circular_ATHalf(S_examples, A_examples):
         expression_circular,
         at.ATHalfStoich,
     )
-    assert np.allclose(result, A_examples["circular"], rtol=R_TOLERANCE)
+    assert all_close(result, A_examples["circular"], rtol=R_TOLERANCE)
 
 
 def test_AT_circular_ATFull(S_examples, A_examples):
@@ -64,7 +65,7 @@ def test_AT_circular_ATFull(S_examples, A_examples):
         expression_circular,
         at.ATFullStoich,
     )
-    assert np.allclose(result, A_examples["circular"], rtol=R_TOLERANCE)
+    assert all_close(result, A_examples["circular"], rtol=R_TOLERANCE)
 
 
 def test_AT_circular_ATPureAdj(S_examples, A_examples):
@@ -74,7 +75,7 @@ def test_AT_circular_ATPureAdj(S_examples, A_examples):
         expression_circular,
         at.ATPureAdjacency,
     )
-    assert np.allclose(result, A_examples["circular"], rtol=R_TOLERANCE)
+    assert all_close(result, A_examples["circular"], rtol=R_TOLERANCE)
 
 
 def test_AT_bidir_linear_ATHalf(S_examples, A_examples):
@@ -84,7 +85,7 @@ def test_AT_bidir_linear_ATHalf(S_examples, A_examples):
         expression_bidir_linear,
         at.ATHalfStoich,
     )
-    assert np.allclose(result, A_examples["bidir_linear"], rtol=R_TOLERANCE)
+    assert all_close(result, A_examples["bidir_linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_bidir_linear_ATFull(S_examples, A_examples):
@@ -94,7 +95,7 @@ def test_AT_bidir_linear_ATFull(S_examples, A_examples):
         expression_bidir_linear,
         at.ATFullStoich,
     )
-    assert np.allclose(result, A_examples["bidir_linear"], rtol=R_TOLERANCE)
+    assert all_close(result, A_examples["bidir_linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_bidir_linear_ATPureAdj(S_examples, A_examples):
@@ -104,7 +105,7 @@ def test_AT_bidir_linear_ATPureAdj(S_examples, A_examples):
         expression_bidir_linear,
         at.ATPureAdjacency,
     )
-    assert np.allclose(result, A_examples["bidir_linear"], rtol=R_TOLERANCE)
+    assert all_close(result, A_examples["bidir_linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_complex_ATHalf(S_examples, A_examples):
@@ -114,7 +115,7 @@ def test_AT_complex_ATHalf(S_examples, A_examples):
         expression_complex,
         at.ATHalfStoich,
     )
-    assert np.allclose(A_examples["complex"], result, rtol=R_TOLERANCE)
+    assert all_close(A_examples["complex"], result, rtol=R_TOLERANCE)
 
 
 def test_AT_complex_ATFull(S_examples, A_examples):
@@ -124,7 +125,7 @@ def test_AT_complex_ATFull(S_examples, A_examples):
         expression_complex,
         at.ATFullStoich,
     )
-    assert np.allclose(A_examples["complex"], result, rtol=R_TOLERANCE)
+    assert all_close(A_examples["complex"], result, rtol=R_TOLERANCE)
 
 
 def test_AT_complex_ATPureAdj(S_examples, A_examples):
@@ -134,7 +135,7 @@ def test_AT_complex_ATPureAdj(S_examples, A_examples):
         expression_complex,
         at.ATPureAdjacency,
     )
-    assert np.allclose(A_examples["complex"], result, rtol=R_TOLERANCE)
+    assert all_close(A_examples["complex"], result, rtol=R_TOLERANCE)
 
 
 def test_A_rows_zero_or_one_ATHalf():
@@ -148,7 +149,7 @@ def test_A_rows_zero_or_one_ATHalf():
     )
     sums = A.sum(axis=1)
     for i in sums:
-        assert np.isclose(i, 0.0, rtol=R_TOLERANCE) or np.isclose(
+        assert is_close(i, 0.0, rtol=R_TOLERANCE) or is_close(
             i, 1.0, rtol=R_TOLERANCE
         )
 
@@ -164,7 +165,7 @@ def test_A_rows_zero_or_one_ATFull():
     )
     sums = A.sum(axis=1)
     for i in sums:
-        assert np.isclose(i, 0.0, rtol=R_TOLERANCE) or np.isclose(
+        assert is_close(i, 0.0, rtol=R_TOLERANCE) or is_close(
             i, 1.0, rtol=R_TOLERANCE
         )
 
@@ -180,6 +181,6 @@ def test_A_rows_zero_or_one():
     )
     sums = A.sum(axis=1)
     for i in sums:
-        assert np.isclose(i, 0.0, rtol=R_TOLERANCE) or np.isclose(
+        assert is_close(i, 0.0, rtol=R_TOLERANCE) or is_close(
             i, 1.0, rtol=R_TOLERANCE
         )
