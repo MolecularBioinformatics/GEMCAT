@@ -100,7 +100,7 @@ The CLI allows you to calculate differential centralities using gene expression 
 
 1.  **Using a single file with pre-calculated fold-changes:**
     ```bash
-    gemcat <expression_file.csv> <model_file.xml> -e <column_name> -o <result_file.csv>
+    gemcat <model_file.xml> <expression_file.csv> -e <column_name> -o <result_file.csv>
     ```
     * `<expression_file.csv>`: Path to your input file.
     * `<model_file.xml>`: Path to your metabolic model file (SBML, JSON, or MAT format).
@@ -109,7 +109,7 @@ The CLI allows you to calculate differential centralities using gene expression 
 
 2.  **Using two files (or one) with condition and baseline expression values:**
     ```bash
-    gemcat <condition_file.csv> <model_file.xml> -e <condition_column_name> -b <baseline_file.csv> -c <baseline_column_name> -o <result_file.csv>
+    gemcat <model_file.xml> <condition_file.csv> -e <condition_column_name> -b <baseline_file.csv> -c <baseline_column_name> -o <result_file.csv>
     ```
     * `<condition_file.csv>`: Path to the file with expression values for your experimental condition.
     * `<baseline_file.csv>`: Path to the file with baseline expression values. If this is the same as the condition file, you can omit the `-b` flag and just use `<condition_file.csv>` as the second positional argument.
@@ -119,7 +119,7 @@ The CLI allows you to calculate differential centralities using gene expression 
 3.  **Using built-in models:**
     If you don't have a model file, GEMCAT can automatically access some common models by name:
     ```bash
-    gemcat <expression_file.csv> <model_name> -e <column_name> -o <result_file.csv>
+    gemcat <model_name> <expression_file.csv> -e <column_name> -o <result_file.csv>
     ```
     Currently supported model names:
     * `recon3d`: [Recon3D](http://bigg.ucsd.edu/models/Recon3D)
