@@ -111,6 +111,7 @@ The CLI allows you to calculate differential centralities using gene expression 
     ```bash
     gemcat <model_file.xml> <condition_file.csv> -e <condition_column_name> -b <baseline_file.csv> -c <baseline_column_name> -o <result_file.csv>
     ```
+    * `<model_file.xml>`: Path to your metabolic model file (SBML, JSON, or MAT format).
     * `<condition_file.csv>`: Path to the file with expression values for your experimental condition.
     * `<baseline_file.csv>`: Path to the file with baseline expression values. If this is the same as the condition file, you can omit the `-b` flag and just use `<condition_file.csv>` as the second positional argument.
     * `<condition_column_name>`: Name of the column with condition expression data.
