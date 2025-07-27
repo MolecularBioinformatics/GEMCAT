@@ -102,8 +102,8 @@ The CLI allows you to calculate differential centralities using gene expression 
     ```bash
     gemcat <model_file.xml> <expression_file.csv> -e <column_name> -o <result_file.csv>
     ```
-    * `<expression_file.csv>`: Path to your input file.
     * `<model_file.xml>`: Path to your metabolic model file (SBML, JSON, or MAT format).
+    * `<expression_file.csv>`: Path to your input file.
     * `<column_name>`: The name of the column in your CSV containing the fold-change values.
     * `<result_file.csv>`: The desired output file path.
 
