@@ -229,7 +229,11 @@ class GeometricAndAverageMeans(ExpressionIntegration):
         """
         if len(gpr) == 0:
             return np.nan
-        result = parse_expr(gpr, {"geomean": geomean})
+        try:
+            result = parse_expr(gpr, {"geomean": geomean})
+        except SyntaxError:
+            logging.debug("Parsing failed for: %s", gpr)
+            return np.nan
         try:
             return float(result)
         except TypeError:
