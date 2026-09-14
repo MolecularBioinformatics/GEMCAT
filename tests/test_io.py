@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import numpy as np
-from fixtures import S_models, model_files_json, model_files_sbml, models
+from fixtures import S_models, model_files_json, model_files_sbml, models, to_dense
 
 from gemcat import io
 
@@ -9,20 +9,20 @@ from gemcat import io
 def test_convert_cobra_model(models, S_models):
     cobra_model = models["mini"]
     model = io.convert_cobra_model(cobra_model)
-    assert np.allclose(model.stoichiometric_matrix, S_models["mini"])
+    assert np.allclose(to_dense(model.stoichiometric_matrix), S_models["mini"])
 
 
 def test_json_io(model_files_json, S_models):
     model_file = model_files_json["mini"]
     model = io.convert_cobra_model(io.load_json_cobra(model_file))
-    assert np.allclose(model.stoichiometric_matrix, S_models["mini"])
+    assert np.allclose(to_dense(model.stoichiometric_matrix), S_models["mini"])
 
 
 def test_sbml_io(model_files_sbml, S_models):
     model_file = model_files_sbml["mini"]
     cobra_model = io.load_sbml_cobra(model_file)
     model = io.convert_cobra_model(cobra_model)
-    assert np.allclose(model.stoichiometric_matrix, S_models["mini"])
+    assert np.allclose(to_dense(model.stoichiometric_matrix), S_models["mini"])
 
 
 def test_load_csv():

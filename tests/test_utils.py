@@ -4,6 +4,8 @@ import cobra
 import numpy as np
 import pandas as pd
 import pytest
+import scipy.sparse as sp
+from fixtures import to_dense
 
 from gemcat import utils
 
@@ -98,7 +100,7 @@ def test_get_n_reactions():
             3,
         ]
     )
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_get_total_stoich():
@@ -138,7 +140,7 @@ def test_get_total_stoich():
             8,
         ]
     )
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_split_matrix_pos_neg():
@@ -170,7 +172,7 @@ def test_split_matrix_pos_neg():
             ],
         ]
     )
-    result_pos, result_neg = utils.split_matrix_pos_neg(S)
+    result_pos, result_neg = utils.split_matrix_pos_neg(sp.csr_array(S.astype(float)))
     expected_pos = np.array(
         [
             [
@@ -227,8 +229,8 @@ def test_split_matrix_pos_neg():
             ],
         ]
     )
-    assert np.allclose(result_pos, expected_pos, rtol=R_TOLERANCE)
-    assert np.allclose(result_neg, expected_neg, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result_pos), expected_pos, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result_neg), expected_neg, rtol=R_TOLERANCE)
 
 
 def test_annotate():
@@ -272,7 +274,7 @@ def test_stoich_matrix_mini(models):
             ],
         ]
     )
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_linearization(models):
@@ -286,14 +288,14 @@ def test_linearization(models):
         ]
     )
     result = utils._get_unidirectional_matrix(model)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_linearization_already_linear(models):
     model = models["mini"]
     expected = utils.get_stoich_matrix_from_cobra(model)
     result = utils._get_unidirectional_matrix(model)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_replace_zeroes_nan():
@@ -336,7 +338,7 @@ def test_replace_zeroes_nan():
         ]
     )
     result = utils._replace_zeroes(A)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_replace_zeroes_inf():
@@ -379,7 +381,7 @@ def test_replace_zeroes_inf():
         ]
     )
     result = utils._replace_zeroes(A)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_replace_zeroes_neg_inf():
@@ -422,7 +424,7 @@ def test_replace_zeroes_neg_inf():
         ]
     )
     result = utils._replace_zeroes(A)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_replace_zeroes_mixed():
@@ -465,7 +467,7 @@ def test_replace_zeroes_mixed():
         ]
     )
     result = utils._replace_zeroes(A)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_calc_zscore():
@@ -627,7 +629,7 @@ def test_get_subset_cols():
         ]
     )
     result = utils._get_subset_cols(S, indeces)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_remove_exchanges():
@@ -741,7 +743,7 @@ def test_remove_exchanges():
         ]
     )
     result = utils._remove_exchanges(S, rxns)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_make_unidirectional():
@@ -885,8 +887,8 @@ def test_make_unidirectional():
     )
     reversibilities = [0, 0, 0, 1, 1, 0, 1, 0, 1]
     reversibilities = [bool(r) for r in reversibilities]
-    result = utils.make_unidirectional(S, reversibilities)
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    result = utils.make_unidirectional(sp.csc_array(S.astype(float)), reversibilities)
+    assert np.allclose(to_dense(result), expected, rtol=R_TOLERANCE)
 
 
 def test_make_unidirectional_wrong_type_int():
@@ -1065,7 +1067,7 @@ def test_make_row_vector():
     arr = np.array([1, 2, 3])
     result = utils.make_row_vector(arr)
     expected = np.array([[1, 2, 3]])
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_make_column_vector():
@@ -1078,7 +1080,7 @@ def test_make_column_vector():
             [3],
         ]
     )
-    assert np.allclose(result, expected, rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), to_dense(expected), rtol=R_TOLERANCE)
 
 
 def test_is_array():

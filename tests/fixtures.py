@@ -3,6 +3,18 @@ from pathlib import Path
 import cobra
 import numpy as np
 import pytest
+import scipy.sparse as sp
+
+
+def to_dense(matrix):
+    """
+    Densify a matrix for comparison against a dense expectation.
+
+    Use this at every assertion site rather than comparing directly. GEMCAT returns sparse
+    matrices, and `np.allclose(sparse, dense)` either raises NotImplementedError or -- worse,
+    in some shapes -- silently densifies and passes for the wrong reason.
+    """
+    return matrix.toarray() if sp.issparse(matrix) else np.asarray(matrix)
 
 
 @pytest.fixture
@@ -51,6 +63,24 @@ def model_files_json():
 
 @pytest.fixture
 def S_examples():
+    """
+    Stoichiometric matrices used as transform *input*, so they are returned sparse.
+
+    The literals stay dense and hand-written because they document the maths; only the
+    returned values are converted. Use S_examples_dense if you need the raw array.
+    """
+    return {
+        name: sp.csr_array(value.astype(float))
+        for name, value in _S_examples_dense().items()
+    }
+
+
+@pytest.fixture
+def S_examples_dense():
+    return _S_examples_dense()
+
+
+def _S_examples_dense():
     S = {}
     S["complex"] = np.array(
         [

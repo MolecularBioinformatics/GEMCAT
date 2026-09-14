@@ -8,7 +8,9 @@ from pathlib import Path
 from typing import Optional, Union
 
 import cobra
+import numpy as np
 import pandas as pd
+import scipy.sparse as sp
 
 from . import utils
 from .model import Model
@@ -70,8 +72,10 @@ def load_mat_cobra(mat_file: Union[str, Path]) -> cobra.Model:
 
 
 def load_csv(
-    csv_file: Union[Path, str], sep=",", reversibilities: Optional[list[bool]] = None
-):
+    csv_file: Union[Path, str],
+    sep: str = ",",
+    reversibilities: Optional[list[bool]] = None,
+) -> Model:
     """
     Load models from CSV file (uses Pandas).
     :param csv_file: Path to CSV file
@@ -79,14 +83,14 @@ def load_csv(
     :param sep: Column separator, defaults to ','
     :type sep: str, optional
     :param reversibilities: List of reversibilities, defaults to None
-    :type reversibilities: List[bool], optional
+    :type reversibilities: Optional[list[bool]]
     :return: Model of the CSV file
     :rtype: Model
     """
     if not isinstance(csv_file, Path):
         csv_file = Path(csv_file)
     dataframe = pd.read_csv(csv_file, sep=sep, index_col=0)
-    stoich_matrix = dataframe.values
+    stoich_matrix = sp.csc_array(dataframe.values.astype(np.float64))
     met = list(dataframe.index)
     rxn = list(dataframe.columns)
     if not reversibilities:

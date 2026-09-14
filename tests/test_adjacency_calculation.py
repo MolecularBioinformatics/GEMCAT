@@ -1,7 +1,8 @@
 from random import randint
 
 import numpy as np
-from fixtures import A_examples, S_examples
+import scipy.sparse as sp
+from fixtures import A_examples, S_examples, to_dense
 
 from gemcat import adjacency_transformation as at
 
@@ -27,14 +28,14 @@ def test_AT_linear_ATHalf(S_examples, A_examples):
     result = at.run_adjacencies_normalize(
         S_examples["linear"], reversibilities_linear, expression_linear, at.ATHalfStoich
     )
-    assert np.allclose(result, A_examples["linear"], rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), A_examples["linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_linear_ATFull(S_examples, A_examples):
     result = at.run_adjacencies_normalize(
         S_examples["linear"], reversibilities_linear, expression_linear, at.ATFullStoich
     )
-    assert np.allclose(result, A_examples["linear"], rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), A_examples["linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_linear_ATPureAdj(S_examples, A_examples):
@@ -44,7 +45,7 @@ def test_AT_linear_ATPureAdj(S_examples, A_examples):
         expression_linear,
         at.ATPureAdjacency,
     )
-    assert np.allclose(result, A_examples["linear"], rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), A_examples["linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_circular_ATHalf(S_examples, A_examples):
@@ -54,7 +55,7 @@ def test_AT_circular_ATHalf(S_examples, A_examples):
         expression_circular,
         at.ATHalfStoich,
     )
-    assert np.allclose(result, A_examples["circular"], rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), A_examples["circular"], rtol=R_TOLERANCE)
 
 
 def test_AT_circular_ATFull(S_examples, A_examples):
@@ -64,7 +65,7 @@ def test_AT_circular_ATFull(S_examples, A_examples):
         expression_circular,
         at.ATFullStoich,
     )
-    assert np.allclose(result, A_examples["circular"], rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), A_examples["circular"], rtol=R_TOLERANCE)
 
 
 def test_AT_circular_ATPureAdj(S_examples, A_examples):
@@ -74,7 +75,7 @@ def test_AT_circular_ATPureAdj(S_examples, A_examples):
         expression_circular,
         at.ATPureAdjacency,
     )
-    assert np.allclose(result, A_examples["circular"], rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), A_examples["circular"], rtol=R_TOLERANCE)
 
 
 def test_AT_bidir_linear_ATHalf(S_examples, A_examples):
@@ -84,7 +85,7 @@ def test_AT_bidir_linear_ATHalf(S_examples, A_examples):
         expression_bidir_linear,
         at.ATHalfStoich,
     )
-    assert np.allclose(result, A_examples["bidir_linear"], rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), A_examples["bidir_linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_bidir_linear_ATFull(S_examples, A_examples):
@@ -94,7 +95,7 @@ def test_AT_bidir_linear_ATFull(S_examples, A_examples):
         expression_bidir_linear,
         at.ATFullStoich,
     )
-    assert np.allclose(result, A_examples["bidir_linear"], rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), A_examples["bidir_linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_bidir_linear_ATPureAdj(S_examples, A_examples):
@@ -104,7 +105,7 @@ def test_AT_bidir_linear_ATPureAdj(S_examples, A_examples):
         expression_bidir_linear,
         at.ATPureAdjacency,
     )
-    assert np.allclose(result, A_examples["bidir_linear"], rtol=R_TOLERANCE)
+    assert np.allclose(to_dense(result), A_examples["bidir_linear"], rtol=R_TOLERANCE)
 
 
 def test_AT_complex_ATHalf(S_examples, A_examples):
@@ -114,7 +115,7 @@ def test_AT_complex_ATHalf(S_examples, A_examples):
         expression_complex,
         at.ATHalfStoich,
     )
-    assert np.allclose(A_examples["complex"], result, rtol=R_TOLERANCE)
+    assert np.allclose(A_examples["complex"], to_dense(result), rtol=R_TOLERANCE)
 
 
 def test_AT_complex_ATFull(S_examples, A_examples):
@@ -124,7 +125,7 @@ def test_AT_complex_ATFull(S_examples, A_examples):
         expression_complex,
         at.ATFullStoich,
     )
-    assert np.allclose(A_examples["complex"], result, rtol=R_TOLERANCE)
+    assert np.allclose(A_examples["complex"], to_dense(result), rtol=R_TOLERANCE)
 
 
 def test_AT_complex_ATPureAdj(S_examples, A_examples):
@@ -134,19 +135,19 @@ def test_AT_complex_ATPureAdj(S_examples, A_examples):
         expression_complex,
         at.ATPureAdjacency,
     )
-    assert np.allclose(A_examples["complex"], result, rtol=R_TOLERANCE)
+    assert np.allclose(A_examples["complex"], to_dense(result), rtol=R_TOLERANCE)
 
 
 def test_A_rows_zero_or_one_ATHalf():
     rand_vals = [randint(-5, 5) for i in range(100)]
-    S = np.array(rand_vals).reshape(10, 10)
+    S = sp.csr_array(np.array(rand_vals, dtype=float).reshape(10, 10))
     A = at.run_adjacencies_normalize(
         S,
         reversibilities_rand_model,
         expression_rand_model,
         at.ATHalfStoich,
     )
-    sums = A.sum(axis=1)
+    sums = np.asarray(A.sum(axis=1)).ravel()
     for i in sums:
         assert np.isclose(i, 0.0, rtol=R_TOLERANCE) or np.isclose(
             i, 1.0, rtol=R_TOLERANCE
@@ -155,14 +156,14 @@ def test_A_rows_zero_or_one_ATHalf():
 
 def test_A_rows_zero_or_one_ATFull():
     rand_vals = [randint(-5, 5) for i in range(100)]
-    S = np.array(rand_vals).reshape(10, 10)
+    S = sp.csr_array(np.array(rand_vals, dtype=float).reshape(10, 10))
     A = at.run_adjacencies_normalize(
         S,
         reversibilities_rand_model,
         expression_rand_model,
         at.ATFullStoich,
     )
-    sums = A.sum(axis=1)
+    sums = np.asarray(A.sum(axis=1)).ravel()
     for i in sums:
         assert np.isclose(i, 0.0, rtol=R_TOLERANCE) or np.isclose(
             i, 1.0, rtol=R_TOLERANCE
@@ -171,14 +172,14 @@ def test_A_rows_zero_or_one_ATFull():
 
 def test_A_rows_zero_or_one():
     rand_vals = [randint(-5, 5) for i in range(100)]
-    S = np.array(rand_vals).reshape(10, 10)
+    S = sp.csr_array(np.array(rand_vals, dtype=float).reshape(10, 10))
     A = at.run_adjacencies_normalize(
         S,
         reversibilities_rand_model,
         expression_rand_model,
         at.ATPureAdjacency,
     )
-    sums = A.sum(axis=1)
+    sums = np.asarray(A.sum(axis=1)).ravel()
     for i in sums:
         assert np.isclose(i, 0.0, rtol=R_TOLERANCE) or np.isclose(
             i, 1.0, rtol=R_TOLERANCE
