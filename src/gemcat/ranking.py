@@ -10,6 +10,7 @@ from typing import Dict, Optional
 
 import networkx as nx
 import numpy as np
+import scipy.sparse as sp
 
 
 class Ranking(ABC):
@@ -20,12 +21,12 @@ class Ranking(ABC):
     @staticmethod
     @abstractmethod
     def propagate(
-        adjacency_matrix: np.array,
+        adjacency_matrix: sp.sparray,
         seeds: Optional[list[float]] = None,
         names: Optional[list[str]] = None,
         graph_args: Optional[Dict] = None,
         pr_args: Optional[Dict] = None,
-    ) -> np.array:
+    ) -> np.ndarray:
         """
         Base class for algorithm to propagate scores from the adjacency matrix.
         """
@@ -46,27 +47,33 @@ class PagerankNX(Ranking):
 
     @staticmethod
     def propagate(
-        adjacency_matrix: np.array,
+        adjacency_matrix: sp.sparray,
         seeds: Optional[list[float]] = None,
         names: Optional[list[str]] = None,
         graph_args: Optional[Dict] = None,
         pr_args: Optional[Dict] = None,
-    ) -> np.array:
+    ) -> np.ndarray:
         """
         Propagates scores using NetworkX's Pagerank.
         See NetworkX documentation for input into graph_args and pr_args.
+
+        Passing `seeds` runs personalized PageRank: the random walk restarts in
+        proportion to the seed weights instead of landing anywhere with equal
+        chance, which pulls scores toward the metabolites you care about. `names`
+        is then required, because seeds match nodes by name.
         :param adjacency_matrix: Adjacency matrix
-        :type adjacency_matrix: np.array (m x m)
+        :type adjacency_matrix: sp.sparray (m x m)
         :param seeds: Metabolite seeds to use as personalization
-        :type seeds: List[float]
-        :param names: Metabolite names for the metabolites in the graph
-        :type names: List[str]
+        :type seeds: Optional[list[float]]
+        :param names: Metabolite names, in graph order. Required with seeds.
+        :type names: Optional[list[str]]
         :param graph_args: Dictionary of arguments passed to networkx DiGraph
         :type graph_args: Optional[dict]
         :param pr_args: Dictionary of arguments passed to networkx Pagerank
         :type pr_args: Optional[dict]
-        :return: NumPy array of Pagerank scores
-        :rtype: 1-D np.array (m x 1)
+        :raises ValueError: If seeds are given without names
+        :return: NumPy array of Pagerank scores (m,)
+        :rtype: np.ndarray
         """
         if graph_args is None:
             graph_args = {}
@@ -74,6 +81,10 @@ class PagerankNX(Ranking):
             pr_args = {}
         graph = nx.DiGraph(adjacency_matrix, **graph_args)
         if isinstance(seeds, list) and len(seeds) > 0:
+            if names is None:
+                err = "Metabolite names are required when seeds are provided"
+                logging.error(err)
+                raise ValueError(err)
             pr_args["personalization"] = dict(zip(names, seeds))
             graph = PagerankNX.rename_unnamed_graph(graph, names)
         results = nx.algorithms.link_analysis.pagerank(graph, **pr_args)
@@ -105,12 +116,12 @@ class PagerankNX(Ranking):
         )
 
     @staticmethod
-    def simple_pagerank_nx(adjacency_matrix: np.array) -> np.array:
+    def simple_pagerank_nx(adjacency_matrix: sp.sparray) -> np.ndarray:
         """
         Shortcut to run NetworkX's Pagerank (primarily used for testing)
-        :param adjacency_matrix: Adjacency matrix
-        :type adjacency_matrix: np.array (m x m)
-        :return: Pagerank scores
-        :rtype: 1-D np.array (m x 1)
+        :param adjacency_matrix: Adjacency matrix (m x m)
+        :type adjacency_matrix: sp.sparray
+        :return: Pagerank scores(m,)
+        :rtype: np.ndarray
         """
         return PagerankNX().propagate(adjacency_matrix)
