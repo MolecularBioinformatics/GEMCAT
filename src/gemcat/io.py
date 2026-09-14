@@ -3,7 +3,6 @@ Input and output functionalities of the framework
 """
 
 import logging
-import pickle
 from pathlib import Path
 from typing import Optional, Union
 
@@ -96,40 +95,3 @@ def load_csv(
     if not reversibilities:
         reversibilities = [False] * len(rxn)
     return Model(stoich_matrix, met, reversibilities)
-
-
-def pickle_model(
-    model: Model, file_path: Union[Path, str], pickle_args: Optional[dict] = None
-) -> Path:
-    """
-    Write a gemcat model to a pickle file
-    :param model: Model to pickle
-    :type model: Model
-    :param file_path: Path/name to save pickle file to
-    :type file_path: Union[Path, str]
-    :param pickle_args: Arguments to pass on to pickle.dump, defaults to None
-    :type pickle_args: Optional[dict], optional
-    :return: Path to created pickle file
-    :rtype: Path
-    """
-    if pickle_args is None:
-        pickle_args = {}
-    pickle.dump(model, str(file_path), **pickle_args)
-    return Path(file_path)
-
-
-def load_pickled(
-    file_path: Union[Path, str], pickle_args: Optional[dict] = None
-) -> Model:
-    """
-    Load a pickled gemcat model
-    :param file_path: Path to pickle file
-    :type file_path: str
-    :param pickle_args: Arguments to pass to pickle.load, defaults to None
-    :type pickle_args: Optional[dict], optional
-    :return: Loaded model object
-    :rtype: Model
-    """
-    if pickle_args is None:
-        pickle_args = {}
-    return pickle.load(str(file_path), **pickle_args)

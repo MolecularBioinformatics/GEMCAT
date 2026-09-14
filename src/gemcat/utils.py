@@ -6,7 +6,7 @@ mostly related to data processing.
 """
 
 import logging
-from typing import List, Tuple, Union
+from typing import List, Tuple
 
 import cobra
 import numpy as np
@@ -106,43 +106,6 @@ def scale_columns(matrix: sp.csc_array, factors: np.ndarray) -> sp.csc_array:
     """
     matrix.data *= np.repeat(factors, np.diff(matrix.indptr))
     return matrix
-
-
-def _get_ids(
-    iterable: List[Union[cobra.Gene, cobra.Reaction, cobra.Metabolite]]
-) -> List[str]:
-    """
-    Gets a list of IDs from a cobra iterable.
-    :param iterable: Iterable for which to get IDs.
-    :type iterable: List[Union[cobra.Gene, cobra.Reaction, cobra.Metabolite]]
-    :return: List of IDs.
-    :rtype: List[str]
-    """
-    return [g.id for g in iterable]
-
-
-def _get_n_reactions(stoich_matrix: np.ndarray) -> np.ndarray:
-    """
-    Returns number of reactions involving each metabolite.
-    (number of non-zero entries in a matrix)
-    :param stoich_matrix: Stoichiometric matrix (m x r)
-    :type stoich_matrix: np.ndarray
-    :return: Vector of row-wise sums (total stoichiometries) (m x 1)
-    :rtype: np.ndarray
-    """
-    return np.absolute(np.count_nonzero(stoich_matrix, axis=1))
-
-
-def _get_total_stoich(stoich_matrix: np.ndarray) -> np.ndarray:
-    """
-    Returns sum of stoichiometries for each metabolite. (row-wise sums of the matrix).
-    Called from within _calc_score_component.
-    :param stoich_matrix: Stoichiometric matrix (m x r)
-    :type stoich_matrix: np.ndarray
-    :return: Vector of row-wise sums (total stoichiometries) (m x 1)
-    :rtype: np.ndarray
-    """
-    return np.absolute(np.sum(stoich_matrix, axis=1))
 
 
 def split_matrix_pos_neg(matrix: sp.sparray) -> Tuple[sp.sparray, sp.sparray]:
@@ -251,132 +214,6 @@ def make_unidirectional(
     return sp.hstack([working, reversible_part], format="csc")
 
 
-def _get_unidirectional_matrix(model: cobra.Model) -> np.ndarray:
-    """
-    Takes in a model and returns its stoichiometric matrix
-    with reversible reactions separated into
-    two different reactions with opposite direction.
-    :param model: Model for which to return the stoichiometric matrix.
-    :type model: cobra.Model
-    :return: Stoichiometric matrix.
-    :rtype: np.array (m x r') (where 2r >= r' >= r)
-    """
-    stoich_matrix = get_stoich_matrix_from_cobra(model)
-    reversibilities = [r.reversibility for r in model.reactions]
-    return make_unidirectional(stoich_matrix, reversibilities)
-
-
-def _replace_zeroes(array: np.ndarray) -> np.ndarray:
-    """
-    Replaces infinity and NaN entries in a matrix with zeroes.
-    Called from within _calc_score_component.
-    :param array: Array in which to replace values
-    :type array: np.ndarray
-    :return: Array with entries replaced
-    :rtype: np.ndarray
-    """
-    array[array == np.inf] = 0.0
-    array[array == -np.inf] = 0.0
-    array[np.isnan(array)] = 0.0
-    return array
-
-
-def _calc_zscore(series: pd.Series) -> pd.Series:
-    """
-    Calculate z-Score of a Pandas Series.
-    :param series: Series to calculate z-Score of.
-    :type series: pd.Series
-    :return: Pandas Series of z-Score.
-    :rtype: pd.Series
-    """
-    return (series - series.mean()) / series.std()
-
-
-def _scale(series: pd.Series) -> pd.Series:
-    """
-    Scale a Pandas Series .
-    :param series: Series of scores to scale.
-    :type series: pd.Series
-    :return: Pandas Series of scaled scores.
-    :rtype: pd.Series
-    """
-    # return series / max(abs(series.min()), series.max())
-    return series / series.sum()
-
-
-def _find_indeces(rxn_list: List[str]) -> List[int]:
-    """
-    Out of a list of reaction strings, find the indeces of the non-exchange reactions.
-    :param rxn_list: List of reaction indeces
-    :type rxn_list: List[str]
-    :return: List of indeces of non-exchange reactions
-    :rtype: List[int]
-    """
-    enum = enumerate(rxn_list)
-    filtered = [count for (count, tag) in enum if not _is_exchange(tag)]
-
-    return filtered
-
-
-def _is_exchange(tag: str) -> bool:
-    """
-    Use the reaction ID to determine whether it is an exchange reaction.
-    :param tag: Reaction ID
-    :type tag: str
-    :return: True/False whether reaction is an exchange reaction.
-    :rtype: bool
-    """
-    exchange_prefixes = ["OF_", "EX_"]
-    for prefix in exchange_prefixes:
-        if tag.startswith(prefix):
-            return True
-
-    return False
-
-
-def _get_subset_cols(matrix: np.ndarray, indeces: List[int]) -> np.ndarray:
-    """
-    Get a subset of a matrix by column indeces.
-    :param matrix: Matrix to slice.
-    :type matrix: np.ndarray
-    :param indeces: Indeces of matrix columns to keep.
-    :type indeces: List[int]
-    :return: Matrix with only given columns included.
-    :rtype: np.array (m x |indeces|)
-    """
-    return matrix[:, indeces]
-
-
-def _l1_norm(vector: np.ndarray) -> float:
-    """
-    Returns the L1-Norm (Manhattan distance) of a NumPy array.
-    :param vector: Vector of which to calculate the L1-Norm
-    :type vector: np.array (m x 1)
-    :return: L1-norm of vector
-    :rtype: float
-    """
-    if vector.size == 0:
-        err = "Cannot calculate the l1-norm of an empty vector"
-        logging.error(err)
-        raise ValueError(err)
-    return np.sum(np.abs(vector))
-
-
-def _remove_exchanges(stoich_matrix: np.ndarray, rxn_list: List[str]) -> np.ndarray:
-    """
-    Remove exchange reactions from a given stoichiometric matrix.
-    :param stoich_matrix: Stoichiometric matrix.
-    :type stoich_matrix: np.array (m x r)
-    :param rxn_list: List of reaction IDs.
-    :type rxn_list: List[str]
-    :return: Stoichiometric matrix with exchange reactions missing
-    :rtype: np.array (m x r' where r' <= r)
-    """
-    rxn_indeces = _find_indeces(rxn_list)
-
-    return _get_subset_cols(stoich_matrix, rxn_indeces)
-
-
 def get_reversibilities(model: cobra.Model) -> List[bool]:
     """
     Return a list of reversibilities for the model.
@@ -386,25 +223,6 @@ def get_reversibilities(model: cobra.Model) -> List[bool]:
     :rtype: List[bool]
     """
     return [r.reversibility for r in model.reactions]
-
-
-def _get_reaction_ids(model: cobra.Model) -> List[str]:
-    """
-    Returns the list of reaction IDs from a given model.
-    :param model: Model object
-    :type model: cobra.Model
-    :return: List of reaction IDs in the model
-    :rtype: List[str]
-    """
-    if not isinstance(model, cobra.Model):
-        err = "CobraPy model required to extract reaction IDs"
-        logging.error(err)
-        raise TypeError(err)
-    if len(model.reactions) == 0:
-        err = "The COBRA model contains no reactions"
-        logging.error(err)
-        raise ValueError(err)
-    return [r.id for r in model.reactions]
 
 
 def get_metabolite_ids(model: cobra.Model) -> List[str]:
@@ -424,71 +242,6 @@ def get_metabolite_ids(model: cobra.Model) -> List[str]:
         logging.error(err)
         raise ValueError(err)
     return [m.id for m in model.metabolites]
-
-
-def make_row_vector(arr: np.ndarray) -> np.ndarray:
-    """
-    Transform 1D-array into row vector
-    :param arr: [description]
-    :type arr: np.ndarray
-    :raises ValueError: [description]
-    :return: [description]
-    :rtype: np.ndarray
-    """
-    return arr.reshape(1, arr.size)
-
-
-def make_column_vector(arr: np.ndarray) -> np.ndarray:
-    """
-    Transform 1D-array into column vector
-    :param arr: [description]
-    :type arr: np.ndarray
-    :raises ValueError: [description]
-    :return: [description]
-    :rtype: np.ndarray
-    """
-    return arr.reshape(arr.size, 1)
-
-
-def _is_np_array(arr: object) -> None:
-    """
-    Throws a TypeError if the object given is not a NumPy array.
-    :param arr: Object to check
-    :type arr: object
-    :raises TypeError: Raised if object type is not np.ndarray
-    """
-    if not isinstance(arr, np.ndarray):
-        received = type(arr)
-        err = f"Expected a NumPy array but received {received}"
-        logging.error(err)
-        raise TypeError(err)
-
-
-def _check_array_shape(arr: np.ndarray, target: np.ndarray) -> None:
-    """
-    Raise ValueError unless two arrays have the same shape.
-    :param arr: Array to check
-    :type arr: np.ndarray
-    :param target: Array whose shape arr must match
-    :type target: np.ndarray
-    :raises ValueError: Raised if shape of the two arrays doesn't match.
-    """
-    if not arr.shape == target.shape:
-        msg = f"Array shape needs to be {target.shape} but is {arr.shape}"
-        logging.error(msg)
-        raise ValueError(msg)
-
-
-def _is_all_ones(arr: np.ndarray) -> bool:
-    """
-    Returns true if an array is all ones.
-    :param arr: Array to check
-    :type arr: np.ndarray
-    :return: True if array is all ones
-    :rtype: bool
-    """
-    ones = np.ones(arr.shape)
-    return np.allclose(arr, ones)
 
 
 def geometric_mean(*numbers: float) -> float:
