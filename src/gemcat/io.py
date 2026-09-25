@@ -3,12 +3,13 @@ Input and output functionalities of the framework
 """
 
 import logging
-import pickle
 from pathlib import Path
 from typing import Optional, Union
 
 import cobra
+import numpy as np
 import pandas as pd
+import scipy.sparse as sp
 
 from . import utils
 from .model import Model
@@ -70,8 +71,10 @@ def load_mat_cobra(mat_file: Union[str, Path]) -> cobra.Model:
 
 
 def load_csv(
-    csv_file: Union[Path, str], sep=",", reversibilities: Optional[list[bool]] = None
-):
+    csv_file: Union[Path, str],
+    sep: str = ",",
+    reversibilities: Optional[list[bool]] = None,
+) -> Model:
     """
     Load models from CSV file (uses Pandas).
     :param csv_file: Path to CSV file
@@ -79,53 +82,16 @@ def load_csv(
     :param sep: Column separator, defaults to ','
     :type sep: str, optional
     :param reversibilities: List of reversibilities, defaults to None
-    :type reversibilities: List[bool], optional
+    :type reversibilities: Optional[list[bool]]
     :return: Model of the CSV file
     :rtype: Model
     """
     if not isinstance(csv_file, Path):
         csv_file = Path(csv_file)
     dataframe = pd.read_csv(csv_file, sep=sep, index_col=0)
-    stoich_matrix = dataframe.values
+    stoich_matrix = sp.csc_array(dataframe.values.astype(np.float64))
     met = list(dataframe.index)
     rxn = list(dataframe.columns)
     if not reversibilities:
         reversibilities = [False] * len(rxn)
     return Model(stoich_matrix, met, reversibilities)
-
-
-def pickle_model(
-    model: Model, file_path: Union[Path, str], pickle_args: Optional[dict] = None
-) -> Path:
-    """
-    Write a gemcat model to a pickle file
-    :param model: Model to pickle
-    :type model: Model
-    :param file_path: Path/name to save pickle file to
-    :type file_path: Union[Path, str]
-    :param pickle_args: Arguments to pass on to pickle.dump, defaults to None
-    :type pickle_args: Optional[dict], optional
-    :return: Path to created pickle file
-    :rtype: Path
-    """
-    if pickle_args is None:
-        pickle_args = {}
-    pickle.dump(model, str(file_path), **pickle_args)
-    return Path(file_path)
-
-
-def load_pickled(
-    file_path: Union[Path, str], pickle_args: Optional[dict] = None
-) -> Model:
-    """
-    Load a pickled gemcat model
-    :param file_path: Path to pickle file
-    :type file_path: str
-    :param pickle_args: Arguments to pass to pickle.load, defaults to None
-    :type pickle_args: Optional[dict], optional
-    :return: Loaded model object
-    :rtype: Model
-    """
-    if pickle_args is None:
-        pickle_args = {}
-    return pickle.load(str(file_path), **pickle_args)

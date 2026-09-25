@@ -10,6 +10,7 @@ from typing import Optional
 import networkx as nx
 import numpy as np
 import pandas as pd
+import scipy.sparse as sp
 
 from . import adjacency_transformation as at
 from . import expression as ex
@@ -24,10 +25,10 @@ class Model:
     Implements the central work flow.
 
     Public attributes:
-    S - stoichiometric matrix (m x r)
+    S - sparse stoichiometric matrix (m x r)
     ranking - the ranking algorithm used (currently only Pagerank)
     metabolite_names - list of metabolite names in order
-    expression - vector of expression values (1 x r)
+    expression - vector of expression values (r,)
     scores - metabolite scores used for personalization
 
     Public methods:
@@ -37,7 +38,7 @@ class Model:
 
     def __init__(
         self,
-        stoichiometric_matrix: np.array,
+        stoichiometric_matrix: sp.sparray,
         metabolite_names: list[str],
         reversibilities: list[bool],
         adjacency: Optional[at.AdjacencyTransformation] = None,
@@ -46,24 +47,27 @@ class Model:
     ):
         """
         Create a model object
-        :param stoichiometric_matrix: stoichiometric matrix,
-        including reversible reactions
-        :type stoichiometric_matrix: np.array [m x r]
+        :param stoichiometric_matrix: sparse stoichiometric matrix,
+        including reversible reactions (m, r)
+        :type stoichiometric_matrix: sp.sparray
         :param metabolite_names: List of metabolite names in order
         :type metabolite_names: list[str]
         :param reversibilities: List of reaction reversibilities
         :type reversibilities: list[bool]
-        :param adjacency: Adjacency calculation object, defaults to using PureAdjacency
-        :type adjacency: Optional[AT.ATPureAdjacency], optional
-        :param ranking: _description_, defaults to using PageRankNX
-        :type ranking: Optional[PR.PagerankNX], optional
-        :param metabolite_seeds: _description_, defaults to None
+        :param adjacency: Adjacency calculation object, an instance rather than a
+        class, defaults to ATPureAdjacency
+        :type adjacency: Optional[at.AdjacencyTransformation], optional
+        :param ranking: Ranking algorithm object, defaults to PagerankNX
+        :type ranking: Optional[pr.Ranking], optional
+        :param metabolite_seeds: Per-metabolite personalization weights,
+        defaults to None
         :type metabolite_seeds: Optional[list[float]], optional
         """
-        self.stoichiometric_matrix = stoichiometric_matrix
-        self.adjacencies: np.ndarray = None
+        utils.require_sparse(stoichiometric_matrix, "the stoichiometric matrix")
+        self.stoichiometric_matrix: sp.sparray = stoichiometric_matrix
+        self.adjacencies: Optional[sp.csr_array] = None
         self.dimensions = self.stoichiometric_matrix.shape
-        self.expression_shape = (1, self.dimensions[1])
+        self.expression_shape = (self.dimensions[1],)
 
         if adjacency is None:
             adjacency = at.ATPureAdjacency()
@@ -73,20 +77,21 @@ class Model:
         self.ranking = ranking
 
         self.metabolite_names = metabolite_names
-        self.expression_vector = None
         self.reversibilities = reversibilities
-        self.expression = None
+        self.expression: Optional[ex.ExpressionIntegration] = None
+        self.expression_vector: np.ndarray
         self._update_expression_vector()
         self._adjacencies_are_current = False
-        self.scores = None
-        self.seeds = None
+        self.scores: Optional[np.ndarray] = None
+        self.seeds: Optional[list[float]] = None
         self.load_metabolite_seeds(metabolite_seeds)
 
-    def load_metabolite_seeds(self, seeds):
+    def load_metabolite_seeds(self, seeds: Optional[list[float]]) -> None:
         """
-        Load metabolite seeds and convert to numpy array if necessary.
-        :param seeds: Metabolite score seeds
-        :type seeds: list[np.ndarray]
+        Load metabolite seeds to use as PageRank personalization weights.
+        :param seeds: Metabolite score seeds, one per metabolite
+        :type seeds: Optional[list[float]]
+        :raises TypeError: If seeds is neither None nor a list
         :raises ValueError: In case of incompatible dimensions
         """
         if seeds is None:
@@ -98,23 +103,22 @@ class Model:
             raise ValueError("Length of seeds must be equal to number of metabolites")
         self.seeds = seeds
 
-    def _update_adjacencies(self):
+    def _update_adjacencies(self) -> None:
         """
-        Calculate the adjacency matrix with currently set values
-        and store it in the model.
-        :return: Adjacency matrix
-        :rtype: np.array (m x m)
+        Calculate the adjacency matrix from the current values and store it in
+        self.adjacencies.
         """
         self.adjacencies = self.adjacency_transformation.transform(
             self.stoichiometric_matrix, self.reversibilities, self.expression_vector
         )
 
-    def load_expression(self, expression: ex.ExpressionIntegration):
+    def load_expression(self, expression: ex.ExpressionIntegration) -> None:
         """
         Load expression data into the model.
         Expression data needs to be in order matching S.
-        :param omics_array: Array of reaction scores
-        :type omics_array: np.array (r)
+        :param expression: Expression integration; one score per reaction
+        :type expression: ex.ExpressionIntegration
+        :raises TypeError: If the argument is not an ExpressionIntegration
         """
         if not isinstance(expression, ex.ExpressionIntegration):
             raise TypeError("Needs to be an Expression object")
@@ -130,9 +134,9 @@ class Model:
         """
         Calculate scores with current S, expression, and metabolite score seeds.
         :param graph_args: Arguments to pass to graph creation, defaults to None into {}
-        :type graph_args: dict, optional
+        :type graph_args: Optional[dict]
         :param pr_args: Args to pass to ranking, defaults to None into {}
-        :type pr_args: dict, optional
+        :type pr_args: Optional[dict]
         :return: Scores for each metabolite
         :rtype: pd.Series
         """
@@ -147,36 +151,29 @@ class Model:
         self.scores = scores
         return utils.annotate_scores(scores, self.metabolite_names)
 
-    def _update_expression_vector(self):
+    def _update_expression_vector(self) -> None:
         """
-        Initializes expression scores
+        Rebuild the per-reaction expression vector from the loaded expression data.
+
+        With no expression loaded it falls back to all ones. Either way
+        the vector is checked and flattened to (r,) for the transforms.
         """
         if self.expression:
-            self.expression_vector = self.expression.get_mapped_values()
+            raw = self.expression.get_mapped_values()
         else:
-            self.expression_vector = np.ones(
-                shape=self.expression_shape,
-                dtype=np.float64,
-            )
+            raw = np.ones(shape=self.expression_shape, dtype=np.float64)
+        self.expression_vector = utils.as_reaction_vector(raw, self.dimensions[1])
 
-    def _check_and_reshape_expression_vector(self):
+    def _check_and_reshape_expression_vector(self) -> None:
         """
-        Checks shape of expression vector.
-        If it doesn't fit S, reshapes it to fit.
-        :raises ValueError: Raised if the expression vector is the wrong shape
+        Normalizes the current expression vector to the shape S expects.
+        :raises ValueError: Raised if the expression vector is the wrong length
         """
-        if self.expression_vector.shape == self.expression_shape:
-            return
-        try:
-            self.expression_vector = self.expression_vector.reshape(
-                self.expression_shape
-            )
-        except Exception as original_err:
-            err = "Current expression vector is wrong length"
-            logging.error(err)
-            raise ValueError(err) from original_err
+        self.expression_vector = utils.as_reaction_vector(
+            self.expression_vector, self.dimensions[1]
+        )
 
-    def _check_and_reload_adjacencies(self):
+    def _check_and_reload_adjacencies(self) -> None:
         """
         Checks whether A is current, if not, reloads it.
         """
@@ -184,7 +181,7 @@ class Model:
             self._update_adjacencies()
             self._adjacencies_are_current = True
 
-    def get_subnetworks(self):
+    def get_subnetworks(self) -> list[list[str]]:
         """
         Returns subnetworks (weakly connected) in the current A.
         :return: List of weakly connected subnetworks

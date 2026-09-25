@@ -26,6 +26,10 @@ accompanying software for our manuscript, "_GEMCAT — A new algorithm for gene 
 ## Compatibility
 GEMCAT has been tested and is compatible with **Python >= 3.10** on Ubuntu and Windows operating systems.
 
+## Performance
+
+Metabolic networks are sparse, so GEMCAT represents every matrix internally with `scipy.sparse`, reducing runtime and memory use.
+
 ## Installation
 You can install GEMCAT in two ways:
 
@@ -40,6 +44,31 @@ You can install GEMCAT in two ways:
     cd gemcat
     pip install .
     ```
+
+### Setting up a development environment
+
+This setup uses your local Python and a virtual environment.
+If you use uv, poetry, conda, or similar environments please use their respective setups.
+From the repository root:
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate          # Windows: .\.venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
+```
+
+Check it worked. The first command must print a path inside `.venv`:
+
+```bash
+python -c "import gemcat; print(gemcat.__file__)"
+gemcat --help
+```
+
+Activating the environment puts the `gemcat` command on your `PATH`. A few tests run it as a subprocess and fail without it.
+
+The large test models are stored with [git lfs](https://git-lfs.com/). If `tests/test_models/Recon3D.json` is a few hundred bytes rather than about 5 MB, run
+`git lfs install && git lfs pull`.
+
 ---
 
 ## How to Use GEMCAT
@@ -174,9 +203,9 @@ Any class inheriting from the abstract base classes in these modules can be exch
 If you're contributing to GEMCAT:
 
 * **Running Tests:**
-    * Run all local tests with `pytest .`.
+    * Run all local tests with `pytest .` (from the repository root).
     * You can exclude slow-running tests by using `pytest . -m "not slow"`. These slow-running tests are
-      integration tests with *real-world data* and will take 10-30 seconds each depending on your hardware.
+      integration tests with *real-world data* and take a few seconds each depending on your hardware.
 * **Prerequisites:** Ensure you have [git lfs](https://git-lfs.com/) installed for tests that rely on large files.
 * **Code Formatting:** Before committing, make sure your code is properly formatted using `isort` and `black`.
 * **CI Pipeline:** The GitHub CI pipeline automatically checks for `isort`, `black`, and `pytest` compliance.

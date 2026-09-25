@@ -91,7 +91,7 @@ class ExpressionIntegration(abc.ABC):
         """
         raise NotImplementedError()
 
-    def get_mapped_values(self) -> np.array:
+    def get_mapped_values(self) -> np.ndarray:
         """
         Returns the mapped values as a NumPy array.
         :return: Gene expression values
@@ -199,7 +199,7 @@ class GeometricAndAverageMeans(ExpressionIntegration):
             gpr = gpr.replace(gene_str, f"{gene_val}")
 
         gpr = gpr.replace("or", "+")
-        re_float = "\d*\.\d*"
+        re_float = r"\d*\.\d*"
         re_and = re.compile(f"{re_float}(?: and {re_float})+")
         hits = re_and.findall(gpr)
         if not hits:
